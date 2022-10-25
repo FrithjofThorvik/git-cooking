@@ -1,0 +1,13 @@
+@import "../../styles/imports/colors";
+
+.orderCard {
+  width: 200px;
+  height: 75px;
+  margin: 0 auto;
+
+  .content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

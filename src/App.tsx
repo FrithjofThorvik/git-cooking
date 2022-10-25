@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
-import Tutorial from "./pages/Tutorial";
+import Play from "./pages/Play";
 
 import "./App.scss";
 
@@ -11,7 +11,7 @@ const App: React.FC = (): JSX.Element => {
     <div>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/tutorial" element={<Tutorial />} />
+        <Route path="/play" element={<Play />} />
       </Routes>
     </div>
   );
