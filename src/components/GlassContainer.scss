@@ -16,6 +16,7 @@
 
 .grain {
   position: absolute;
+  border-radius: inherit;
   backdrop-filter: blur(20px);
   background-blend-mode: overlay, normal;
   background: radial-gradient(
@@ -34,10 +35,11 @@
 
 .triangle {
   position: absolute;
+  border-radius: inherit;
   background-image: -webkit-linear-gradient(
     5deg,
     rgba(65, 65, 65, 0.2) 40%,
-    rgba($gray, 0) 40%
+    rgba($gray, 0.05) 40%
   );
   top: 0;
   left: 0;
@@ -45,9 +47,14 @@
   bottom: 0;
 }
 
+.layers {
+  overflow: hidden;
+  border-radius: inherit;
+}
+
 .content {
-  position: absolute;
   display: flex;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
