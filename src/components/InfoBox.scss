@@ -3,52 +3,36 @@
 .infoContainer {
   display: flex;
   position: absolute;
-  flex-direction: column;
   right: 40px;
   bottom: 40px;
   width: 400px;
   height: 200px;
+  flex: 40% 60%;
   background-color: $black;
   border-radius: 15px;
   border: 3px $line-dark solid;
 
-  .content {
-    .clockArea {
-      width: 40%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
+  .clockArea {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 100%;
 
-      .clockText {
-        width: 100%;
-        text-align: center;
-      }
-
-      .clock {
-        display: flex;
-        justify-content: center;
-        .cirlceBorder {
-          padding: 10px;
-          background: linear-gradient(to right, red, purple);
-        }
-        .circle {
-          border-radius: 100%;
-          background-color: $black;
-          width: 80px;
-          height: 80px;
-
-          border-radius: 1000px;
-        }
-      }
-    }
-
-    .infoText {
-      padding: 25px;
+    .clockText {
+      width: 100%;
       text-align: center;
-      width: 60%;
-      background-color: red;
+      color: $white;
     }
+  }
+
+  .infoArea {
+    width: 60%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    color: $white;
   }
 }
