@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 import "./Terminal.scss";
 
@@ -7,7 +7,6 @@ interface ITerminalProps {
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => any;
   value: string;
   history: string[];
-  bottomRef: React.RefObject<HTMLDivElement> | null;
 }
 
 const Terminal: React.FC<ITerminalProps> = ({
@@ -15,8 +14,14 @@ const Terminal: React.FC<ITerminalProps> = ({
   handleChange,
   value,
   history,
-  bottomRef,
 }): JSX.Element => {
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // scroll to bottom every time history change
+    bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
+  }, [history]);
+
   return (
     <div className="terminalContainer">
       <div className="terminalContent">

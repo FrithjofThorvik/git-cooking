@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Terminal from "../../components/Terminal";
 
@@ -9,12 +9,6 @@ const TerminalController: React.FC<
 > = (): JSX.Element => {
   const [value, setValue] = useState<string>("");
   const [history, setHistory] = useState<string[]>([]);
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // scroll to bottom every time history change
-    bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
-  }, [history]);
 
   const executeCommand = (command: string) => {
     // do something for the command here!
@@ -42,7 +36,6 @@ const TerminalController: React.FC<
       handleKeyDown={onKeyDown}
       value={value}
       history={history}
-      bottomRef={bottomRef}
     />
   );
 };
