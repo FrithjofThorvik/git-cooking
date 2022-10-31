@@ -1,0 +1,14 @@
+@import "../../../styles/imports/colors";
+
+.file {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  font-size: 16px;
+  margin: 3px 12px;
+
+  &-icon {
+    font-size: 14px;
+    margin-right: 5px;
+  }
+}

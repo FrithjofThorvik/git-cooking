@@ -4,14 +4,14 @@ import image from "../../assets/logo.png";
 
 import "./StartSidebar.scss";
 
-const Sidebar: React.FC = (): JSX.Element => {
+const StartSidebar: React.FC = (): JSX.Element => {
   return (
-    <div className="sidebar">
+    <div className="start-sidebar">
       <GlassContainer>
-        <img src={image} className="logo" />
+        <img src={image} className="start-sidebar-logo" />
       </GlassContainer>
     </div>
   );
 };
 
-export default Sidebar;
+export default StartSidebar;

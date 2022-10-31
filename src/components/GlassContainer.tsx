@@ -24,11 +24,11 @@ const GlassContainer: React.FC<IGlassContainerProps> = ({
   };
 
   return (
-    <div className="glassContainer" style={style}>
-      <div className="content">{children}</div>
-      <div className="layers">
-        {grain && <div className="grain" />}
-        {triangle && <div className="triangle" />}
+    <div className="glass-container" style={style}>
+      <div className="glass-container-content">{children}</div>
+      <div className="glass-container-layers">
+        {grain && <div className="glass-container-layers-grain" />}
+        {triangle && <div className="glass-container-layers-triangle" />}
       </div>
     </div>
   );

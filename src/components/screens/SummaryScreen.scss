@@ -10,7 +10,7 @@
   width: 100vw;
   height: 100vh;
 
-  .summary-screen-buttons {
+  &-buttons {
     display: flex;
     justify-content: space-between;
     width: 80%;
