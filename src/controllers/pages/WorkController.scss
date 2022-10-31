@@ -15,6 +15,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    box-sizing: border-box;
     width: 60%;
     padding: 15px;
 
@@ -52,13 +53,19 @@
   .right {
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
     width: 25%;
+    padding: 15px;
 
     .topRight {
       height: 60%;
     }
 
     .bottomRight {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: flex-end;
       height: 40%;
     }
   }
