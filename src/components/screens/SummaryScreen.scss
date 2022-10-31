@@ -1,0 +1,19 @@
+.summary-screen {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  background-image: url("../../assets/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 100vw;
+  height: 100vh;
+
+  .summary-screen-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin: 25px auto;
+  }
+}

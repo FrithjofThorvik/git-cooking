@@ -7,11 +7,16 @@ import FileViewController from "../components/FileViewController";
 import StageViewController from "../components/StageViewController";
 import DirectoryController from "../components/DirectoryController";
 import CommitHistoryController from "../components/CommitHistoryController";
+
 import "./WorkController.scss";
 
-interface IWorkControllerProps {}
+interface IWorkControllerProps {
+  goToSummary: () => void;
+}
 
-const WorkController: React.FC<IWorkControllerProps> = (): JSX.Element => {
+const WorkController: React.FC<IWorkControllerProps> = ({
+  goToSummary,
+}): JSX.Element => {
   return (
     <div className="work">
       <div className="left">
