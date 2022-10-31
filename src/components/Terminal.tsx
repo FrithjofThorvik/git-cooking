@@ -7,7 +7,7 @@ interface ITerminalProps {}
 const Terminal: React.FC<ITerminalProps> = (): JSX.Element => {
   return (
     <div className="terminalContainer">
-      <div className="content">Hello</div>
+      <div className="terminalContent">Hello</div>
     </div>
   );
 };

@@ -18,10 +18,7 @@ const OrderCard: React.FC<IOrderCardProps> = ({ percent }): JSX.Element => {
           <div className="person">
             <img src={chefImg} alt="chef" />
             <div className="progressBar">
-              <div
-                className="progress"
-                style={{ width: `${percent}"%"` }}
-              ></div>
+              <div className="progress" style={{ width: `${80}"%"` }}></div>
             </div>
           </div>
           <div className="coworker">
