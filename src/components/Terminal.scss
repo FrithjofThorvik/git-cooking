@@ -13,9 +13,54 @@
   border-radius: 0px 0px 15px 15px;
   border: 3px $line-dark solid;
 
-  .content {
-    width: 100%;
+  .terminalContent {
+    width: auto;
     height: 100%;
     padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow-y: hidden;
+  }
+  .terminalHistory {
+    color: $gray;
+    opacity: 0.7;
+    height: auto;
+    overflow-y: auto;
+    white-space: pre-wrap;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    p {
+      margin: 0;
+      width: 100%;
+    }
+  }
+
+  .terminalInputArea {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+  }
+
+  .terminalInput {
+    background-color: $black-dark;
+    color: $white;
+    border: 0;
+    width: 100%;
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 16px;
+
+    &:focus {
+      outline: none !important;
+      border: 0px;
+    }
+
+    input {
+      width: 100%;
+    }
   }
 }

@@ -7,6 +7,7 @@ import InfoBoxController from "../components/InfoBoxController";
 import TerminalController from "../components/TerminalController";
 
 import "./WorkController.scss";
+import CommitHistoryController from "../components/CommitHistoryController";
 
 interface IWorkControllerProps {}
 
@@ -62,6 +63,7 @@ const WorkController: React.FC<IWorkControllerProps> = (): JSX.Element => {
       <TerminalController />
       <InfoBoxController />
       <Orders />
+      <CommitHistoryController />
     </div>
   );
 };
