@@ -8,10 +8,14 @@ import TerminalController from "../components/TerminalController";
 
 import "./WorkController.scss";
 import CommitHistoryController from "../components/CommitHistoryController";
+import { margin } from "@mui/system";
+import { autocompleteClasses } from "@mui/material";
 
-interface IWorkControllerProps {}
+interface IWorkControllerProps {
+  goToSummary: () => void
+}
 
-const WorkController: React.FC<IWorkControllerProps> = (): JSX.Element => {
+const WorkController: React.FC<IWorkControllerProps> = ({ goToSummary }): JSX.Element => {
   const directory: IDirectory = {
     folders: [
       {
@@ -64,6 +68,7 @@ const WorkController: React.FC<IWorkControllerProps> = (): JSX.Element => {
       <InfoBoxController />
       <Orders />
       <CommitHistoryController />
+      <button onClick={goToSummary} style={{ position: "absolute", bottom: 0 }}>Summary</button>
     </div>
   );
 };

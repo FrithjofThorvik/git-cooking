@@ -6,12 +6,16 @@ interface IGlassContainerProps {
   border?: boolean;
   shadow?: boolean;
   children: JSX.Element | JSX.Element[];
+  grain?: boolean;
+  triangle?: boolean;
 }
 
 const GlassContainer: React.FC<IGlassContainerProps> = ({
   children,
   border = false,
   shadow = false,
+  triangle = true,
+  grain = true,
 }): JSX.Element => {
   const style = {
     border: `${border ? "3px solid #94a3b8" : "none"}`,
@@ -23,8 +27,8 @@ const GlassContainer: React.FC<IGlassContainerProps> = ({
     <div className="glassContainer" style={style}>
       <div className="content">{children}</div>
       <div className="layers">
-        <div className="grain" />
-        <div className="triangle" />
+        {grain && <div className="grain" />}
+        {triangle && <div className="triangle" />}
       </div>
     </div>
   );
