@@ -19,7 +19,7 @@ const Terminal: React.FC<ITerminalProps> = ({
 
   useEffect(() => {
     // scroll to bottom every time history change
-    bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
+    // bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
   }, [history]);
 
   return (

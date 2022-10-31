@@ -2,11 +2,8 @@
 
 .orders {
   display: flex;
-  position: absolute;
+  align-items: center;
   flex-direction: column;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 300px;
+  justify-content: flex-start;
   height: 100%;
 }

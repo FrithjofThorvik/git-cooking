@@ -1,15 +1,12 @@
 @import "../../styles/imports/colors";
 
-.sidebar {
+.directorySidebar {
   display: flex;
-  position: absolute;
   flex-direction: column;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 250px;
+  box-sizing: border-box;
+  width: 100%;
   height: 100%;
-  box-shadow: 10px 0 10px 2px rgba(0, 0, 0, 0.3);
+  padding: 15px;
 
   .directory {
     display: flex;
@@ -17,7 +14,6 @@
     align-items: flex-start;
     justify-content: flex-start;
     width: 100%;
-    height: 100%;
     row-gap: 50px;
   }
 }

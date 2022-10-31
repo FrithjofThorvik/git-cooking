@@ -2,20 +2,28 @@ import React from "react";
 import SummaryButton, { ISummaryButtonProps } from "../misc/SummaryButton";
 import SummaryModal, { ISummaryModalProps } from "../SummaryModal";
 
-export interface ISummaryScreenProps { modal: ISummaryModalProps; nextButton: ISummaryButtonProps; prevButton: ISummaryButtonProps; }
+import "./SummaryScreen.scss";
 
-const SummaryScreen: React.FC<
-    ISummaryScreenProps
-> = (props): JSX.Element => {
-    return <div className="summary-screen">
+export interface ISummaryScreenProps {
+  modal: ISummaryModalProps;
+  nextButton: ISummaryButtonProps;
+  prevButton: ISummaryButtonProps;
+}
+
+const SummaryScreen: React.FC<ISummaryScreenProps> = (props): JSX.Element => {
+  return (
+    <div className="summary-screen">
+      <SummaryModal {...props.modal} />
+      <div className="summary-screen-buttons">
         <div className="summary-screen-back-button">
-            <SummaryButton {...props.nextButton} />
+          <SummaryButton {...props.nextButton} />
         </div>
-        <SummaryModal {...props.modal} />
         <div className="summary-screen-next-button">
-            <SummaryButton {...props.prevButton} />
+          <SummaryButton {...props.prevButton} />
         </div>
-    </div>;
+      </div>
+    </div>
+  );
 };
 
 export default SummaryScreen;

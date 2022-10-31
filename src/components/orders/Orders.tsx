@@ -8,7 +8,7 @@ interface IOrdersProps {}
 const Orders: React.FC<IOrdersProps> = (): JSX.Element => {
   return (
     <div className="orders">
-      <OrderCard />
+      <OrderCard percent={20} />
     </div>
   );
 };

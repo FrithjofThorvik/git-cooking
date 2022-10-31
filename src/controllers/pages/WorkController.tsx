@@ -1,74 +1,49 @@
 import React from "react";
 
-import { IDirectory } from "../../types/interfaces";
-import Orders from "../../components/orders/Orders";
-import DirectorySidebar from "../../components/sidebars/DirectorySidebar";
+import OrdersController from "../components/OrdersController";
 import InfoBoxController from "../components/InfoBoxController";
 import TerminalController from "../components/TerminalController";
+import FileViewController from "../components/FileViewController";
+import StageViewController from "../components/StageViewController";
+import DirectoryController from "../components/DirectoryController";
+import CommitHistoryController from "../components/CommitHistoryController";
 
 import "./WorkController.scss";
-import CommitHistoryController from "../components/CommitHistoryController";
-import { margin } from "@mui/system";
-import { autocompleteClasses } from "@mui/material";
 
 interface IWorkControllerProps {
-  goToSummary: () => void
+  goToSummary: () => void;
 }
 
-const WorkController: React.FC<IWorkControllerProps> = ({ goToSummary }): JSX.Element => {
-  const directory: IDirectory = {
-    folders: [
-      {
-        name: "Orders",
-        folders: [
-          {
-            name: "Order #1",
-            folders: [],
-            files: [
-              {
-                name: "Burger",
-              },
-              {
-                name: "Fries",
-              },
-            ],
-            isOpen: true,
-          },
-          {
-            name: "Order #2",
-            folders: [],
-            files: [
-              {
-                name: "Burger",
-              },
-              {
-                name: "Fries",
-              },
-            ],
-            isOpen: false,
-          },
-        ],
-        files: [],
-        isOpen: true,
-      },
-      {
-        name: "ingredients",
-        folders: [],
-        files: [],
-        isOpen: true,
-      },
-    ],
-    files: [],
-  };
-
+const WorkController: React.FC<IWorkControllerProps> = ({
+  goToSummary,
+}): JSX.Element => {
   return (
     <div className="work">
-      <DirectorySidebar directory={directory} />
-      <TerminalController />
-      <InfoBoxController />
-      <Orders />
-      <CommitHistoryController />
-      <button onClick={goToSummary} style={{ position: "absolute", bottom: 0 }}>Summary</button>
+      <div className="left">
+        <DirectoryController />
+      </div>
+      <div className="middle">
+        <div className="topMiddle">
+          <div className="topMiddleLeft">
+            <FileViewController />
+          </div>
+          <div className="topMiddleRight">
+            <StageViewController />
+          </div>
+        </div>
+        <div className="bottomMiddle">
+          <TerminalController />
+        </div>
+      </div>
+      <div className="right">
+        <div className="topRight">
+          <OrdersController />
+        </div>
+        <div className="bottomRight">
+          <InfoBoxController />
+          <CommitHistoryController />
+        </div>
+      </div>
     </div>
   );
 };

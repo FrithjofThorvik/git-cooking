@@ -1,14 +1,19 @@
 .summary-screen {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  background-image: url("../../assets/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 100vw;
+  height: 100vh;
+
+  .summary-screen-buttons {
     display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    background-image: url("../../assets/background.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    width: 100vw;
-    height: 100vh;
+    justify-content: space-between;
+    width: 80%;
+    margin: 25px auto;
+  }
 }
