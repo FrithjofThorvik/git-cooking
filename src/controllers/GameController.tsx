@@ -6,11 +6,12 @@ import SummaryController from "./pages/SummaryController";
 
 const GameController: React.FC = (): JSX.Element => {
   const [gameState, setGameState] = useState<GameState>(GameState.WORKING);
+
   return (
     <div className="game">
       {/* Add routing logic */}
       {gameState === GameState.WORKING ? (
-        <WorkController />
+        <WorkController goToSummary={() => setGameState(GameState.SUMMARY)} />
       ) : (
         gameState === GameState.SUMMARY && <SummaryController />
       )}
