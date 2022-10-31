@@ -1,7 +1,7 @@
 import React from "react";
 
-import { IDirectory } from "../../../types/interfaces";
-import DirectorySidebar from "../../../components/work/Directory";
+import { IDirectory } from "types/interfaces";
+import DirectorySidebar from "components/work/Directory";
 
 interface IDirectoryControllerProps {}
 

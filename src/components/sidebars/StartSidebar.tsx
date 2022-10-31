@@ -1,6 +1,7 @@
 import React from "react";
-import GlassContainer from "../GlassContainer";
-import image from "../../assets/logo.png";
+
+import image from "assets/logo.png";
+import GlassContainer from "components/GlassContainer";
 
 import "./StartSidebar.scss";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import Tooltip from "@mui/material/Tooltip";
 
-import { ICommitHistory, ICommit } from "../../types/interfaces";
+import { ICommitHistory, ICommit } from "types/interfaces";
 
 import "./CommitHistory.scss";
 

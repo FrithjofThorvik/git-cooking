@@ -1,6 +1,6 @@
 import React from "react";
 
-import InfoBox from "../../../components/work/InfoBox";
+import InfoBox from "components/work/InfoBox";
 
 interface IInfoBoxControllerProps {}
 

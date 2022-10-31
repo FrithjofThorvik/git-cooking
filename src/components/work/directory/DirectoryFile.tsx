@@ -1,7 +1,7 @@
 import React from "react";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 
-import { IFile } from "../../../types/interfaces";
+import { IFile } from "types/interfaces";
 
 import "./DirectoryFile.scss";
 

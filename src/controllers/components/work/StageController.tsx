@@ -1,6 +1,6 @@
 import React from "react";
 
-import Stage from "../../../components/work/Stage";
+import Stage from "components/work/Stage";
 
 interface IStageControllerProps {}
 

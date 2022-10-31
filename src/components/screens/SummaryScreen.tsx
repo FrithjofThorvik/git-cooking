@@ -1,7 +1,11 @@
 import React from "react";
 
-import SummaryButton, { ISummaryButtonProps } from "../summary/SummaryButton";
-import SummaryModal, { ISummaryModalProps } from "../summary/SummaryModal";
+import SummaryModal, {
+  ISummaryModalProps,
+} from "components/summary/SummaryModal";
+import SummaryButton, {
+  ISummaryButtonProps,
+} from "components/summary/SummaryButton";
 
 import "./SummaryScreen.scss";
 

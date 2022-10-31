@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "../components/sidebars/StartSidebar";
+import Sidebar from "components/sidebars/StartSidebar";
 
 import "./Home.scss";
 

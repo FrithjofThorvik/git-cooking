@@ -1,7 +1,7 @@
 import React from "react";
 import SummaryScreen, {
   ISummaryScreenProps,
-} from "../../components/screens/SummaryScreen";
+} from "components/screens/SummaryScreen";
 
 interface ISummaryScreenControllerProps {}
 

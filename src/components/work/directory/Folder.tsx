@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
-import { IFolder } from "../../../types/interfaces";
+import { IFolder } from "types/interfaces";
 import DirectoryFile from "./DirectoryFile";
 
 import "./Folder.scss";

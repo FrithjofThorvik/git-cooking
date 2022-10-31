@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import Terminal from "../../../components/work/Terminal";
+import Terminal from "components/work/Terminal";
 
 interface ITerminalControllerProps {}
 

@@ -1,5 +1,5 @@
 import React from "react";
-import Orders from "../../../components/work/Orders";
+import Orders from "components/work/Orders";
 
 interface IOrdersControllerProps {}
 

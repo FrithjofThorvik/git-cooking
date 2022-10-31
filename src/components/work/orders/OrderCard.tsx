@@ -1,8 +1,8 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 
-import chefImg from "../../../assets/chef.png";
-import GlassContainer from "../../GlassContainer";
+import chefImg from "assets/chef.png";
+import GlassContainer from "components/GlassContainer";
 
 import "./OrderCard.scss";
 

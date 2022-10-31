@@ -1,6 +1,6 @@
 import React from "react";
 
-import File from "../../../components/work/File";
+import File from "components/work/File";
 
 interface IFileControllerProps {}
 

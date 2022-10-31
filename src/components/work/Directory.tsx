@@ -1,6 +1,6 @@
 import React from "react";
 
-import { IDirectory } from "../../types/interfaces";
+import { IDirectory } from "types/interfaces";
 import DirectoryFile from "./directory/DirectoryFile";
 import Folder from "./directory/Folder";
 

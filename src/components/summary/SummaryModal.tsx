@@ -1,7 +1,7 @@
 import React from "react";
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 
-import GlassContainer from "../GlassContainer";
+import GlassContainer from "components/GlassContainer";
 
 import "./SummaryModal.scss";
 

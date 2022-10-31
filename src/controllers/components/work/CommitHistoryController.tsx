@@ -1,7 +1,7 @@
 import React from "react";
 
-import { ICommit, ICommitHistory } from "../../../types/interfaces";
-import CommitHistory from "../../../components/work/CommitHistory";
+import { ICommit, ICommitHistory } from "types/interfaces";
+import CommitHistory from "components/work/CommitHistory";
 
 interface ICommitHistoryControllerProps {}
 

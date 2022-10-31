@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-import { GameState } from "../types/enums";
-import WorkScreenController from "./screens/WorkScreenController";
-import SummaryScreenController from "./screens/SummaryScreenController";
+import { GameState } from "types/enums";
+import WorkScreenController from "controllers/screens/WorkScreenController";
+import SummaryScreenController from "controllers/screens/SummaryScreenController";
 
 const GameController: React.FC = (): JSX.Element => {
-  const [gameState, setGameState] = useState<GameState>(GameState.SUMMARY);
+  const [gameState, setGameState] = useState<GameState>(GameState.WORKING);
 
   return (
     <div className="game">

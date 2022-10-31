@@ -1,13 +1,13 @@
 import React from "react";
 
-import WorkScreen from "../../components/screens/WorkScreen";
-import OrdersController from "../components/work/OrdersController";
-import InfoBoxController from "../components/work/InfoBoxController";
-import TerminalController from "../components/work/TerminalController";
-import FileController from "../components/work/FileController";
-import StageController from "../components/work/StageController";
-import DirectoryController from "../components/work/DirectoryController";
-import CommitHistoryController from "../components/work/CommitHistoryController";
+import WorkScreen from "components/screens/WorkScreen";
+import FileController from "controllers/components/work/FileController";
+import StageController from "controllers/components/work/StageController";
+import OrdersController from "controllers/components/work/OrdersController";
+import InfoBoxController from "controllers/components/work/InfoBoxController";
+import TerminalController from "controllers/components/work/TerminalController";
+import DirectoryController from "controllers/components/work/DirectoryController";
+import CommitHistoryController from "controllers/components/work/CommitHistoryController";
 
 interface IWorkScreenControllerProps {
   goToSummary: () => void;
