@@ -1,1 +1,23 @@
-.summary-button {}
+@import "../../styles/imports/colors";
+
+.summary-button {
+  border-radius: 50px;
+  width: 200px;
+  height: 75px;
+  border: 5px solid;
+  color: $white;
+  font-size: 24px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+.default {
+  background-color: $dark;
+  border-color: $white;
+}
+
+.green {
+  background-color: $green;
+  border-color: $line-green;
+}

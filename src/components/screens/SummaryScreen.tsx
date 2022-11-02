@@ -21,10 +21,10 @@ const SummaryScreen: React.FC<ISummaryScreenProps> = (props): JSX.Element => {
       <SummaryModal {...props.modal} />
       <div className="summary-screen-buttons">
         <div className="summary-screen-buttons-back-button">
-          <SummaryButton {...props.nextButton} />
+          <SummaryButton {...props.prevButton} />
         </div>
         <div className="summary-screen-buttons-next-button">
-          <SummaryButton {...props.prevButton} />
+          <SummaryButton {...props.nextButton} />
         </div>
       </div>
     </div>
