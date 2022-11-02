@@ -1,7 +1,7 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 
-import chefImg from "assets/chef.png";
+import { imgChef } from "assets";
 import GlassContainer from "components/GlassContainer";
 
 import "./OrderCard.scss";
@@ -16,7 +16,7 @@ const OrderCard: React.FC<IOrderCardProps> = ({ percent }): JSX.Element => {
       <GlassContainer border shadow>
         <div className="order-card-content">
           <div className="order-card-content-person">
-            <img src={chefImg} alt="chef" />
+            <img src={imgChef} alt="chef" />
             <div className="order-card-content-person-progressBar">
               <div
                 className="order-card-content-person-progressBar-progress"

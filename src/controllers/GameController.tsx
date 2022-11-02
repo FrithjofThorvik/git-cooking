@@ -1,43 +1,53 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { GameState } from "types/enums";
+import { useGameData } from "hooks/useGameData";
 import WorkScreenController from "controllers/screens/WorkScreenController";
 import SummaryScreenController from "controllers/screens/SummaryScreenController";
 import UpgradeScreenController from "controllers/screens/UpgradeScreenController";
 
 const GameController: React.FC = (): JSX.Element => {
-  const [gameState, setGameState] = useState<GameState>(GameState.SUMMARY);
+  const { gameData, setGameData } = useGameData();
 
   const gameStateMachine = () => {
-    switch (gameState) {
+    switch (gameData.gameState) {
       case GameState.WORKING:
         return (
           <WorkScreenController
-            goToSummary={() => setGameState(GameState.SUMMARY)}
+            goToSummary={() =>
+              setGameData({ ...gameData, gameState: GameState.SUMMARY })
+            }
           />
         );
       case GameState.MERGE:
-        //todo
         console.log("merge");
         break;
       case GameState.SUMMARY:
         return (
           <SummaryScreenController
-            goNext={() => setGameState(GameState.UPGRADE)}
-            goBack={() => setGameState(GameState.MERGE)}
+            goNext={() =>
+              setGameData({ ...gameData, gameState: GameState.UPGRADE })
+            }
+            goBack={() =>
+              setGameData({ ...gameData, gameState: GameState.MERGE })
+            }
           />
         );
       case GameState.UPGRADE:
         return (
           <UpgradeScreenController
-            goNext={() => setGameState(GameState.WORKING)}
-            goBack={() => setGameState(GameState.SUMMARY)}
+            goNext={() =>
+              setGameData({ ...gameData, gameState: GameState.WORKING })
+            }
+            goBack={() =>
+              setGameData({ ...gameData, gameState: GameState.SUMMARY })
+            }
           />
         );
     }
   };
 
-  return <div className="game">{gameStateMachine()}</div>;
+  return <div className="game">{gameData && gameStateMachine()}</div>;
 };
 
 export default GameController;

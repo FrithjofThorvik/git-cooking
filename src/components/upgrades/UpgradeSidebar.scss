@@ -12,16 +12,16 @@
     width: 100%;
 
     &-logo {
-      margin: 0 auto;
       width: 150px;
       height: 150px;
-      margin-top: 25px;
+      margin: 25px auto;
     }
 
     &-menu {
       display: flex;
       flex-direction: column;
       justify-content: center;
+      gap: 20px;
 
       &-item {
         display: flex;

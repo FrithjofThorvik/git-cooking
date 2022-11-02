@@ -1,60 +1,55 @@
 import React from "react";
 
-import image from "assets/logo.png";
+import { imgLogo } from "assets";
+import { UpgradeType } from "types/enums";
 import GlassContainer from "components/GlassContainer";
-
 import CodeOutlinedIcon from "@mui/icons-material/CodeOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import FastfoodOutlinedIcon from "@mui/icons-material/FastfoodOutlined";
 
 import "./UpgradeSidebar.scss";
-import { IUpgradeMenu } from "types/interfaces";
 
 export interface IUpgradeSidebarProps {
-  activeMenu: number;
-  setActiveMenu: (id: number) => any;
-  menu: IUpgradeMenu;
+  activeUpgradeType: UpgradeType;
+  setActiveUpgradeType: React.Dispatch<React.SetStateAction<UpgradeType>>;
 }
 
 const UpgradeSidebar: React.FC<IUpgradeSidebarProps> = ({
-  menu,
-  activeMenu,
-  setActiveMenu,
+  activeUpgradeType,
+  setActiveUpgradeType,
 }): JSX.Element => {
-  const iconSwitch = (icon: string | undefined) => {
-    switch (icon) {
-      case "home":
+  const iconSwitch = (upgradeType: UpgradeType) => {
+    switch (upgradeType) {
+      case UpgradeType.UPGRADES:
         return <HomeOutlinedIcon />;
-      case "code":
+      case UpgradeType.COMMANDS:
         return <CodeOutlinedIcon />;
-      case "fastfood":
+      case UpgradeType.INGREDIENTS:
         return <FastfoodOutlinedIcon />;
       default:
         return <CategoryOutlinedIcon />;
     }
   };
-
   return (
     <div className="upgrade-sidebar">
       <GlassContainer>
         <div className="upgrade-sidebar-content">
-          <img src={image} className="upgrade-sidebar-content-logo" />
+          <img src={imgLogo} className="upgrade-sidebar-content-logo" />
           <div className="upgrade-sidebar-content-menu">
-            {menu.categories.map((item) => {
-              let modifier = item.id == activeMenu ? "selected" : " ";
+            {Object.values(UpgradeType).map((val: UpgradeType) => {
               return (
                 <div
-                  className={
-                    "upgrade-sidebar-content-menu-item" + " " + modifier
-                  }
-                  key={item.id}
-                  onClick={() => setActiveMenu(item.id)}
+                  className={`upgrade-sidebar-content-menu-item ${
+                    val === activeUpgradeType && "selected"
+                  }`}
+                  key={val}
+                  onClick={() => setActiveUpgradeType(val)}
                 >
                   <div className="upgrade-sidebar-content-menu-item-logo">
-                    {iconSwitch(item.icon)}
+                    {iconSwitch(val)}
                   </div>
-                  <p>{item.title}</p>
+                  <p>{val}</p>
                 </div>
               );
             })}
