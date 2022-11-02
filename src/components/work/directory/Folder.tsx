@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import { IFolder } from "types/interfaces";
 import DirectoryFile from "./DirectoryFile";
@@ -16,7 +16,7 @@ const Folder: React.FC<IFolderProps> = ({ folder }): JSX.Element => {
   return (
     <div className="folder">
       <div className="folder-info" onClick={() => setIsOpen(!isOpen)}>
-        <KeyboardArrowRightIcon
+        <ChevronRightIcon
           style={{ transform: `rotate(${isOpen ? "90deg" : "0deg"})` }}
         />
         <div>{folder.name}</div>
