@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { GameState } from "types/enums";
 import WorkScreenController from "controllers/screens/WorkScreenController";
 import SummaryScreenController from "controllers/screens/SummaryScreenController";
+import UpgradeScreenController from "controllers/screens/UpgradeScreenController";
 
 const GameController: React.FC = (): JSX.Element => {
   const [gameState, setGameState] = useState<GameState>(GameState.SUMMARY);
@@ -27,9 +28,12 @@ const GameController: React.FC = (): JSX.Element => {
           />
         );
       case GameState.UPGRADE:
-        //todo
-        console.log("upgrade");
-        break;
+        return (
+          <UpgradeScreenController
+            goNext={() => setGameState(GameState.WORKING)}
+            goBack={() => setGameState(GameState.SUMMARY)}
+          />
+        );
     }
   };
 
