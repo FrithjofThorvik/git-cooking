@@ -1,6 +1,7 @@
 import React from "react";
 
 import { IDirectory } from "types/interfaces";
+import { useGameData } from "hooks/useGameData";
 import DirectorySidebar from "components/work/Directory";
 
 interface IDirectoryControllerProps {}
@@ -8,48 +9,10 @@ interface IDirectoryControllerProps {}
 const DirectoryController: React.FC<
   IDirectoryControllerProps
 > = (): JSX.Element => {
+  const { gameData, setGameData } = useGameData();
+
   const directory: IDirectory = {
-    folders: [
-      {
-        name: "Orders",
-        folders: [
-          {
-            name: "Order #1",
-            folders: [],
-            files: [
-              {
-                name: "Burger",
-              },
-              {
-                name: "Fries",
-              },
-            ],
-            isOpen: true,
-          },
-          {
-            name: "Order #2",
-            folders: [],
-            files: [
-              {
-                name: "Burger",
-              },
-              {
-                name: "Fries",
-              },
-            ],
-            isOpen: false,
-          },
-        ],
-        files: [],
-        isOpen: true,
-      },
-      {
-        name: "ingredients",
-        folders: [],
-        files: [],
-        isOpen: true,
-      },
-    ],
+    folders: [],
     files: [],
   };
 

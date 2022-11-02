@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+import { useGameData } from "hooks/useGameData";
 import Terminal from "components/work/Terminal";
 
 interface ITerminalControllerProps {}
@@ -9,6 +10,7 @@ const TerminalController: React.FC<
 > = (): JSX.Element => {
   const [value, setValue] = useState<string>("");
   const [history, setHistory] = useState<string[]>([]);
+  const { gameData, setGameData } = useGameData();
 
   const executeCommand = (command: string) => {
     // do something for the command here!
@@ -27,6 +29,7 @@ const TerminalController: React.FC<
       event.preventDefault();
       executeCommand(value);
       setValue("");
+      setGameData({ ...gameData, day: gameData.day + 1 });
     }
   };
 

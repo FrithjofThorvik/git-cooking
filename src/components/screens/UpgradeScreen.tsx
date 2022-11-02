@@ -1,53 +1,59 @@
 import React, { useState } from "react";
 
-import UpgradeCard from "components/UpgradeCard";
-import { IUpgradeCard, IUpgradeMenu } from "types/interfaces";
-import UpgradeSidebar from "components/sidebars/UpgradeSidebar";
-import MenuButton, { IMenuButtonProps } from "components/MenuButton";
+import { IUpgrade } from "types/interfaces";
+import { UpgradeType } from "types/enums";
+import MenuButton from "components/MenuButton";
+import UpgradeCard from "components/upgrades/UpgradeCard";
+import UpgradeSidebar from "components/upgrades/UpgradeSidebar";
 
 import "./UpgradeScreen.scss";
 
 export interface IUpgradeScreenProps {
-  nextButton: IMenuButtonProps;
-  prevButton: IMenuButtonProps;
-  menu: IUpgradeMenu;
+  goNext: () => void;
+  goBack: () => void;
+  upgrades: IUpgrade[];
+  purchaseUpgrade: (itemId: number) => void;
 }
 
-const UpgradeScreen: React.FC<IUpgradeScreenProps> = (props): JSX.Element => {
-  const [activeMenu, setActiveMenu] = useState<number>(1);
+const UpgradeScreen: React.FC<IUpgradeScreenProps> = ({
+  upgrades,
+  goNext,
+  goBack,
+  purchaseUpgrade,
+}): JSX.Element => {
+  const [activeUpgradeType, setActiveUpgradeType] = useState<UpgradeType>(
+    UpgradeType.UPGRADES
+  );
 
   return (
     <div className="upgrade-screen">
       <div className="upgrade-screen-left">
         <UpgradeSidebar
-          menu={props.menu}
-          setActiveMenu={setActiveMenu}
-          activeMenu={activeMenu}
+          setActiveUpgradeType={setActiveUpgradeType}
+          activeUpgradeType={activeUpgradeType}
         />
       </div>
       <div className="upgrade-screen-right">
         <div className="upgrade-screen-right-top">
           <div className="upgrade-screen-right-top-items">
-            {props.menu.categories
-              .filter((c) => c.id === activeMenu)
-              .map((c) =>
-                c.items.map((item, index) => (
-                  <UpgradeCard
-                    key={index}
-                    item={item}
-                    handleClick={() => props.menu.buyItem(item.id)}
-                  />
-                ))
-              )}
+            {upgrades
+              .filter((upgrade) => upgrade.type === activeUpgradeType)
+              .map((upgrade, index) => (
+                <UpgradeCard
+                  key={index}
+                  upgrade={upgrade}
+                  purchaseUpgrade={() => purchaseUpgrade(upgrade.id)}
+                />
+              ))}
           </div>
         </div>
         <div className="upgrade-screen-right-bottom">
           <div className="upgrade-screen-right-bottom-buttons">
             <div className="upgrade-screen-right-bottom-buttons-back-button">
-              <MenuButton {...props.prevButton} />
+              <MenuButton onClick={goBack} text="RESULTS" type="default" />
             </div>
             <div className="upgrade-screen-right-bottom-buttons-next-button">
-              <MenuButton {...props.nextButton} />
+              <MenuButton onClick={goNext} text="NEXT DAY" type="green" />
             </div>
           </div>
         </div>

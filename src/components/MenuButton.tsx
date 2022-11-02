@@ -14,7 +14,7 @@ const MenuButton: React.FC<IMenuButtonProps> = ({
   type = "default",
 }): JSX.Element => {
   return (
-    <button className={"menu-button" + " " + type} onClick={onClick}>
+    <button className={`menu-button ${type}`} onClick={onClick}>
       {text}
     </button>
   );

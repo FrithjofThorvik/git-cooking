@@ -1,51 +1,50 @@
-import React, { useState } from "react";
-
-import { IUpgradeCard, IUpgradeMenu } from "types/interfaces";
-import GlassContainer from "components/GlassContainer";
-import UpgradeSidebar from "components/sidebars/UpgradeSidebar";
-import MenuButton, { IMenuButtonProps } from "components/MenuButton";
-
+import React from "react";
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
+
+import { IUpgrade } from "types/interfaces";
+import GlassContainer from "components/GlassContainer";
 
 import "./UpgradeCard.scss";
 
 export interface IUpgradeCardProps {
-  item: IUpgradeCard;
-  handleClick: () => void;
+  upgrade: IUpgrade;
+  purchaseUpgrade: () => void;
 }
 
 const UpgradeCard: React.FC<IUpgradeCardProps> = ({
-  item,
-  handleClick,
+  upgrade,
+  purchaseUpgrade,
 }): JSX.Element => {
-  let cardClassName = "card";
-  if (item.bought) cardClassName += " bought";
-  if (!item.unlocked) cardClassName += " locked";
   return (
-    <div className={cardClassName}>
+    <div
+      className={`card ${
+        upgrade.purchased ? "purchased" : upgrade.unlocked ? "" : "locked"
+      }`}
+    >
       <GlassContainer triangle={false} grain={false} border>
         <div className="card-content">
           <div className="card-content-img">
-            <img src={require(`../assets/${item.image}`)} alt={item.image} />
+            <img src={upgrade.image} alt={upgrade.image} />
           </div>
           <div className="card-content-title">
-            {" "}
-            <h2 className="card-content-title">{item.title}</h2>
+            <h2 className="card-content-title">{upgrade.name}</h2>
           </div>
           <div className="card-content-desc">
-            {" "}
-            <p className="card-content-desc">{item.description}</p>
+            <p className="card-content-desc">{upgrade.description}</p>
           </div>
           <div className="card-content-buy">
-            <button className="card-content-buy-button" onClick={handleClick}>
-              {item.bought ? (
+            <button
+              className="card-content-buy-button"
+              onClick={purchaseUpgrade}
+            >
+              {upgrade.purchased ? (
                 <p className="card-content-buy-button-price">BOUGHT</p>
-              ) : !item.unlocked ? (
+              ) : !upgrade.unlocked ? (
                 <p className="card-content-buy-button-price">LOCKED</p>
               ) : (
                 <p className="card-content-buy-button-price">
                   <PaidOutlinedIcon />
-                  {item.price}
+                  {upgrade.price}
                 </p>
               )}
             </button>

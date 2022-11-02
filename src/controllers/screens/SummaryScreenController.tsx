@@ -21,16 +21,8 @@ const SummaryScreenController: React.FC<ISummaryScreenControllerProps> = ({
         { text: "Profit:", value: 20 },
       ],
     },
-    nextButton: {
-      text: "NEXT",
-      onClick: goNext,
-      type: "green",
-    },
-    prevButton: {
-      text: "BACK",
-      onClick: goBack,
-      type: "default",
-    },
+    goNext: goNext,
+    goBack: goBack,
   };
   return <SummaryScreen {...props} />;
 };
