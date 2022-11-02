@@ -3,11 +3,15 @@ import SummaryScreen, {
   ISummaryScreenProps,
 } from "components/screens/SummaryScreen";
 
-interface ISummaryScreenControllerProps {}
+interface ISummaryScreenControllerProps {
+  goNext: () => void;
+  goBack: () => void;
+}
 
-const SummaryScreenController: React.FC<
-  ISummaryScreenControllerProps
-> = (): JSX.Element => {
+const SummaryScreenController: React.FC<ISummaryScreenControllerProps> = ({
+  goNext,
+  goBack,
+}): JSX.Element => {
   const props: ISummaryScreenProps = {
     modal: {
       title: "Day 3",
@@ -18,13 +22,13 @@ const SummaryScreenController: React.FC<
       ],
     },
     nextButton: {
-      text: "next",
-      onClick: () => 0,
+      text: "NEXT",
+      onClick: goNext,
       type: "green",
     },
     prevButton: {
-      text: "merge",
-      onClick: () => 0,
+      text: "BACK",
+      onClick: goBack,
       type: "default",
     },
   };
