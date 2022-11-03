@@ -1,16 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useGameData } from "hooks/useGameData";
 import Terminal from "components/work/Terminal";
 import { GameState } from "types/enums";
 
-interface ITerminalControllerProps {}
+interface ITerminalControllerProps { }
 
 const TerminalController: React.FC<
   ITerminalControllerProps
 > = (): JSX.Element => {
-  const [value, setValue] = useState<string>("");
-  const [history, setHistory] = useState<string[]>([]);
   const { gameData, setGameData } = useGameData();
 
   const parseGitCommand = (args: string[]) => {
@@ -23,33 +21,18 @@ const TerminalController: React.FC<
     }
   };
 
-  const parseCommand = (command: string) => {
+  // return command if valid and a status message if needed
+  const parseCommand = (command: string): [string, string] => {
     const args = command.split(" ");
 
     if (args[0] === "git") parseGitCommand(args.slice(1));
 
-    // for now just display the command in history
-    setHistory((prevState) => [...prevState, command]);
-  };
-
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
-  };
-
-  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      parseCommand(value);
-      setValue("");
-    }
+    return [command, command];
   };
 
   return (
     <Terminal
-      handleChange={onChange}
-      handleKeyDown={onKeyDown}
-      value={value}
-      history={history}
+      parseCommand={parseCommand}
     />
   );
 };
