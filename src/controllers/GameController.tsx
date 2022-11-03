@@ -20,7 +20,7 @@ const GameController: React.FC = (): JSX.Element => {
           />
         );
       case GameState.MERGE:
-        console.log("merge");
+        return (<button onClick={() => setGameData({ ...gameData, gameState: GameState.SUMMARY })} style={{ width: "250px", height: "50px" }} >Go to summary</button>)
         break;
       case GameState.SUMMARY:
         return (
