@@ -11,12 +11,14 @@ import "./UpgradeScreen.scss";
 export interface IUpgradeScreenProps {
   goNext: () => void;
   goBack: () => void;
+  cash: number;
   upgrades: IUpgrade[];
-  purchaseUpgrade: (itemId: number) => void;
+  purchaseUpgrade: (upgrade: IUpgrade) => void;
 }
 
 const UpgradeScreen: React.FC<IUpgradeScreenProps> = ({
   upgrades,
+  cash,
   goNext,
   goBack,
   purchaseUpgrade,
@@ -31,6 +33,7 @@ const UpgradeScreen: React.FC<IUpgradeScreenProps> = ({
         <UpgradeSidebar
           setActiveUpgradeType={setActiveUpgradeType}
           activeUpgradeType={activeUpgradeType}
+          cash={cash}
         />
       </div>
       <div className="upgrade-screen-right">
@@ -42,7 +45,8 @@ const UpgradeScreen: React.FC<IUpgradeScreenProps> = ({
                 <UpgradeCard
                   key={index}
                   upgrade={upgrade}
-                  purchaseUpgrade={() => purchaseUpgrade(upgrade.id)}
+                  cash={cash}
+                  purchaseUpgrade={() => purchaseUpgrade(upgrade)}
                 />
               ))}
           </div>

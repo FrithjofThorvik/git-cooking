@@ -1,12 +1,13 @@
 import { ingredients } from "./ingredients";
 import { IGitCooking } from "types/interfaces";
 import { FileType, FolderType, GameState, IngredientType } from "types/enums";
+import { upgrades } from "./upgrades";
 
 export const defaultGameData: IGitCooking = {
   day: 0,
-  cash: 0,
+  cash: 250,
   gameState: GameState.WORKING,
-  upgrades: [],
+  upgrades: upgrades,
   directory: {
     folders: [
       {
