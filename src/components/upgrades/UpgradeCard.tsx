@@ -8,18 +8,25 @@ import "./UpgradeCard.scss";
 
 export interface IUpgradeCardProps {
   upgrade: IUpgrade;
+  cash: number;
   purchaseUpgrade: () => void;
 }
 
 const UpgradeCard: React.FC<IUpgradeCardProps> = ({
   upgrade,
+  cash,
   purchaseUpgrade,
 }): JSX.Element => {
   return (
     <div
-      className={`card ${
-        upgrade.purchased ? "purchased" : upgrade.unlocked ? "" : "locked"
-      }`}
+      className={`card ${upgrade.purchased
+          ? "purchased"
+          : upgrade.unlocked
+            ? cash >= upgrade.price
+              ? ""
+              : "notafford"
+            : "locked"
+        }`}
     >
       <GlassContainer triangle={false} grain={false} border>
         <div className="card-content">

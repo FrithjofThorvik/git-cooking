@@ -3,6 +3,8 @@ import React from "react";
 import { imgLogo } from "assets";
 import { UpgradeType } from "types/enums";
 import GlassContainer from "components/GlassContainer";
+
+import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 import CodeOutlinedIcon from "@mui/icons-material/CodeOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
@@ -13,11 +15,13 @@ import "./UpgradeSidebar.scss";
 export interface IUpgradeSidebarProps {
   activeUpgradeType: UpgradeType;
   setActiveUpgradeType: React.Dispatch<React.SetStateAction<UpgradeType>>;
+  cash: number;
 }
 
 const UpgradeSidebar: React.FC<IUpgradeSidebarProps> = ({
   activeUpgradeType,
   setActiveUpgradeType,
+  cash,
 }): JSX.Element => {
   const iconSwitch = (upgradeType: UpgradeType) => {
     switch (upgradeType) {
@@ -53,6 +57,12 @@ const UpgradeSidebar: React.FC<IUpgradeSidebarProps> = ({
                 </div>
               );
             })}
+          </div>
+          <div className="upgrade-sidebar-content-cash">
+            <p>
+              <PaidOutlinedIcon />
+              {cash}
+            </p>
           </div>
         </div>
       </GlassContainer>

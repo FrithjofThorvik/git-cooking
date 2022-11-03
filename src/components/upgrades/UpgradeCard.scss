@@ -64,6 +64,13 @@
     }
   }
 
+  &.notafford {
+    .card-content-buy-button {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+
   &.purchased {
     .glass-container {
       border-color: $line-green !important;
