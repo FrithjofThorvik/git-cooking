@@ -26,10 +26,6 @@ export interface IDirectory {
   files: IFile[];
 }
 
-export interface ICommitHistory {
-  commits: ICommit[];
-}
-
 export interface ICommit {
   message: string;
   id: string;
@@ -59,4 +55,5 @@ export interface IGitCooking {
   gameState: GameState;
   directory: IDirectory;
   upgrades: IUpgrade[];
+  commits: ICommit[];
 }

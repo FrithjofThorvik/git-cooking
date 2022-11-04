@@ -42,4 +42,13 @@ export const defaultGameData: IGitCooking = {
     ],
     files: [],
   },
+  commits: [
+    { message: "first commit", id: "#1" },
+    { message: "next commit", id: "#2" },
+    { message: "another commit", id: "#3" },
+    { message: "look at this commit", id: "#4" },
+    { message: "soon done", id: "#5" },
+    { message: "six'th commit", id: "#6" },
+    { message: "last commit", id: "#7" },
+  ],
 };

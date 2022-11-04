@@ -1,22 +1,22 @@
 import React from "react";
 import Tooltip from "@mui/material/Tooltip";
 
-import { ICommitHistory, ICommit } from "types/interfaces";
+import { ICommit } from "types/interfaces";
 
 import "./CommitHistory.scss";
 
 interface ICommitHistoryProps {
-  commitHistory: ICommitHistory;
+  commits: ICommit[];
   handleClick: (commit: ICommit) => any;
 }
 const CommitHistory: React.FC<ICommitHistoryProps> = ({
-  commitHistory,
+  commits,
   handleClick,
 }): JSX.Element => {
   return (
     <div className="commit-history">
       <div className="commit-history-content">
-        {commitHistory.commits.map((commit) => (
+        {commits.map((commit) => (
           <Commit commit={commit} key={commit.id} handleClick={handleClick} />
         ))}
       </div>
