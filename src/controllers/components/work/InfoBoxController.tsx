@@ -13,12 +13,10 @@ const InfoBoxController: React.FC<
   return (
     <InfoBox
       infoText="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo"
-      clock={{
-        startTime: 1300,
-        endTime: 2100,
-        currentTime: 1930,
-        day: gameData.day,
-      }}
+      timeLapsed={gameData.timeLapsed}
+      baseDayLength={gameData.baseDayLength}
+      dayLengthModifier={1}
+      day={gameData.day}
     />
   );
 };
