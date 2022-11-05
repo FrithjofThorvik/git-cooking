@@ -5,6 +5,8 @@ import { upgrades } from "./upgrades";
 
 export const defaultGameData: IGitCooking = {
   day: 0,
+  timeLapsed: 0,
+  baseDayLength: 60000, // in milliseconds
   cash: 250,
   gameState: GameState.WORKING,
   upgrades: upgrades,

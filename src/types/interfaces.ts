@@ -51,6 +51,8 @@ export interface IUpgrade {
 
 export interface IGitCooking {
   day: number;
+  timeLapsed: number;
+  baseDayLength: number;
   cash: number;
   gameState: GameState;
   directory: IDirectory;

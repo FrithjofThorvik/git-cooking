@@ -3,50 +3,98 @@ import ArcProgress from "react-arc-progress";
 
 import "./InfoBox.scss";
 
-// Takes time on format 1259 (12:59) and calculates angle on circle (with angle 0 at 03:00)
-const clockToAngle = (time: number) => {
-  const anglePerMinute = 360 / 1200;
-  const relativeTime = time % 1200;
-  let angle = (relativeTime + 1200 - 300) * anglePerMinute;
-  return angle;
-};
+interface IArcProgressClock {
+  progress: number;
+  time: string;
+  startAngle: number;
+  endAngle: number;
+  color: string;
+}
 
-// Formats from number 1259 to string 12:59
-const formatTime = (time: number) =>
-  time.toString().slice(0, 2) + ":" + time.toString().slice(2);
+const formatClock = (
+  timeLapsed: number,
+  baseDayLength: number,
+  dayLengthModifier: number
+): IArcProgressClock => {
+  const toMinutesFromHoursAndMinutes = (hours: number, minutes: number) =>
+    hours * 60 + minutes;
+
+  const minutesToAngle = (minutes: number) => {
+    const clock_12 = toMinutesFromHoursAndMinutes(12, 0); // full turn
+    const clock_03 = toMinutesFromHoursAndMinutes(3, 0); // angle 0 on clock is 03:00
+    const anglePerMinute = 360 / clock_12;
+    const relativeTime = minutes % clock_12; // to avoid more than full turn on clock
+
+    const angleDiff = clock_12 - clock_03;
+
+    // Calculate angle for time after 12:00, with offset since angle 0 at 03:00
+    const angle = (relativeTime + angleDiff) * anglePerMinute;
+    return angle;
+  };
+
+  const toFormattedHoursAndMinutes = (totalMinutes: number) => {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.floor(totalMinutes % 60);
+
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  const startTimeInMinutes = toMinutesFromHoursAndMinutes(13, 0);
+  let endTimeInMinutes =
+    toMinutesFromHoursAndMinutes(21, 0) + 60 * (dayLengthModifier - 1);
+
+  // Converts from timelapsed in ms to minutes on the clock
+  const relativeMinutes =
+    (timeLapsed * (endTimeInMinutes - startTimeInMinutes)) /
+      (baseDayLength * dayLengthModifier) +
+    startTimeInMinutes;
+
+  const progress = timeLapsed / (baseDayLength * dayLengthModifier);
+
+  return {
+    progress: progress,
+    time: progress === 1 ? "DONE" : toFormattedHoursAndMinutes(relativeMinutes),
+    startAngle: minutesToAngle(startTimeInMinutes),
+    endAngle: minutesToAngle(endTimeInMinutes),
+    color: progress === 1 ? "#dc3c76" : "#14c299",
+  };
+};
 
 interface IInfoBoxProps {
   infoText: string;
-  clock: {
-    currentTime: number;
-    day: number;
-    startTime: number;
-    endTime: number;
-  };
+  day: number;
+  timeLapsed: number;
+  baseDayLength: number;
+  dayLengthModifier: number;
 }
 
-const InfoBox: React.FC<IInfoBoxProps> = ({ infoText, clock }): JSX.Element => {
+const InfoBox: React.FC<IInfoBoxProps> = ({
+  infoText,
+  day,
+  timeLapsed,
+  baseDayLength,
+  dayLengthModifier,
+}): JSX.Element => {
+  const formattedClock = formatClock(
+    timeLapsed,
+    baseDayLength,
+    dayLengthModifier
+  );
+
   return (
     <div className="info-box">
       <div className="info-box-clock">
-        <div className="info-box-clock-text">{`Day ${clock.day}`}</div>
+        <div className="info-box-clock-text">{`Day ${day}`}</div>
         <ArcProgress
-          progress={
-            (clock.currentTime - clock.startTime) /
-            (clock.endTime - clock.startTime)
-          }
-          text={formatTime(clock.currentTime)}
-          observer={(current) => {
-            const { percentage, currentText } = current;
-            //console.log("observer:", percentage, currentText);
-          }}
-          animationEnd={({ progress, text }) => {
-            //console.log("animationEnd", progress, text);
-          }}
-          arcStart={clockToAngle(clock.startTime)}
-          arcEnd={clockToAngle(clock.endTime)}
+          progress={formattedClock.progress}
+          text={formattedClock.time}
+          arcStart={formattedClock.startAngle}
+          arcEnd={formattedClock.endAngle}
           size={100}
-          fillColor={"#14c299"}
+          animation={false}
+          fillColor={formattedClock.color}
           textStyle={{ color: "#e2e8f0", font: "Nunito Sans" }}
           thickness={6}
         />
