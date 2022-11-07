@@ -1,42 +1,43 @@
 import { upgrades } from "./upgrades";
 import { ingredients } from "./ingredients";
 import { IBranch, IDirectory, IGitCooking } from "types/gameDataInterfaces";
-import { FileType, FolderType, GameState, IngredientType } from "types/enums";
+import { GameState, IngredientType } from "types/enums";
 
 export const defaultDirectory: IDirectory = {
-  folders: [
+  orders: [
     {
-      name: "orders",
-      isOpen: false,
-      type: FolderType.ROOT,
-      folders: [],
-      files: [],
-    },
-    {
-      name: "ingredients",
-      isOpen: false,
-      type: FolderType.ROOT,
-      folders: [
+      id: "123",
+      name: "order #1",
+      isCreated: false,
+      orderItems: [
         {
+          id: "123",
           name: "burger",
-          isOpen: true,
-          type: FolderType.INGREDIENT,
-          folders: [],
-          files: [
-            {
-              name: "top_bun.ing",
-              type: FileType.INGREDIENT,
-              ingredientType: IngredientType.BURGER,
-              ingredient: ingredients.burger.bunTop,
-              path: "orders/ingredients/burger/top_bun.ing",
-            },
-          ],
+          path: "orders/order1/burger",
+          ingredients: [],
+          type: IngredientType.BURGER,
+          orderId: "123",
         },
       ],
-      files: [],
+      items: [
+        {
+          id: "123",
+          name: "burger",
+          path: "orders/order1/burger",
+          ingredients: [],
+          type: IngredientType.BURGER,
+          orderId: "123",
+        },
+      ],
     },
   ],
-  files: [],
+  foods: [
+    {
+      id: "123",
+      name: "burger",
+      items: [ingredients.burger.bunTop],
+    },
+  ],
 };
 
 const defaultBranch: IBranch = {
@@ -52,10 +53,11 @@ export const defaultGameData: IGitCooking = {
   gameState: GameState.WORKING,
   upgrades: upgrades,
   directory: defaultDirectory,
+  selectedItems: [],
   gitActiveBranch: defaultBranch,
   gitBranches: [defaultBranch],
-  gitModifiedFiles: [],
-  gitStagedFiles: [],
+  gitModifiedItems: [],
+  gitStagedItems: [],
 };
 
 export const emptyGameData: IGitCooking = {
@@ -64,9 +66,10 @@ export const emptyGameData: IGitCooking = {
   baseDayLength: 60000, // in milliseconds
   gameState: GameState.LOADING,
   upgrades: [],
-  directory: { files: [], folders: [] },
+  directory: { orders: [], foods: [] },
+  selectedItems: [],
   gitActiveBranch: defaultBranch,
   gitBranches: [],
-  gitModifiedFiles: [],
-  gitStagedFiles: [],
+  gitModifiedItems: [],
+  gitStagedItems: [],
 };

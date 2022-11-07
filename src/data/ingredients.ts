@@ -1,4 +1,5 @@
 import { imgBunTop } from "assets";
+import { IngredientType } from "types/enums";
 import { IIngredient } from "types/gameDataInterfaces";
 
 interface IngredientList {
@@ -14,6 +15,8 @@ export const ingredients: IngredientList = {
       image: imgBunTop,
       cost: 100,
       purchased: false,
+      path: "",
+      type: IngredientType.BURGER,
     },
   },
 };

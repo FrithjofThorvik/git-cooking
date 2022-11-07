@@ -1,4 +1,4 @@
-import { IBranch, ICommit, IDirectory, IFile } from "types/gameDataInterfaces";
+import { IBranch, ICommit, IDirectory, Item } from "types/gameDataInterfaces";
 import { v4 } from "uuid";
 
 class GitHelper {
@@ -38,14 +38,14 @@ class GitHelper {
 
   public getFileToStage = (
     path: string,
-    modifiedFiles: IFile[]
-  ): IFile | null => {
-    let fileToStage: IFile | null = null;
-    for (let i = 0; i < modifiedFiles.length; i++) {
-      const file = modifiedFiles[i];
-      if (file.path === path) fileToStage = file;
+    modifiedItems: Item[]
+  ): Item | null => {
+    let itemToStage: Item | null = null;
+    for (let i = 0; i < modifiedItems.length; i++) {
+      const item = modifiedItems[i];
+      if (item.path === path) itemToStage = item;
     }
-    return fileToStage;
+    return itemToStage;
   };
 
   public getUpdatedBranches = (
@@ -80,6 +80,3 @@ class GitHelper {
 }
 
 export const gitHelper = new GitHelper();
-function uuidv4(): string {
-  throw new Error("Function not implemented.");
-}

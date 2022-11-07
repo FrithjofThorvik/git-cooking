@@ -1,3 +1,4 @@
+import { IOrderItem } from "types/gameDataInterfaces";
 import { IArcProgressClock } from "types/interfaces";
 
 export const formatClock = (
@@ -50,3 +51,6 @@ export const formatClock = (
     color: progress === 1 ? "#dc3c76" : "#14c299",
   };
 };
+
+export const isOrderItem = (arg: any): arg is IOrderItem =>
+  arg.orderId !== undefined;
