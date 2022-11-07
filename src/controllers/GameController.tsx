@@ -1,13 +1,13 @@
 import React from "react";
 
 import { GameState } from "types/enums";
-import { useGameData } from "hooks/useGameData";
+import { useGameData, setGameData } from "hooks/useGameData";
 import WorkScreenController from "controllers/screens/WorkScreenController";
 import SummaryScreenController from "controllers/screens/SummaryScreenController";
 import UpgradeScreenController from "controllers/screens/UpgradeScreenController";
 
 const GameController: React.FC = (): JSX.Element => {
-  const { gameData, setGameData } = useGameData();
+  const gameData = useGameData();
 
   const gameStateMachine = () => {
     switch (gameData.gameState) {
@@ -20,7 +20,16 @@ const GameController: React.FC = (): JSX.Element => {
           />
         );
       case GameState.MERGE:
-        return (<button onClick={() => setGameData({ ...gameData, gameState: GameState.SUMMARY })} style={{ width: "250px", height: "50px" }} >Go to summary</button>)
+        return (
+          <button
+            onClick={() =>
+              setGameData({ ...gameData, gameState: GameState.SUMMARY })
+            }
+            style={{ width: "250px", height: "50px" }}
+          >
+            Go to summary
+          </button>
+        );
         break;
       case GameState.SUMMARY:
         return (
@@ -44,6 +53,8 @@ const GameController: React.FC = (): JSX.Element => {
             }
           />
         );
+      case GameState.LOADING:
+        return <div>Loading...</div>;
     }
   };
 

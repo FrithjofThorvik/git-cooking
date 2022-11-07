@@ -1,5 +1,5 @@
 import { imgLogo } from "assets";
-import { IUpgrade } from "types/interfaces";
+import { IUpgrade } from "types/gameDataInterfaces";
 import { UpgradeType } from "types/enums";
 
 export const upgrades: IUpgrade[] = [

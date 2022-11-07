@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ICommit } from "types/interfaces";
+import { ICommit } from "types/gameDataInterfaces";
 import { useGameData } from "hooks/useGameData";
 import CommitHistory from "components/work/CommitHistory";
 
@@ -9,7 +9,7 @@ interface ICommitHistoryControllerProps {}
 const CommitHistoryController: React.FC<
   ICommitHistoryControllerProps
 > = (): JSX.Element => {
-  const { gameData, setGameData } = useGameData();
+  const gameData = useGameData();
 
   const handleClickOnCommit = (commit: ICommit) => {
     alert(`${commit.id}: ${commit.message}`);
@@ -17,7 +17,7 @@ const CommitHistoryController: React.FC<
 
   return (
     <CommitHistory
-      commits={gameData.commits}
+      commits={gameData.gitActiveBranch.commits}
       handleClick={handleClickOnCommit}
     />
   );

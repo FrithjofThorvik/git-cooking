@@ -12,12 +12,15 @@
     "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.2",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "react-singleton-hook": "^4.0.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^16.11.68",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
+    "@types/uuid": "^8.3.4",
     "eslint": "^8.25.0",
     "eslint-config-node": "^4.1.0",
     "eslint-config-prettier": "^8.5.0",

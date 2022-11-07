@@ -1,5 +1,5 @@
 import { imgBunTop } from "assets";
-import { IIngredient } from "types/interfaces";
+import { IIngredient } from "types/gameDataInterfaces";
 
 interface IngredientList {
   burger: {

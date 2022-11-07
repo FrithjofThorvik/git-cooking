@@ -1,61 +1,25 @@
-import {
-  FileType,
-  FolderType,
-  GameState,
-  IngredientType,
-  UpgradeType,
-} from "./enums";
+import { IGitCooking } from "./gameDataInterfaces";
 
-export interface IFile {
-  name: string;
-  type: FileType;
-  ingredientType: IngredientType;
-  ingredient: IIngredient;
-}
-
-export interface IFolder {
-  name: string;
-  folders: IFolder[];
-  files: IFile[];
-  isOpen: boolean;
-  type: FolderType;
-}
-
-export interface IDirectory {
-  folders: IFolder[];
-  files: IFile[];
-}
-
-export interface ICommit {
+export interface IGitResponse {
   message: string;
-  id: string;
+  success: boolean;
 }
 
-export interface IIngredient {
-  name: string;
-  cost: number;
-  purchased: boolean;
-  image: string;
+export interface ICommandArg {
+  key: string;
+  args: ICommandArg[];
+  cmd: (
+    gameData: IGitCooking,
+    setGameData: (gameData: IGitCooking) => void,
+    input?: string
+  ) => IGitResponse;
+  isDynamic?: boolean;
 }
 
-export interface IUpgrade {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  purchased: boolean;
-  unlocked: boolean;
-  description: string;
-  type: UpgradeType;
-}
-
-export interface IGitCooking {
-  day: number;
-  timeLapsed: number;
-  baseDayLength: number;
-  cash: number;
-  gameState: GameState;
-  directory: IDirectory;
-  upgrades: IUpgrade[];
-  commits: ICommit[];
+export interface IArcProgressClock {
+  time: string;
+  color: string;
+  endAngle: number;
+  progress: number;
+  startAngle: number;
 }

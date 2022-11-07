@@ -1,16 +1,24 @@
 import React, { useState } from "react";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-import { IFolder } from "types/interfaces";
+import { IFile, IFolder } from "types/gameDataInterfaces";
 import DirectoryFile from "./DirectoryFile";
 
 import "./Folder.scss";
 
 interface IFolderProps {
   folder: IFolder;
+  stagedFiles: IFile[];
+  modifiedFiles: IFile[];
+  modifyFile: (file: IFile) => void;
 }
 
-const Folder: React.FC<IFolderProps> = ({ folder }): JSX.Element => {
+const Folder: React.FC<IFolderProps> = ({
+  folder,
+  stagedFiles,
+  modifiedFiles,
+  modifyFile,
+}): JSX.Element => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   return (
@@ -24,10 +32,26 @@ const Folder: React.FC<IFolderProps> = ({ folder }): JSX.Element => {
       {isOpen && (
         <div className="folder-container">
           {folder.folders.map((f, i) => {
-            return <Folder folder={f} key={i} />;
+            return (
+              <Folder
+                folder={f}
+                stagedFiles={stagedFiles}
+                modifiedFiles={modifiedFiles}
+                modifyFile={modifyFile}
+                key={i}
+              />
+            );
           })}
           {folder.files.map((file, i) => {
-            return <DirectoryFile file={file} key={i} />;
+            return (
+              <DirectoryFile
+                file={file}
+                stagedFiles={stagedFiles}
+                modifiedFiles={modifiedFiles}
+                modifyFile={modifyFile}
+                key={i}
+              />
+            );
           })}
         </div>
       )}

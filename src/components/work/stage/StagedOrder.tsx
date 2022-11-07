@@ -8,11 +8,13 @@ import "./StagedOrder.scss";
 interface IStagedOrderProps {
   name: string;
   percent: number;
+  files: string[];
 }
 
 const StagedOrder: React.FC<IStagedOrderProps> = ({
   name,
   percent,
+  files,
 }): JSX.Element => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const color = percent > 66 ? "#14c299" : percent > 33 ? "#fa9292" : "#dc3c76";
@@ -35,8 +37,7 @@ const StagedOrder: React.FC<IStagedOrderProps> = ({
       </div>
       {isOpen && (
         <div className="staged-order-extra">
-          <div>Burger</div>
-          <div>Fries</div>
+          {files && files.map((file, index) => <div key={index}>{file}</div>)}
         </div>
       )}
     </div>
