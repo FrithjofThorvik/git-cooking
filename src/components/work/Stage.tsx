@@ -4,12 +4,14 @@ import StagedOrders from "./stage/StagedOrders";
 
 import "./Stage.scss";
 
-interface IStageProps {}
+interface IStageProps {
+  orders: { name: string; percent: number; files: string[] }[];
+}
 
-const Stage: React.FC<IStageProps> = (): JSX.Element => {
+const Stage: React.FC<IStageProps> = ({ orders }): JSX.Element => {
   return (
     <div className="stage">
-      <StagedOrders />
+      <StagedOrders orders={orders} />
     </div>
   );
 };

@@ -1,25 +1,37 @@
-import { useEffect } from "react";
-import { useCookies } from "react-cookie";
+import { useEffect, useState } from "react";
 
-import { IGitCooking } from "types/interfaces";
-import { defaultGameData } from "data/defaultData";
+import { IGitCooking } from "types/gameDataInterfaces";
+import { singletonHook } from "react-singleton-hook";
+import { defaultGameData, emptyGameData } from "data/defaultData";
 
-export const useGameData = () => {
-  const [cookies, setCookie, removeCookie] = useCookies(["git-cooking"]);
-  const gameData: IGitCooking = cookies["git-cooking"];
+const init = emptyGameData;
+let globalSetMode: any = () => {
+  throw new Error("GameState error");
+};
+
+const useGameDataIml = () => {
+  const [gameData, setData] = useState<IGitCooking>(init);
 
   useEffect(() => {
-    if (!cookies["git-cooking"]) {
+    if (!localStorage.getItem("git-cooking")) {
       setGameData(defaultGameData);
+    } else {
+      const data = localStorage.getItem("git-cooking");
+      if (data) {
+        const updatedGameData: IGitCooking = JSON.parse(data);
+        setData(updatedGameData);
+      }
     }
   }, []);
 
   const setGameData = (gameData: IGitCooking) => {
-    setCookie("git-cooking", gameData, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30,
-    });
+    localStorage.setItem("git-cooking", JSON.stringify(gameData));
+    setData(gameData);
   };
+  globalSetMode = setGameData;
 
-  return { gameData, setGameData };
+  return gameData;
 };
+
+export const useGameData = singletonHook(init, useGameDataIml);
+export const setGameData = (gameData: IGitCooking) => globalSetMode(gameData);

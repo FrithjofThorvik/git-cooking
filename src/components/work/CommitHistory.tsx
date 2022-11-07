@@ -1,7 +1,7 @@
 import React from "react";
 import Tooltip from "@mui/material/Tooltip";
 
-import { ICommit } from "types/interfaces";
+import { ICommit } from "types/gameDataInterfaces";
 
 import "./CommitHistory.scss";
 
@@ -16,8 +16,13 @@ const CommitHistory: React.FC<ICommitHistoryProps> = ({
   return (
     <div className="commit-history">
       <div className="commit-history-content">
-        {commits.map((commit) => (
-          <Commit commit={commit} key={commit.id} handleClick={handleClick} />
+        {commits.map((commit, i) => (
+          <Commit
+            commit={commit}
+            index={i}
+            key={commit.id}
+            handleClick={handleClick}
+          />
         ))}
       </div>
     </div>
@@ -26,17 +31,19 @@ const CommitHistory: React.FC<ICommitHistoryProps> = ({
 
 interface ICommitProps {
   commit: ICommit;
+  index: number;
   handleClick: (commit: ICommit) => any;
 }
 const Commit: React.FC<ICommitProps> = ({
   commit,
+  index,
   handleClick,
 }): JSX.Element => {
   return (
     <Tooltip title={commit.message} placement="top" arrow>
       <div>
         <div className="commit" onClick={() => handleClick(commit)}>
-          <p className="commit-text">{commit.id}</p>
+          <p className="commit-text">{`C${index + 1}`}</p>
         </div>
       </div>
     </Tooltip>

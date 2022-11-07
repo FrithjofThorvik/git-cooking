@@ -3,13 +3,24 @@ import StagedOrder from "./StagedOrder";
 
 import "./StagedOrders.scss";
 
-interface IStagedOrdersProps {}
+interface IStagedOrdersProps {
+  orders: { name: string; percent: number; files: string[] }[];
+}
 
-const StagedOrders: React.FC<IStagedOrdersProps> = (): JSX.Element => {
+const StagedOrders: React.FC<IStagedOrdersProps> = ({
+  orders,
+}): JSX.Element => {
   return (
     <div className="staged-orders">
-      <StagedOrder name={"Emanuel"} percent={100} />
-      <StagedOrder name={"Jonas"} percent={66} />
+      {orders &&
+        orders.map((order, index) => (
+          <StagedOrder
+            name={order.name}
+            percent={order.percent}
+            files={order.files}
+            key={index}
+          />
+        ))}
     </div>
   );
 };

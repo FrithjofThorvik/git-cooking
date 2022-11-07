@@ -4,6 +4,7 @@ export enum GameState {
   WORKING,
   UPGRADE,
   MERGE,
+  LOADING,
 }
 
 export enum FolderType {
@@ -27,4 +28,11 @@ export enum UpgradeType {
   UPGRADES = "Upgrades",
   COMMANDS = "Git Commands",
   INGREDIENTS = "Ingredients",
+}
+
+export enum GitStatus {
+  CREATED,
+  DELETED,
+  MODIFIED,
+  UNMODIFIED,
 }

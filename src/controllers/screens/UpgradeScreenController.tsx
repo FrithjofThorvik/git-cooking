@@ -1,8 +1,8 @@
 import React from "react";
 
-import { useGameData } from "hooks/useGameData";
+import { IUpgrade } from "types/gameDataInterfaces";
+import { setGameData, useGameData } from "hooks/useGameData";
 import UpgradeScreen from "components/screens/UpgradeScreen";
-import { IUpgrade } from "types/interfaces";
 
 interface IUpgradeScreenControllerProps {
   goNext: () => void;
@@ -13,7 +13,7 @@ const UpgradeScreenController: React.FC<IUpgradeScreenControllerProps> = ({
   goNext,
   goBack,
 }): JSX.Element => {
-  const { gameData, setGameData } = useGameData();
+  const gameData = useGameData();
 
   const purchaseUpgrade = (upgrade: IUpgrade) => {
     if (

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { IUpgrade } from "types/interfaces";
+import { IUpgrade } from "types/gameDataInterfaces";
 import { UpgradeType } from "types/enums";
 import MenuButton from "components/MenuButton";
 import UpgradeCard from "components/upgrades/UpgradeCard";

@@ -37,12 +37,21 @@
 
 .commit {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   background-color: $line-dark;
-  height: 50px;
-  width: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 100%;
+
+  &-text {
+    width: 80%;
+    text-align: center;
+    margin: 0 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   &:hover {
     cursor: pointer;

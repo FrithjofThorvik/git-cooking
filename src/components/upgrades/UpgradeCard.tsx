@@ -1,7 +1,7 @@
 import React from "react";
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 
-import { IUpgrade } from "types/interfaces";
+import { IUpgrade } from "types/gameDataInterfaces";
 import GlassContainer from "components/GlassContainer";
 
 import "./UpgradeCard.scss";
@@ -19,14 +19,15 @@ const UpgradeCard: React.FC<IUpgradeCardProps> = ({
 }): JSX.Element => {
   return (
     <div
-      className={`card ${upgrade.purchased
+      className={`card ${
+        upgrade.purchased
           ? "purchased"
           : upgrade.unlocked
-            ? cash >= upgrade.price
-              ? ""
-              : "notafford"
-            : "locked"
-        }`}
+          ? cash >= upgrade.price
+            ? ""
+            : "notafford"
+          : "locked"
+      }`}
     >
       <GlassContainer triangle={false} grain={false} border>
         <div className="card-content">
