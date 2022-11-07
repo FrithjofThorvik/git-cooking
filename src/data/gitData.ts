@@ -1,8 +1,7 @@
-import { gitCommandDoesNotExist, gitRes } from "services/git";
 import { gitHelper } from "services/gitHelper";
-import { IBranch, ICommit, IFile } from "types/gameDataInterfaces";
 import { ICommandArg } from "types/interfaces";
-import { v4 as uuidv4 } from "uuid";
+import { IBranch, Item } from "types/gameDataInterfaces";
+import { gitCommandDoesNotExist, gitRes } from "services/git";
 
 export const successMessages = {
   gitInitialized: "Initialized empty Git repository in <PATH>/.git/",
@@ -65,8 +64,8 @@ export const gitCommands: ICommandArg[] = [
             return gitRes(`Error: already on ${branchName}`, false);
 
           if (
-            gameData.gitStagedFiles.length > 0 ||
-            gameData.gitModifiedFiles.length > 0
+            gameData.gitStagedItems.length > 0 ||
+            gameData.gitModifiedItems.length > 0
           )
             return gitRes(
               "Error: please add/commit, or undo your changes to checkout",
@@ -95,7 +94,6 @@ export const gitCommands: ICommandArg[] = [
             args: [],
             cmd: (gameData, setGameData, branchName) => {
               const branches = gameData.gitBranches;
-              const activeBranch = gameData.gitActiveBranch;
 
               if (typeof branchName !== "string")
                 return gitRes(`Error: '${branchName} is an invalid'`, false);
@@ -133,23 +131,23 @@ export const gitCommands: ICommandArg[] = [
           if (typeof path !== "string")
             return gitRes(`Error: '${path} is invalid'`, false);
 
-          let fileToStage: IFile | null = gitHelper.getFileToStage(
+          let itemToStage: Item | null = gitHelper.getFileToStage(
             path,
-            gameData.gitModifiedFiles
+            gameData.gitModifiedItems
           );
 
-          if (!fileToStage)
+          if (!itemToStage)
             return gitRes(`Error: '${path}' did not match any files`, false);
 
-          const newStagedFiles = gameData.gitStagedFiles.concat([fileToStage]);
-          const newModifiedFiles = gameData.gitModifiedFiles.filter(
-            (file) => file.path !== path
+          const newStagedItems = gameData.gitStagedItems.concat([itemToStage]);
+          const newModifiedItems = gameData.gitModifiedItems.filter(
+            (item) => item.path !== path
           );
 
           setGameData({
             ...gameData,
-            gitStagedFiles: newStagedFiles,
-            gitModifiedFiles: newModifiedFiles,
+            gitStagedItems: newStagedItems,
+            gitModifiedItems: newModifiedItems,
           });
 
           return gitRes(`Added '${path}'`, true);
@@ -159,13 +157,13 @@ export const gitCommands: ICommandArg[] = [
         key: ".",
         args: [],
         cmd: (gameData, setGameData) => {
-          if (gameData.gitModifiedFiles.length === 0)
+          if (gameData.gitModifiedItems.length === 0)
             return gitRes("Error: No files have been modified", false);
 
           setGameData({
             ...gameData,
-            gitStagedFiles: gameData.gitModifiedFiles,
-            gitModifiedFiles: [],
+            gitStagedItems: gameData.gitModifiedItems,
+            gitModifiedItems: [],
           });
 
           return gitRes(`Added all files`, true);
@@ -188,7 +186,7 @@ export const gitCommands: ICommandArg[] = [
               if (typeof message !== "string")
                 return gitRes(`Error: ${message} is invalid`, false);
 
-              if (gameData.gitStagedFiles.length === 0)
+              if (gameData.gitStagedItems.length === 0)
                 return gitRes("Error: nothing to commit", false);
 
               const { updatedActiveBranch, updatedBranches } =
@@ -198,16 +196,16 @@ export const gitCommands: ICommandArg[] = [
                   gameData.directory,
                   message
                 );
-              // commits.push(directory)
+
               setGameData({
                 ...gameData,
                 gitActiveBranch: updatedActiveBranch,
                 gitBranches: updatedBranches,
-                gitStagedFiles: [],
+                gitStagedItems: [],
               });
 
               return gitRes(
-                `${gameData.gitStagedFiles.length} files commited`,
+                `${gameData.gitStagedItems.length} items commited`,
                 true
               );
             },

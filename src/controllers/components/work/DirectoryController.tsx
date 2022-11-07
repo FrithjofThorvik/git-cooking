@@ -1,6 +1,6 @@
 import React from "react";
 
-import { IFile } from "types/gameDataInterfaces";
+import { Item } from "types/gameDataInterfaces";
 import { useGameData, setGameData } from "hooks/useGameData";
 import Directory from "components/work/Directory";
 
@@ -11,25 +11,45 @@ const DirectoryController: React.FC<
 > = (): JSX.Element => {
   const gameData = useGameData();
 
-  const modifyFile = (file: IFile) => {
+  const modifyOrderItem = (item: Item) => {
     let isValid = true;
-    for (let i = 0; i < gameData.gitModifiedFiles.length; i++) {
-      if (gameData.gitModifiedFiles[i].path === file.path) isValid = false;
+    for (let i = 0; i < gameData.gitModifiedItems.length; i++) {
+      if (gameData.gitModifiedItems[i].path === item.path) isValid = false;
     }
     if (!isValid) {
-      alert("File already modified");
+      alert("Item already modified");
       return;
     }
-    const newModifiedFiles = gameData.gitModifiedFiles.concat([file]);
-    setGameData({ ...gameData, gitModifiedFiles: newModifiedFiles });
+    const newModifiedItems = gameData.gitModifiedItems.concat([item]);
+    setGameData({ ...gameData, gitModifiedItems: newModifiedItems });
+  };
+
+  const createOrderFolder = () => {
+    // const name = gameData.directory.folders.
+  };
+
+  const createOrderFile = () => {};
+
+  const openFile = (path: string) => {
+    // if (gameData.selectedItems.map((s) => s.path).includes(path)) return;
+    // const updatedSelectedFiles = gameData.selectedItems.concat([path]);
+    // setGameData({ ...gameData, selectedItems: updatedSelectedFiles });
+  };
+
+  const closeFile = (path: string) => {
+    // if (!gameData.selectedItems.map((s) => s.path).includes(path)) return;
+    // const updatedSelectedFiles = gameData.selectedItems.filter(
+    //   (p) => p.path !== path
+    // );
+    // setGameData({ ...gameData, selectedItems: updatedSelectedFiles });
   };
 
   return (
     <Directory
       directory={gameData.directory}
-      stagedFiles={gameData.gitStagedFiles}
-      modifiedFiles={gameData.gitModifiedFiles}
-      modifyFile={modifyFile}
+      stagedItems={gameData.gitStagedItems}
+      modifiedItems={gameData.gitModifiedItems}
+      modifyOrderItem={modifyOrderItem}
     />
   );
 };

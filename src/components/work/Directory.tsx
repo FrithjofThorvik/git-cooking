@@ -1,49 +1,82 @@
-import React from "react";
+import React, { useState } from "react";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-import { IDirectory, IFile } from "types/gameDataInterfaces";
-import Folder from "./directory/Folder";
-import DirectoryFile from "./directory/DirectoryFile";
+import {
+  IDirectory,
+  IFood,
+  IOrder,
+  IOrderItem,
+  Item,
+} from "types/gameDataInterfaces";
+import DirectoryFolder from "./directory/DirectoryFolder";
 
 import "./Directory.scss";
 
 interface IDirectoryProps {
   directory: IDirectory;
-  stagedFiles: IFile[];
-  modifiedFiles: IFile[];
-  modifyFile: (file: IFile) => void;
+  stagedItems: Item[];
+  modifiedItems: Item[];
+  modifyOrderItem: (order: IOrderItem) => void;
 }
 
 const Directory: React.FC<IDirectoryProps> = ({
   directory,
-  stagedFiles,
-  modifiedFiles,
-  modifyFile,
+  stagedItems,
+  modifiedItems,
+  modifyOrderItem,
 }): JSX.Element => {
+  const [isOrdersOpen, setIsOrdersOpen] = useState<boolean>(false);
+  const [isIngredientsOpen, setIsIngredientsOpen] = useState<boolean>(false);
+
   return (
     <div className="directory">
       <div className="directory-content">
-        {directory.folders.map((folder, i) => {
-          return (
-            <Folder
-              folder={folder}
-              stagedFiles={stagedFiles}
-              modifiedFiles={modifiedFiles}
-              modifyFile={modifyFile}
-              key={i}
+        <div className="directory-content-orders">
+          <div
+            className="directory-content-info"
+            onClick={() => setIsOrdersOpen(!isOrdersOpen)}
+          >
+            <ChevronRightIcon
+              style={{
+                transform: `rotate(${isOrdersOpen ? "90deg" : "0deg"})`,
+              }}
             />
-          );
-        })}
-        {directory.files.map((file, i) => {
-          return (
-            <DirectoryFile
-              file={file}
-              stagedFiles={stagedFiles}
-              modifiedFiles={modifiedFiles}
-              modifyFile={modifyFile}
-              key={i}
+            <div>Orders</div>
+          </div>
+          {isOrdersOpen &&
+            directory.orders.map((order: IOrder) => (
+              <DirectoryFolder
+                folder={order}
+                stagedItems={stagedItems}
+                modifiedItems={modifiedItems}
+                key={order.id}
+                modifyOrderItem={modifyOrderItem}
+              />
+            ))}
+        </div>
+        <div className="directory-content-ingredients">
+          <div
+            className="directory-content-info"
+            onClick={() => setIsIngredientsOpen(!isIngredientsOpen)}
+          >
+            <ChevronRightIcon
+              style={{
+                transform: `rotate(${isIngredientsOpen ? "90deg" : "0deg"})`,
+              }}
             />
-          );
-        })}
+            <div>Ingredients</div>
+          </div>
+          {isIngredientsOpen &&
+            directory.foods.map((food: IFood) => (
+              <DirectoryFolder
+                folder={food}
+                stagedItems={stagedItems}
+                modifiedItems={modifiedItems}
+                key={food.id}
+                modifyOrderItem={modifyOrderItem}
+              />
+            ))}
+        </div>
       </div>
     </div>
   );

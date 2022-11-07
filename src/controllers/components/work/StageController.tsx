@@ -8,18 +8,13 @@ interface IStageControllerProps {}
 const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
   const orders = [];
-  gameData.gitStagedFiles.forEach((file) => {
+  gameData.gitStagedItems.forEach((item) => {
     return {
       name: "julian",
       percent: 45,
       files: [],
     };
   });
-  // name: string;
-  // type: FileType;
-  // ingredientType: IngredientType;
-  // ingredient: IIngredient;
-  // path: string;
   return (
     <Stage orders={[{ name: "Julian", percent: 45, files: ["Burger"] }]} />
   );
