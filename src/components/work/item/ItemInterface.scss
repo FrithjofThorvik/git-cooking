@@ -1,12 +1,10 @@
 @import "styles/imports/colors";
 
-.file {
+.item-interface {
   display: flex;
   align-items: center;
+  flex-direction: column;
   justify-content: center;
-  border: 3px $line-dark solid;
-  background-color: $black-dark;
   width: 100%;
   height: 100%;
-  border-top-left-radius: 15px;
 }

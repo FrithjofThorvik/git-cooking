@@ -1,4 +1,4 @@
-import { IOrderItem } from "types/gameDataInterfaces";
+import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { IArcProgressClock } from "types/interfaces";
 
 export const formatClock = (

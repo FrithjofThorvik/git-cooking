@@ -1,20 +1,19 @@
 @import "styles/imports/colors";
 
-.directory-folder {
+.food-folder {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
   width: 100%;
-  margin-top: 5px;
-  margin-left: 20px;
+  margin: 5px 0;
 
   &-info {
     display: flex;
     font-weight: bold;
     align-items: center;
     justify-content: flex-start;
-    font-size: 16px;
+    font-size: 18px;
 
     &:hover {
       cursor: pointer;

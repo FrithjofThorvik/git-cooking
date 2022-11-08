@@ -1,0 +1,19 @@
+@import "styles/imports/colors";
+
+.order-item {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  font-size: 18px;
+  margin: 3px 12px;
+
+  &-icon {
+    font-size: inherit !important;
+    margin-right: 3px;
+  }
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }
+}

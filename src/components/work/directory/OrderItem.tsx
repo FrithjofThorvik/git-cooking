@@ -4,20 +4,20 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import { isOrderItem } from "services/helpers";
 import { IOrderItem, Item } from "types/gameDataInterfaces";
 
-import "./DirectoryItem.scss";
+import "./OrderItem.scss";
 
-interface IDirectoryItemProps {
+interface IOrderItemProps {
   item: Item;
   stagedItems: Item[];
   modifiedItems: Item[];
-  modifyOrderItem: (order: IOrderItem) => void;
+  selectOrderItem: (order: IOrderItem) => void;
 }
 
-const DirectoryItem: React.FC<IDirectoryItemProps> = ({
+const OrderItem: React.FC<IOrderItemProps> = ({
   item,
   stagedItems,
   modifiedItems,
-  modifyOrderItem,
+  selectOrderItem,
 }): JSX.Element => {
   const [isStaged, setIsStaged] = useState<boolean>(false);
   const [isModified, setIsModified] = useState<boolean>(false);
@@ -39,18 +39,18 @@ const DirectoryItem: React.FC<IDirectoryItemProps> = ({
 
   return (
     <div
-      className="directory-file"
+      className="order-item"
       style={{
         color: `${isModified ? "orange" : isStaged ? "green" : "white"}`,
       }}
       onClick={() => {
-        if (isOrderItem(item)) modifyOrderItem(item);
+        if (isOrderItem(item)) selectOrderItem(item);
       }}
     >
-      <DescriptionOutlinedIcon className="directory-file-icon" />
+      <DescriptionOutlinedIcon className="order-item-icon" />
       <div>{item.name}</div>
     </div>
   );
 };
 
-export default DirectoryItem;
+export default OrderItem;

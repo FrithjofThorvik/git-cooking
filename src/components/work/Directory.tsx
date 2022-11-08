@@ -8,7 +8,9 @@ import {
   IOrderItem,
   Item,
 } from "types/gameDataInterfaces";
-import DirectoryFolder from "./directory/DirectoryFolder";
+import Button from "./directory/Button";
+import FoodsFolder from "./directory/FoodFolder";
+import OrdersFolder from "./directory/OrderFolder";
 
 import "./Directory.scss";
 
@@ -16,24 +18,28 @@ interface IDirectoryProps {
   directory: IDirectory;
   stagedItems: Item[];
   modifiedItems: Item[];
-  modifyOrderItem: (order: IOrderItem) => void;
+  selectOrderItem: (orderItem: IOrderItem) => void;
+  createOrderFolder: (order: IOrder) => void;
+  createOrderItem: (order: IOrder, name: string) => void;
 }
 
 const Directory: React.FC<IDirectoryProps> = ({
   directory,
   stagedItems,
   modifiedItems,
-  modifyOrderItem,
+  selectOrderItem,
+  createOrderFolder,
+  createOrderItem,
 }): JSX.Element => {
-  const [isOrdersOpen, setIsOrdersOpen] = useState<boolean>(false);
-  const [isIngredientsOpen, setIsIngredientsOpen] = useState<boolean>(false);
+  const [isOrdersOpen, setIsOrdersOpen] = useState<boolean>(true);
+  const [isIngredientsOpen, setIsIngredientsOpen] = useState<boolean>(true);
 
   return (
     <div className="directory">
       <div className="directory-content">
-        <div className="directory-content-orders">
+        <div className="directory-content-folder">
           <div
-            className="directory-content-info"
+            className="directory-content-folder-info"
             onClick={() => setIsOrdersOpen(!isOrdersOpen)}
           >
             <ChevronRightIcon
@@ -43,20 +49,36 @@ const Directory: React.FC<IDirectoryProps> = ({
             />
             <div>Orders</div>
           </div>
-          {isOrdersOpen &&
-            directory.orders.map((order: IOrder) => (
-              <DirectoryFolder
-                folder={order}
-                stagedItems={stagedItems}
-                modifiedItems={modifiedItems}
-                key={order.id}
-                modifyOrderItem={modifyOrderItem}
-              />
-            ))}
+          {isOrdersOpen && (
+            <div className="directory-content-folder-content">
+              {directory.orders
+                .filter((o) => o.isCreated)
+                .sort((a, b) => (a.name > b.name ? 1 : -1))
+                .map((order: IOrder) => (
+                  <OrdersFolder
+                    order={order}
+                    stagedItems={stagedItems}
+                    modifiedItems={modifiedItems}
+                    key={order.id}
+                    selectOrderItem={selectOrderItem}
+                    createOrderItem={createOrderItem}
+                  />
+                ))}
+              {directory.orders
+                .filter((o) => !o.isCreated)
+                .map((order: IOrder) => (
+                  <Button
+                    text={order.name}
+                    onClick={() => createOrderFolder(order)}
+                    key={order.id}
+                  />
+                ))}
+            </div>
+          )}
         </div>
-        <div className="directory-content-ingredients">
+        <div className="directory-content-folder">
           <div
-            className="directory-content-info"
+            className="directory-content-folder-info"
             onClick={() => setIsIngredientsOpen(!isIngredientsOpen)}
           >
             <ChevronRightIcon
@@ -66,16 +88,18 @@ const Directory: React.FC<IDirectoryProps> = ({
             />
             <div>Ingredients</div>
           </div>
-          {isIngredientsOpen &&
-            directory.foods.map((food: IFood) => (
-              <DirectoryFolder
-                folder={food}
-                stagedItems={stagedItems}
-                modifiedItems={modifiedItems}
-                key={food.id}
-                modifyOrderItem={modifyOrderItem}
-              />
-            ))}
+          {isIngredientsOpen && (
+            <div className="directory-content-folder-content">
+              {directory.foods.map((food: IFood) => (
+                <FoodsFolder
+                  food={food}
+                  stagedItems={stagedItems}
+                  modifiedItems={modifiedItems}
+                  key={food.id}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
