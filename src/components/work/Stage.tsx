@@ -4,7 +4,7 @@ import StagedOrders from "./stage/StagedOrders";
 
 import "./Stage.scss";
 
-interface IStageProps {
+export interface IStageProps {
   orders: { name: string; percent: number; files: string[] }[];
 }
 

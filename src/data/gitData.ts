@@ -139,7 +139,10 @@ export const gitCommands: ICommandArg[] = [
           if (!itemToStage)
             return gitRes(`Error: '${path}' did not match any files`, false);
 
-          const newStagedItems = gameData.gitStagedItems.concat([itemToStage]);
+          const newStagedItems = gameData.gitStagedItems;
+
+          gitHelper.updateExistingOrAddNew(itemToStage, newStagedItems)
+
           const newModifiedItems = gameData.gitModifiedItems.filter(
             (item) => item.path !== path
           );
@@ -160,9 +163,15 @@ export const gitCommands: ICommandArg[] = [
           if (gameData.gitModifiedItems.length === 0)
             return gitRes("Error: No files have been modified", false);
 
+          const newStagedItems = gameData.gitStagedItems;
+
+          gameData.gitModifiedItems.forEach(
+            modifiedItem => gitHelper.updateExistingOrAddNew(modifiedItem, newStagedItems)
+          )
+
           setGameData({
             ...gameData,
-            gitStagedItems: gameData.gitModifiedItems,
+            gitStagedItems: newStagedItems,
             gitModifiedItems: [],
           });
 
