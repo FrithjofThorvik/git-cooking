@@ -43,6 +43,15 @@ export const gitCommands: ICommandArg[] = [
         ],
         cmd: () => gitCommandDoesNotExist(),
       },
+      {
+        key: "remove-localstorage",
+        args: [],
+        cmd: () => {
+          localStorage.removeItem("git-cooking");
+          localStorage.removeItem("git-cooking-time");
+          return gitRes("Removed localstorage. Please refresh page...", true);
+        },
+      },
     ],
     cmd: () => gitCommandDoesNotExist(),
   },
@@ -131,7 +140,7 @@ export const gitCommands: ICommandArg[] = [
           if (typeof path !== "string")
             return gitRes(`Error: '${path} is invalid'`, false);
 
-          let itemToStage: Item | null = gitHelper.getFileToStage(
+          let itemToStage: Item | null = gitHelper.getModifiedFile(
             path,
             gameData.gitModifiedItems
           );
@@ -141,7 +150,7 @@ export const gitCommands: ICommandArg[] = [
 
           const newStagedItems = gameData.gitStagedItems;
 
-          gitHelper.updateExistingOrAddNew(itemToStage, newStagedItems)
+          gitHelper.updateExistingOrAddNew(itemToStage, newStagedItems);
 
           const newModifiedItems = gameData.gitModifiedItems.filter(
             (item) => item.path !== path
@@ -165,9 +174,9 @@ export const gitCommands: ICommandArg[] = [
 
           const newStagedItems = gameData.gitStagedItems;
 
-          gameData.gitModifiedItems.forEach(
-            modifiedItem => gitHelper.updateExistingOrAddNew(modifiedItem, newStagedItems)
-          )
+          gameData.gitModifiedItems.forEach((modifiedItem) =>
+            gitHelper.updateExistingOrAddNew(modifiedItem, newStagedItems)
+          );
 
           setGameData({
             ...gameData,
@@ -224,5 +233,66 @@ export const gitCommands: ICommandArg[] = [
       },
     ],
     cmd: () => gitRes("", false),
+  },
+  {
+    key: "status",
+    args: [],
+    cmd: (gameData) => {
+      let status = "";
+      for (let i = 0; i < gameData.gitStagedItems.length; i++) {
+        status += `\t added: \t\t${gameData.gitStagedItems[i].path}\n`;
+      }
+      for (let i = 0; i < gameData.gitModifiedItems.length; i++) {
+        status += `\t modified: \t${gameData.gitModifiedItems[i].path}\n`;
+      }
+      if (status) return gitRes(status, true);
+      else return gitRes("Nothing to commit, working tree clean", true);
+    },
+  },
+  {
+    key: "restore",
+    args: [
+      {
+        key: "<PATH>",
+        isDynamic: true,
+        args: [],
+        cmd: (gameData, setGameData, path) => {
+          if (typeof path !== "string")
+            return gitRes(`Error: '${path} is invalid'`, false);
+
+          let itemToRestore: Item | null = gitHelper.getModifiedFile(
+            path,
+            gameData.gitModifiedItems
+          );
+
+          if (!itemToRestore)
+            return gitRes(`Error: '${path}' did not match any files`, false);
+
+          const newModifiedItems = gameData.gitModifiedItems.filter(
+            (item) => item.path !== path
+          );
+
+          setGameData({
+            ...gameData,
+            gitModifiedItems: newModifiedItems,
+          });
+
+          return gitRes(`Restored '${path}'`, true);
+        },
+      },
+      {
+        key: ".",
+        args: [],
+        cmd: (gameData, setGameData) => {
+          setGameData({
+            ...gameData,
+            directory: gameData.gitActiveBranch.directory,
+            gitModifiedItems: [],
+          });
+          return gitRes("Restored modified files", true);
+        },
+      },
+    ],
+    cmd: () => gitRes("Error: no path specified", false),
   },
 ];

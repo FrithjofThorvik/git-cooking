@@ -59,7 +59,9 @@ class Git {
       let currentCmdArg: ICommandArg | null = null;
       let dynamicInput: string | undefined;
       for (let i = 0; i < args.length; i++) {
-        let currentArgKey: string = args[i];
+        let currentArgKey: string = args[i]
+          .replaceAll('"', "")
+          .replaceAll("'", "");
         let currentCmdArgs = currentCmdArg ? currentCmdArg.args : gitCommands;
 
         let tempCmdArg: ICommandArg | null = this.findCmdArg(
