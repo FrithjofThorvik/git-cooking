@@ -14,7 +14,7 @@ export const defaultDirectory: IDirectory = {
           id: "3",
           name: "burger",
           path: "orders/order1/burger",
-          ingredients: [],
+          ingredients: [ingredients.burger.bunTop, ingredients.burger.salad, ingredients.burger.onions, ingredients.burger.paddy, ingredients.burger.bunBottom],
           type: IngredientType.BURGER,
           orderId: "1",
         },

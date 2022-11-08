@@ -1,15 +1,21 @@
 import React from "react";
 
-import OrderCard from "./orders/OrderCard";
+import OrderCard, { IOrderCardProps } from "./orders/OrderCard";
 
 import "./Orders.scss";
 
-interface IOrdersProps {}
+interface IOrdersProps {
+  orders: IOrderCardProps[];
+}
 
-const Orders: React.FC<IOrdersProps> = (): JSX.Element => {
+const Orders: React.FC<IOrdersProps> = ({ orders }): JSX.Element => {
   return (
     <div className="orders">
-      <OrderCard percent={20} />
+      {orders && orders.sort((a, b) =>
+        a.name > b.name ? 1 : -1)
+        .map((order, index) =>
+          <OrderCard {...order} key={index} />
+        )}
     </div>
   );
 };
