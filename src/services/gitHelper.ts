@@ -36,7 +36,7 @@ class GitHelper {
     return branch;
   };
 
-  public getFileToStage = (
+  public getModifiedFile = (
     path: string,
     modifiedItems: Item[]
   ): Item | null => {
@@ -79,7 +79,9 @@ class GitHelper {
   };
 
   public updateExistingOrAddNew = (modifiedItem: Item, newArray: Item[]) => {
-    const indexInStaged = newArray.findIndex(s => s.path === modifiedItem.path);
+    const indexInStaged = newArray.findIndex(
+      (s) => s.path === modifiedItem.path
+    );
 
     // if modified item is in array
     if (indexInStaged != -1) {
@@ -87,9 +89,9 @@ class GitHelper {
       newArray[indexInStaged] = modifiedItem;
     } else {
       // add item
-      newArray.push(modifiedItem)
+      newArray.push(modifiedItem);
     }
-  }
+  };
 }
 
 export const gitHelper = new GitHelper();
