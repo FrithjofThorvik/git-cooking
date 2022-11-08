@@ -2,7 +2,7 @@ import React from "react";
 
 import { useTimeLapsed } from "hooks/useTimeLapsed";
 import WorkScreen from "components/screens/WorkScreen";
-import FileController from "controllers/components/work/FileController";
+import FileController from "controllers/components/work/ItemController";
 import StageController from "controllers/components/work/StageController";
 import OrdersController from "controllers/components/work/OrdersController";
 import InfoBoxController from "controllers/components/work/InfoBoxController";

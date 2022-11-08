@@ -1,11 +1,4 @@
-import {
-  FileType,
-  FolderType,
-  GameState,
-  GitStatus,
-  IngredientType,
-  UpgradeType,
-} from "./enums";
+import { GameState, IngredientType, UpgradeType } from "./enums";
 
 export interface IDirectory {
   orders: IOrder[];
