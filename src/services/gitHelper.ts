@@ -77,6 +77,19 @@ class GitHelper {
     }
     return { updatedActiveBranch, updatedBranches };
   };
+
+  public updateExistingOrAddNew = (modifiedItem: Item, newArray: Item[]) => {
+    const indexInStaged = newArray.findIndex(s => s.path === modifiedItem.path);
+
+    // if modified item is in array
+    if (indexInStaged != -1) {
+      // update item
+      newArray[indexInStaged] = modifiedItem;
+    } else {
+      // add item
+      newArray.push(modifiedItem)
+    }
+  }
 }
 
 export const gitHelper = new GitHelper();

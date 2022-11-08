@@ -1,23 +1,38 @@
 import React from "react";
 
-import Stage from "components/work/Stage";
-import { useGameData, setGameData } from "hooks/useGameData";
+import Stage, { IStageProps } from "components/work/Stage";
+import { useGameData } from "hooks/useGameData";
+import { isOrderItem } from "services/helpers";
 
-interface IStageControllerProps {}
+interface IStageControllerProps { }
 
 const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
-  const orders = [];
+  let orders: IStageProps["orders"] = [];
+
   gameData.gitStagedItems.forEach((item) => {
-    return {
-      name: "julian",
-      percent: 45,
-      files: [],
-    };
+    if (isOrderItem(item)) {
+      const relatedOrder = gameData.directory.orders
+        .filter((o) => o.id === item.orderId)
+        .at(0);
+
+      const elementIndex = orders.findIndex(
+        (element) => element.name === relatedOrder?.name
+      );
+
+      if (elementIndex === -1) {
+        orders.push({
+          name: relatedOrder?.name ? relatedOrder.name : "Order",
+          percent: 45,
+          files: [item.name],
+        });
+      } else {
+        orders[elementIndex].files.push(item.name);
+      }
+    }
   });
-  return (
-    <Stage orders={[{ name: "Julian", percent: 45, files: ["Burger"] }]} />
-  );
+
+  return <Stage orders={orders} />;
 };
 
 export default StageController;
