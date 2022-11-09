@@ -7,4 +7,21 @@
   justify-content: flex-start;
   height: 100%;
   gap: 30px;
+
+  overflow-y: auto;
+
+  &::-webkit-scrollbar-track {
+    background-color: $black;
+    border-radius: 15px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    border-radius: 15px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $white;
+    border-radius: 15px;
+  }
 }

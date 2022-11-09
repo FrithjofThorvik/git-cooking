@@ -18,6 +18,7 @@ export interface IOrder {
   id: string;
   name: string;
   isCreated: boolean;
+  timeEnd: number;
   orderItems: IOrderItem[];
   items: IOrderItem[];
 }
@@ -27,6 +28,7 @@ export type Item = IOrderItem | IIngredient;
 export interface IFood {
   id: string;
   name: string;
+  unlocked: boolean;
   items: IIngredient[];
 }
 
