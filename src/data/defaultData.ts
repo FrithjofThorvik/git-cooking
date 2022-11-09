@@ -1,74 +1,29 @@
 import { upgrades } from "./upgrades";
-import { ingredients } from "./ingredients";
+import { foodItems } from "./ingredients";
 import { IBranch, IDirectory, IGitCooking } from "types/gameDataInterfaces";
-import { GameState, IngredientType } from "types/enums";
+import { GameState } from "types/enums";
 
 export const defaultDirectory: IDirectory = {
-  orders: [
+  orders: [],
+  foods: [
     {
       id: "1",
-      name: "order #1",
-      isCreated: false,
-      orderItems: [
-        {
-          id: "3",
-          name: "burger",
-          path: "orders/order1/burger",
-          ingredients: [ingredients.burger.bunTop, ingredients.burger.salad, ingredients.burger.onions, ingredients.burger.paddy, ingredients.burger.bunBottom],
-          type: IngredientType.BURGER,
-          orderId: "1",
-        },
-      ],
+      name: "burger",
+      unlocked: foodItems.burger.unlocked,
       items: [
-        {
-          id: "3",
-          name: "burger",
-          path: "orders/order1/burger",
-          ingredients: [],
-          type: IngredientType.BURGER,
-          orderId: "1",
-        },
+        foodItems.burger.ingredients.bunTop,
+        foodItems.burger.ingredients.paddy,
+        foodItems.burger.ingredients.bunBottom,
       ],
     },
     {
       id: "2",
-      name: "order #2",
-      isCreated: false,
-      orderItems: [
-        {
-          id: "4",
-          name: "burger",
-          path: "orders/order2/burger",
-          ingredients: [],
-          type: IngredientType.BURGER,
-          orderId: "2",
-        },
-      ],
+      name: "fries",
+      unlocked: foodItems.fries.unlocked,
       items: [
-        {
-          id: "4",
-          name: "burger",
-          path: "orders/order2/burger",
-          ingredients: [],
-          type: IngredientType.BURGER,
-          orderId: "2",
-        },
-        {
-          id: "5",
-          name: "burger2",
-          path: "orders/order2/burger2",
-          ingredients: [],
-          type: IngredientType.BURGER,
-          orderId: "2",
-        },
+        foodItems.fries.ingredients.cheese,
+        foodItems.fries.ingredients.normal,
       ],
-    },
-  ],
-  foods: [
-    {
-      id: "123",
-      name: "burger",
-      items: [ingredients.burger.bunTop],
     },
   ],
 };

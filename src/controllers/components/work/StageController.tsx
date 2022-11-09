@@ -2,34 +2,44 @@ import React from "react";
 
 import Stage, { IStageProps } from "components/work/Stage";
 import { useGameData } from "hooks/useGameData";
-import { isOrderItem } from "services/helpers";
+import { compareOrders, isOrderItem } from "services/helpers";
+import { IOrder, Item, IOrderItem } from "types/gameDataInterfaces";
 
-interface IStageControllerProps { }
+interface IStageControllerProps {}
 
 const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
   let orders: IStageProps["orders"] = [];
+  let stagedItemsWithOrder: { items: IOrderItem[]; order: IOrder }[] = [];
 
-  gameData.gitStagedItems.forEach((item) => {
+  gameData.gitStagedItems.forEach((item: Item) => {
     if (isOrderItem(item)) {
       const relatedOrder = gameData.directory.orders
-        .filter((o) => o.id === item.orderId)
+        .filter((o: IOrder) => o.id === item.orderId)
         .at(0);
 
-      const elementIndex = orders.findIndex(
-        (element) => element.name === relatedOrder?.name
+      const elementIndex = stagedItemsWithOrder.findIndex(
+        (element) => element.order.name === relatedOrder?.name
       );
 
-      if (elementIndex === -1) {
-        orders.push({
-          name: relatedOrder?.name ? relatedOrder.name : "Order",
-          percent: 45,
-          files: [item.name],
+      if (relatedOrder && elementIndex === -1) {
+        stagedItemsWithOrder.push({
+          items: [item],
+          order: relatedOrder,
         });
       } else {
-        orders[elementIndex].files.push(item.name);
+        stagedItemsWithOrder[elementIndex].items.push(item);
       }
     }
+  });
+
+  // update percent
+  orders = stagedItemsWithOrder.map((o) => {
+    return {
+      name: o.order.name,
+      percent: Math.round(compareOrders(o.items, o.order.orderItems) * 100),
+      files: o.items.map((i) => i.name),
+    };
   });
 
   return <Stage orders={orders} />;
