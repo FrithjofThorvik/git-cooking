@@ -22,7 +22,7 @@ export const foodItems: IFoodItemList = {
       image: imgBunTop,
       cost: 100,
       purchased: true,
-      path: "",
+      path: "ingredients/burger/bun_top.ing",
       type: IngredientType.BURGER,
     },
     paddy: {
@@ -30,7 +30,7 @@ export const foodItems: IFoodItemList = {
       image: imgPaddy,
       cost: 100,
       purchased: true,
-      path: "",
+      path: "ingredients/burger/paddy.ing",
       type: IngredientType.BURGER,
     },
     salad: {
@@ -38,7 +38,7 @@ export const foodItems: IFoodItemList = {
       image: imgSalad,
       cost: 100,
       purchased: false,
-      path: "",
+      path: "ingredients/burger/salad.ing",
       type: IngredientType.BURGER,
     },
     onions: {
@@ -46,7 +46,7 @@ export const foodItems: IFoodItemList = {
       image: imgOnions,
       cost: 100,
       purchased: false,
-      path: "",
+      path: "ingredients/burger/onions.ing",
       type: IngredientType.BURGER,
     },
     bunBottom: {
@@ -54,7 +54,7 @@ export const foodItems: IFoodItemList = {
       image: imgBunBottom,
       cost: 100,
       purchased: true,
-      path: "",
+      path: "ingredients/burger/bun_bottom.ing",
       type: IngredientType.BURGER,
     },
   },

@@ -43,10 +43,11 @@ const DirectoryController: React.FC<
   };
 
   const selectOrderItem = (orderItem: IOrderItem) => {
-    if (gameData.selectedItems.map((s) => s.path).includes(orderItem.path))
-      return;
-    const updatedSelectedFiles = gameData.selectedItems.concat([orderItem]);
-    setGameData({ ...gameData, selectedItems: updatedSelectedFiles });
+    if (gameData.selectedItems.includes(orderItem.id)) return;
+    setGameData({
+      ...gameData,
+      selectedItems: [...gameData.selectedItems, orderItem.id],
+    });
   };
 
   return (
