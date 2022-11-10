@@ -1,22 +1,45 @@
 import React, { useEffect, useState } from "react";
 
-import { IOrderItem } from "types/gameDataInterfaces";
+import { IngredientType } from "types/enums";
+import { getOrderItemsFromIds } from "services/gameDataHelper";
+import {
+  IFood,
+  IIngredient,
+  IOrder,
+  IOrderItem,
+} from "types/gameDataInterfaces";
 import ItemSelector from "./item/ItemSelector";
 import ItemInterface from "./item/ItemInterface";
 
 import "./Item.scss";
 
 interface IItemProps {
-  selectedItems: IOrderItem[];
+  foods: IFood[];
+  orders: IOrder[];
+  selectedItemIds: string[];
   closeOrderItem: (item: IOrderItem) => void;
   modifyOrderItem: (item: IOrderItem) => void;
+  addIngredientToOrderItem: (
+    orderItem: IOrderItem,
+    ingredient: IIngredient
+  ) => void;
+  removeIngredientFromOrderItem: (orderItem: IOrderItem, index: number) => void;
+  setOrderItemType: (orderItem: IOrderItem, type: IngredientType) => void;
 }
 
 const Item: React.FC<IItemProps> = ({
-  selectedItems,
+  foods,
+  orders,
+  selectedItemIds,
   closeOrderItem,
   modifyOrderItem,
+  addIngredientToOrderItem,
+  removeIngredientFromOrderItem,
+  setOrderItemType,
 }): JSX.Element => {
+  const [selectedItems, setSelectedItems] = useState<IOrderItem[]>(
+    getOrderItemsFromIds(orders, selectedItemIds)
+  );
   const [activeItem, setActiveItem] = useState<IOrderItem | null>(
     selectedItems[0] ?? null
   );
@@ -31,6 +54,10 @@ const Item: React.FC<IItemProps> = ({
       setActiveItem(selectedItems[0]);
   }, [selectedItems]);
 
+  useEffect(() => {
+    setSelectedItems(getOrderItemsFromIds(orders, selectedItemIds));
+  }, [selectedItemIds]);
+
   return (
     <div className="item">
       <ItemSelector
@@ -42,6 +69,10 @@ const Item: React.FC<IItemProps> = ({
       <ItemInterface
         activeItem={activeItem}
         modifyOrderItem={modifyOrderItem}
+        setOrderItemType={setOrderItemType}
+        addIngredientToOrderItem={addIngredientToOrderItem}
+        removeIngredientFromOrderItem={removeIngredientFromOrderItem}
+        foods={foods}
       />
     </div>
   );

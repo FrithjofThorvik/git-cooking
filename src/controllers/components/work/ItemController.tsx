@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-import { IOrderItem } from "types/gameDataInterfaces";
+import { IIngredient, IOrderItem } from "types/gameDataInterfaces";
 import { setGameData, useGameData } from "hooks/useGameData";
 import Item from "components/work/Item";
+import { IngredientType } from "types/enums";
+import {
+  getIndexOfOrder,
+  getIndexOfOrderItem,
+  getOrderFromOrderItem,
+} from "services/gameDataHelper";
 
 interface IItemControllerProps {}
 
@@ -10,9 +16,9 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
 
   const closeOrderItem = (item: IOrderItem) => {
-    if (!gameData.selectedItems.map((s) => s.path).includes(item.path)) return;
+    if (!gameData.selectedItems.includes(item.id)) return;
     const updatedSelectedFiles = gameData.selectedItems.filter(
-      (p) => p.path !== item.path
+      (id) => id !== item.id
     );
     setGameData({ ...gameData, selectedItems: updatedSelectedFiles });
   };
@@ -30,11 +36,79 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
     setGameData({ ...gameData, gitModifiedItems: newModifiedItems });
   };
 
+  const setOrderItemType = (orderItem: IOrderItem, type: IngredientType) => {
+    const order = getOrderFromOrderItem(gameData.directory.orders, orderItem);
+    if (!order) return;
+
+    const indexOfOrder = getIndexOfOrder(gameData.directory.orders, order);
+    const indexOfOrderItem = getIndexOfOrderItem(order, orderItem);
+
+    let updatedOrders = gameData.directory.orders;
+    updatedOrders[indexOfOrder].items[indexOfOrderItem].type = type;
+
+    setGameData({
+      ...gameData,
+      directory: { ...gameData.directory, orders: updatedOrders },
+    });
+  };
+
+  const addIngredientToOrderItem = (
+    orderItem: IOrderItem,
+    ingredient: IIngredient
+  ) => {
+    const order = getOrderFromOrderItem(gameData.directory.orders, orderItem);
+    if (!order) return;
+
+    const indexOfOrder = getIndexOfOrder(gameData.directory.orders, order);
+    const indexOfOrderItem = getIndexOfOrderItem(order, orderItem);
+
+    let updatedOrders = gameData.directory.orders;
+    updatedOrders[indexOfOrder].items[indexOfOrderItem].ingredients.push(
+      ingredient
+    );
+
+    setGameData({
+      ...gameData,
+      directory: { ...gameData.directory, orders: updatedOrders },
+    });
+  };
+
+  const removeIngredientFromOrderItem = (
+    orderItem: IOrderItem,
+    index: number
+  ) => {
+    const order = getOrderFromOrderItem(gameData.directory.orders, orderItem);
+    if (!order) return;
+
+    const indexOfOrder = getIndexOfOrder(gameData.directory.orders, order);
+    const indexOfOrderItem = getIndexOfOrderItem(order, orderItem);
+
+    let updatedOrders = gameData.directory.orders;
+    updatedOrders[indexOfOrder].items[indexOfOrderItem].ingredients.splice(
+      index,
+      1
+    );
+
+    setGameData({
+      ...gameData,
+      directory: { ...gameData.directory, orders: updatedOrders },
+    });
+  };
+
+  useEffect(() => {
+    console.log(gameData.directory.orders);
+  }, [gameData.directory.orders]);
+
   return (
     <Item
-      selectedItems={gameData.selectedItems}
+      selectedItemIds={gameData.selectedItems}
       closeOrderItem={closeOrderItem}
       modifyOrderItem={modifyOrderItem}
+      setOrderItemType={setOrderItemType}
+      addIngredientToOrderItem={addIngredientToOrderItem}
+      removeIngredientFromOrderItem={removeIngredientFromOrderItem}
+      foods={gameData.directory.foods}
+      orders={gameData.directory.orders}
     />
   );
 };

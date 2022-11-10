@@ -19,9 +19,9 @@ export enum FileType {
 }
 
 export enum IngredientType {
-  BURGER,
-  EXTRA,
-  DRINKS,
+  BURGER = "Burger",
+  EXTRA = "Extra",
+  DRINKS = "Drinks",
 }
 
 export enum UpgradeType {

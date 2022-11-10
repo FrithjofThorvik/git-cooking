@@ -1,4 +1,3 @@
-import { IframeHTMLAttributes } from "react";
 import { GameState, IngredientType, UpgradeType } from "./enums";
 
 export interface IDirectory {
@@ -100,7 +99,7 @@ export interface IGitCooking {
   gameState: GameState;
   directory: IDirectory;
   upgrades: IUpgrade[];
-  selectedItems: IOrderItem[];
+  selectedItems: string[];
   gitStagedItems: Item[];
   gitModifiedItems: Item[];
   gitBranches: IBranch[];
