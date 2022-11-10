@@ -1,49 +1,51 @@
 import { v4 } from "uuid";
-import { IngredientType } from "types/enums";
-import { IFood, IGitCooking, IIngredient, IOrder, IOrderItem } from "types/gameDataInterfaces";
+import {
+  IFood,
+  IGitCooking,
+  IOrder,
+  IOrderItem,
+} from "types/gameDataInterfaces";
 import { randomIntFromInterval } from "./helpers";
 import { names } from "data/names";
 
 class OrderGenerator {
-  private getOrderName = () => names[randomIntFromInterval(0, names.length - 1)];
+  private maxItems = 3;
+  private orderDuration = 10000; //in ms
 
-  private chooseItems = (itemsAndIngredients: IFood[]): IFood[] => {
-    const nrItems = randomIntFromInterval(1, 3);
+  private getOrderName = (existingOrderNames: string[]) => {
+    const unusedNames = names.filter((n) => !existingOrderNames.includes(n));
+    let newName = unusedNames[randomIntFromInterval(0, unusedNames.length - 1)];
 
-    let items = [];
-    for (let i = 0; i < nrItems; i++) {
-      // Choose a random item 
-      const newItemIndex = randomIntFromInterval(0, itemsAndIngredients.length - 1);
-      const newItem = itemsAndIngredients.at(newItemIndex)
-      newItem && items.push(newItem);
-    }
-
-    return items;
+    return newName;
   };
 
-  private chooseIngredients = (choosenItems: IFood): IIngredient[] => {
-    const nrItems = randomIntFromInterval(1, 4);
+  private chooseItems = (items: IFood[]): IFood[] => {
+    const nrItems = randomIntFromInterval(1, this.maxItems);
 
-    let ingredients = [];
+    let choosenItems = [];
     for (let i = 0; i < nrItems; i++) {
-      // Choose a random ingredient 
-      const newItemIndex = randomIntFromInterval(0, choosenItems.items.length - 1);
-      const newIngredient = choosenItems.items.at(newItemIndex);
-      newIngredient && ingredients.push(newIngredient);
+      // Choose a random item
+      const newItemIndex = randomIntFromInterval(0, items.length - 1);
+      const newItem = items.at(newItemIndex);
+      newItem && choosenItems.push(newItem);
     }
 
-    return ingredients;
+    return choosenItems;
   };
 
-  private generateRandomOrder = (itemsAndIngredients: IFood[], gameTime: number): IOrder => {
+  private generateRandomOrder = (
+    items: IFood[],
+    gameTime: number,
+    existingOrderNames: string[]
+  ): IOrder => {
     const orderId = v4();
-    const orderName = this.getOrderName();
-    const pathPrefx = `orders/${orderName}`
+    const orderName = this.getOrderName(existingOrderNames);
+    const pathPrefx = `orders/${orderName}`;
 
     // Choose which and how many items
-    const choosenItems = this.chooseItems(itemsAndIngredients);
+    const choosenItems = this.chooseItems(items);
 
-    // Map choosen items to IOrderItem
+    // Generate the orderItems
     const orderItems: IOrderItem[] = choosenItems.map((item) => {
       return {
         ...item,
@@ -51,8 +53,8 @@ class OrderGenerator {
         name: item.name,
         orderId: orderId,
         path: `${pathPrefx}/${item.name}`,
-        type: IngredientType.BURGER,
-        ingredients: this.chooseIngredients(item),
+        type: item.type,
+        ingredients: item.builder(item.ingredients),
       };
     });
 
@@ -60,37 +62,60 @@ class OrderGenerator {
     return {
       id: orderId,
       name: orderName,
-      timeEnd: gameTime + 10000,
+      timeStart: gameTime,
+      timeEnd: gameTime + this.orderDuration,
       isCreated: false,
       orderItems: orderItems,
       items: [],
     };
   };
 
-  public buildNewOrder = (
+  private generateNewOrder = (
     gameTime: number,
     gameData: IGitCooking,
     setGameData: (gameData: IGitCooking) => void
   ): void => {
-
     // Filter out locked items
     const unlockedItems = gameData.directory.foods.filter((food) => {
       return food.unlocked;
     });
 
-    // Filter out locked ingredients
-    const unlockedItemsAndIngredients = unlockedItems.map((item) => {
-      return {
-        id: item.id,
-        name: item.name,
-        unlocked: item.unlocked,
-        items: item.items.filter((i) => i.purchased),
-      };
-    });
-
     // Generate random order
-    const newOrder = this.generateRandomOrder(unlockedItemsAndIngredients, gameTime);
-    setGameData({ ...gameData, directory: { ...gameData.directory, orders: [...gameData.directory.orders, newOrder] } })
+    const newOrder = this.generateRandomOrder(
+      unlockedItems,
+      gameTime,
+      gameData.directory.orders.map((o) => o.name)
+    );
+
+    setGameData({
+      ...gameData,
+      directory: {
+        ...gameData.directory,
+        orders: [...gameData.directory.orders, newOrder],
+      },
+    });
+  };
+
+  public simulateOrders = (
+    gameTime: number,
+    gameData: IGitCooking,
+    setGameData: (gameData: IGitCooking) => void
+  ): void => {
+    if (gameData.directory.orders.length === 0) {
+      this.generateNewOrder(gameTime, gameData, setGameData);
+    }
+    if (
+      gameTime > gameData.baseDayLength / 3 &&
+      gameData.directory.orders.length === 1
+    ) {
+      this.generateNewOrder(gameTime, gameData, setGameData);
+    }
+    if (
+      gameTime > gameData.baseDayLength / 2 &&
+      gameData.directory.orders.length === 2
+    ) {
+      this.generateNewOrder(gameTime, gameData, setGameData);
+    }
   };
 }
 

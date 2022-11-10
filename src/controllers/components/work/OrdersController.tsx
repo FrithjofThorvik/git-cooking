@@ -1,32 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import Orders from "components/work/Orders";
 import { setGameData, useGameData } from "hooks/useGameData";
 import { orderGenerator } from "services/orderGenerator";
 import { useGameTime } from "hooks/useGameTime";
 
-interface IOrdersControllerProps { }
+interface IOrdersControllerProps {}
 
 const OrdersController: React.FC<IOrdersControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
   const gameTime = useGameTime();
 
-  const generateOrder = () => {
-    orderGenerator.buildNewOrder(gameTime, gameData, setGameData);
-  }
+  useEffect(() => {
+    orderGenerator.simulateOrders(gameTime, gameData, setGameData);
+  }, [gameTime, gameData]);
 
-  return <Orders
-    orders={gameData.directory.orders.map((order) => {
-      return {
-        percent: (gameTime / order.timeEnd) * 100,
-        items: order.orderItems.map((item) => {
-          return { ingredients: item.ingredients.map((i) => i.image) };
-        }),
-        name: order.name,
-      };
-    })
-    }
-    generateOrder={generateOrder} />;
+  const formattedOrders = gameData.directory.orders.map((order) => {
+    return {
+      percent:
+        ((gameTime - order.timeStart) / (order.timeEnd - order.timeStart)) *
+        100,
+      items: order.orderItems.map((item) => {
+        return { ingredients: item.ingredients.map((i) => i.image) };
+      }),
+      name: order.name,
+    };
+  });
+
+  return <Orders orders={formattedOrders} />;
 };
 
 export default OrdersController;
