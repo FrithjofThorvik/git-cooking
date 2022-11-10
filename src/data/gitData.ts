@@ -44,7 +44,7 @@ export const gitCommands: ICommandArg[] = [
         cmd: () => gitCommandDoesNotExist(),
       },
       {
-        key: "remove-localstorage",
+        key: "clear",
         args: [],
         cmd: () => {
           localStorage.removeItem("git-cooking");

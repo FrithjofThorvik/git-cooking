@@ -21,10 +21,7 @@ const FoodFolder: React.FC<IFoodFolderProps> = ({
 
   return (
     <div className="food-folder">
-      <div
-        className="food-folder-info"
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <div className="food-folder-info" onClick={() => setIsOpen(!isOpen)}>
         <ChevronRightIcon
           style={{ transform: `rotate(${isOpen ? "90deg" : "0deg"})` }}
         />
@@ -32,7 +29,7 @@ const FoodFolder: React.FC<IFoodFolderProps> = ({
       </div>
       {isOpen && (
         <div className="food-folder-container">
-          {food.items.map((item, i) => {
+          {Object.values(food.ingredients).map((item, i) => {
             return (
               <IngredientItem
                 item={item}

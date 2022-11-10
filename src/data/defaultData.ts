@@ -1,29 +1,33 @@
 import { upgrades } from "./upgrades";
 import { foodItems } from "./ingredients";
-import { IBranch, IDirectory, IGitCooking } from "types/gameDataInterfaces";
-import { GameState } from "types/enums";
+import {
+  IBranch,
+  IBurger,
+  IDirectory,
+  IFries,
+  IGitCooking,
+} from "types/gameDataInterfaces";
+import { GameState, IngredientType } from "types/enums";
+import { foodBuilder } from "services/foodBuilders";
 
 export const defaultDirectory: IDirectory = {
   orders: [],
   foods: [
     {
       id: "1",
-      name: "burger",
-      unlocked: foodItems.burger.unlocked,
-      items: [
-        foodItems.burger.ingredients.bunTop,
-        foodItems.burger.ingredients.paddy,
-        foodItems.burger.ingredients.bunBottom,
-      ],
+      name: "Burger",
+      type: IngredientType.BURGER,
+      unlocked: true,
+      ingredients: foodItems.burger,
+      builder: (ingredients) => foodBuilder.buildBurger(ingredients as IBurger),
     },
     {
       id: "2",
-      name: "fries",
-      unlocked: foodItems.fries.unlocked,
-      items: [
-        foodItems.fries.ingredients.cheese,
-        foodItems.fries.ingredients.normal,
-      ],
+      name: "Fries",
+      unlocked: true,
+      type: IngredientType.EXTRA,
+      ingredients: foodItems.fries,
+      builder: (ingredients) => foodBuilder.buildFries(ingredients as IFries),
     },
   ],
 };

@@ -1,3 +1,4 @@
+import { IframeHTMLAttributes } from "react";
 import { GameState, IngredientType, UpgradeType } from "./enums";
 
 export interface IDirectory {
@@ -18,6 +19,7 @@ export interface IOrder {
   id: string;
   name: string;
   isCreated: boolean;
+  timeStart: number;
   timeEnd: number;
   orderItems: IOrderItem[];
   items: IOrderItem[];
@@ -29,7 +31,28 @@ export interface IFood {
   id: string;
   name: string;
   unlocked: boolean;
-  items: IIngredient[];
+  type: IngredientType;
+  builder: (ingredients: FoodType) => IIngredient[];
+  ingredients: FoodType;
+}
+
+export type FoodType = IBurger | IFries;
+
+export interface FoodDict {
+  [key: string]: IIngredient;
+}
+
+export interface IBurger extends FoodDict {
+  bunTop: IIngredient;
+  paddy: IIngredient;
+  salad: IIngredient;
+  onions: IIngredient;
+  bunBottom: IIngredient;
+}
+
+export interface IFries extends FoodDict {
+  cheese: IIngredient;
+  normal: IIngredient;
 }
 
 export interface IIngredient {
