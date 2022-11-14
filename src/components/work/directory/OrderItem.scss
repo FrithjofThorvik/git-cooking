@@ -6,14 +6,32 @@
   justify-content: left;
   font-size: 18px;
   margin: 3px 12px;
+  width: 100%;
 
   &-icon {
-    font-size: inherit !important;
+    font-size: 18px !important;
     margin-right: 3px;
+
+    &-delete {
+      visibility: hidden;
+      margin-left: auto;
+      color: $gray;
+      font-size: 18px !important;
+      z-index: 2;
+
+      &:hover {
+        cursor: pointer;
+        color: $red;
+      }
+    }
   }
 
   &:hover {
     cursor: pointer;
     opacity: 0.8;
+
+    .order-item-icon-delete {
+      visibility: visible;
+    }
   }
 }

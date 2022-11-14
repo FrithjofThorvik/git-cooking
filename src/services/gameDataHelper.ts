@@ -46,15 +46,31 @@ export const getIndexOfOrderItem = (
 export const getOrderItemsFromIds = (orders: IOrder[], ids: string[]) => {
   let selectedOrderItems: IOrderItem[] = [];
 
-  for (let i = 0; i < orders.length; i++) {
-    for (let j = 0; j < orders[i].items.length; j++) {
-      for (let k = 0; k < ids.length; k++) {
-        if (orders[i].items[j].id === ids[k]) {
-          selectedOrderItems.push(orders[i].items[j]);
-        }
-      }
-    }
-  }
+  orders.forEach((o) => {
+    o.items.forEach((i) => {
+      if (ids.includes(i.id)) selectedOrderItems.push(i);
+    });
+  });
 
   return selectedOrderItems;
+};
+
+export const getOrderItemFromId = (orders: IOrder[], id: string) => {
+  let order: IOrderItem | null = null;
+  orders.forEach((o) => {
+    o.items.forEach((i) => {
+      if (i.id === id) {
+        order = i;
+      }
+    });
+  });
+  return order;
+};
+
+export const getOrderNameFromId = (orders: IOrder[], id: string) => {
+  let name = "";
+  orders.forEach((o) => {
+    if (o.id === id) name = o.name;
+  });
+  return name;
 };

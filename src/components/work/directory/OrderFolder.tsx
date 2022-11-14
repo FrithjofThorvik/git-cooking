@@ -14,6 +14,7 @@ interface IOrderFolderProps {
   modifiedItems: Item[];
   selectOrderItem: (order: IOrderItem) => void;
   createOrderItem: (order: IOrder, name: string) => void;
+  deleteOrderItem: (orderItem: IOrderItem) => void;
 }
 
 const OrderFolder: React.FC<IOrderFolderProps> = ({
@@ -22,6 +23,7 @@ const OrderFolder: React.FC<IOrderFolderProps> = ({
   modifiedItems,
   selectOrderItem,
   createOrderItem,
+  deleteOrderItem,
 }): JSX.Element => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [isCreatingItem, setIsCreatingItem] = useState<boolean>(false);
@@ -48,6 +50,7 @@ const OrderFolder: React.FC<IOrderFolderProps> = ({
                   stagedItems={stagedItems}
                   modifiedItems={modifiedItems}
                   selectOrderItem={selectOrderItem}
+                  deleteOrderItem={deleteOrderItem}
                 />
               );
             })}

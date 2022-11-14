@@ -21,6 +21,7 @@ interface IDirectoryProps {
   selectOrderItem: (orderItem: IOrderItem) => void;
   createOrderFolder: (order: IOrder) => void;
   createOrderItem: (order: IOrder, name: string) => void;
+  deleteOrderItem: (orderItem: IOrderItem) => void;
 }
 
 const Directory: React.FC<IDirectoryProps> = ({
@@ -30,6 +31,7 @@ const Directory: React.FC<IDirectoryProps> = ({
   selectOrderItem,
   createOrderFolder,
   createOrderItem,
+  deleteOrderItem,
 }): JSX.Element => {
   const [isOrdersOpen, setIsOrdersOpen] = useState<boolean>(true);
   const [isIngredientsOpen, setIsIngredientsOpen] = useState<boolean>(true);
@@ -62,6 +64,7 @@ const Directory: React.FC<IDirectoryProps> = ({
                     key={order.id}
                     selectOrderItem={selectOrderItem}
                     createOrderItem={createOrderItem}
+                    deleteOrderItem={deleteOrderItem}
                   />
                 ))}
               {directory.orders

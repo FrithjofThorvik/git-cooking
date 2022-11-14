@@ -2,46 +2,86 @@
 
 .item-selector {
   display: flex;
-  justify-content: flex-start;
   align-content: center;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  overflow-x: scroll;
 
   width: 100%;
   background-color: $dark;
   height: 40px;
+  padding-bottom: 7px;
   border-top-left-radius: 15px;
 
-  &-item {
+  &-group {
     display: flex;
-    align-items: center;
-    box-sizing: border-box;
-    justify-content: space-between;
-    background-color: $dark;
-    height: 100%;
-    padding: 2px 10px;
-    font-size: 14px;
+    align-items: flex-end;
+    border-bottom: 1px solid $gray;
+    margin: 0 5px;
 
-    &:first-child {
-      border-top-left-radius: 15px;
-    }
+    &-items {
+      display: flex;
+      height: 80%;
 
-    &-icon {
-      color: $gray;
-      font-size: inherit !important;
-      margin-left: 10px;
+      &-item {
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        justify-content: space-between;
+        background-color: $dark;
+        height: 100%;
+        padding: 2px 10px;
+        font-size: 14px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
 
-      &:hover {
-        cursor: pointer;
-        opacity: 0.8;
+        &-icon {
+          color: $gray;
+          font-size: inherit !important;
+          margin-left: 10px;
+
+          &:hover {
+            cursor: pointer;
+            opacity: 0.8;
+          }
+        }
+
+        &:hover {
+          cursor: pointer;
+          opacity: 0.8;
+        }
+      }
+
+      &-item-selected {
+        background-color: $black;
+        border: 1px solid $gray;
+        border-bottom: none;
       }
     }
 
-    &:hover {
-      cursor: pointer;
-      opacity: 0.8;
+    &-label {
+      display: flex;
+      white-space: nowrap;
+      align-items: center;
+      justify-content: center;
+      background-color: $gray;
+      color: $black;
+      font-size: 8px;
+      padding: 2px 5px;
+      margin-bottom: 5px;
+      border-radius: 10px;
+      margin-right: 4px;
+      user-select: none;
+      -webkit-user-select: none;
+
+      &:hover {
+        cursor: pointer;
+        opacity: 0.9;
+      }
     }
   }
 
-  &-item-selected {
-    background-color: $black;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }

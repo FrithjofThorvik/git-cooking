@@ -5,7 +5,12 @@ import { useGameData, setGameData } from "hooks/useGameData";
 import Directory from "components/work/Directory";
 import { IngredientType } from "types/enums";
 import { v4 } from "uuid";
-import { getNewOrderItem, doesOrderItemExist } from "services/gameDataHelper";
+import {
+  getNewOrderItem,
+  doesOrderItemExist,
+  getOrderFromOrderItem,
+  getIndexOfOrder,
+} from "services/gameDataHelper";
 
 interface IDirectoryControllerProps {}
 
@@ -42,8 +47,32 @@ const DirectoryController: React.FC<
     });
   };
 
+  const deleteOrderItem = (orderItem: IOrderItem) => {
+    const order = getOrderFromOrderItem(gameData.directory.orders, orderItem);
+    if (!order) return;
+
+    const updatedOrderItems = order.items.filter((i) => i.id !== orderItem.id);
+    const orderIndex = getIndexOfOrder(gameData.directory.orders, order);
+    let updatedOrders = gameData.directory.orders;
+    updatedOrders[orderIndex].items = updatedOrderItems;
+
+    let updatedSelectedItems = gameData.selectedItems;
+    if (gameData.selectedItems.includes(orderItem.id)) {
+      updatedSelectedItems = updatedSelectedItems.filter(
+        (id) => id !== orderItem.id
+      );
+    }
+
+    setGameData({
+      ...gameData,
+      directory: { ...gameData.directory, orders: updatedOrders },
+      selectedItems: updatedSelectedItems,
+    });
+  };
+
   const selectOrderItem = (orderItem: IOrderItem) => {
     if (gameData.selectedItems.includes(orderItem.id)) return;
+
     setGameData({
       ...gameData,
       selectedItems: [...gameData.selectedItems, orderItem.id],
@@ -58,6 +87,7 @@ const DirectoryController: React.FC<
       selectOrderItem={selectOrderItem}
       createOrderFolder={createOrderFolder}
       createOrderItem={createOrderItem}
+      deleteOrderItem={deleteOrderItem}
     />
   );
 };
