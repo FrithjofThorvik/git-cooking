@@ -95,10 +95,6 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
     });
   };
 
-  useEffect(() => {
-    console.log(gameData.directory.orders);
-  }, [gameData.directory.orders]);
-
   return (
     <Item
       selectedItemIds={gameData.selectedItems}

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 import { IngredientType } from "types/enums";
-import { getOrderItemsFromIds } from "services/gameDataHelper";
+import {
+  getOrderItemFromId,
+  getOrderItemsFromIds,
+} from "services/gameDataHelper";
 import {
   IFood,
   IIngredient,
@@ -55,12 +58,22 @@ const Item: React.FC<IItemProps> = ({
   }, [selectedItems]);
 
   useEffect(() => {
+    const oldSelectedItemIds = selectedItems.map((i) => i.id);
+
+    for (let i = 0; i < selectedItemIds.length; i++) {
+      if (!oldSelectedItemIds.includes(selectedItemIds[i])) {
+        const newActiveItem = getOrderItemFromId(orders, selectedItemIds[i]);
+        if (newActiveItem) setActiveItem(newActiveItem);
+      }
+    }
+
     setSelectedItems(getOrderItemsFromIds(orders, selectedItemIds));
   }, [selectedItemIds]);
 
   return (
     <div className="item">
       <ItemSelector
+        orders={orders}
         items={selectedItems}
         activeItem={activeItem}
         setActiveItem={setActiveItem}

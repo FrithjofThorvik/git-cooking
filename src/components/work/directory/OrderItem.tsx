@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 import { isOrderItem } from "services/helpers";
 import { IOrderItem, Item } from "types/gameDataInterfaces";
@@ -7,10 +8,11 @@ import { IOrderItem, Item } from "types/gameDataInterfaces";
 import "./OrderItem.scss";
 
 interface IOrderItemProps {
-  item: Item;
+  item: IOrderItem;
   stagedItems: Item[];
   modifiedItems: Item[];
   selectOrderItem: (order: IOrderItem) => void;
+  deleteOrderItem: (orderItem: IOrderItem) => void;
 }
 
 const OrderItem: React.FC<IOrderItemProps> = ({
@@ -18,6 +20,7 @@ const OrderItem: React.FC<IOrderItemProps> = ({
   stagedItems,
   modifiedItems,
   selectOrderItem,
+  deleteOrderItem,
 }): JSX.Element => {
   const [isStaged, setIsStaged] = useState<boolean>(false);
   const [isModified, setIsModified] = useState<boolean>(false);
@@ -49,6 +52,10 @@ const OrderItem: React.FC<IOrderItemProps> = ({
     >
       <DescriptionOutlinedIcon className="order-item-icon" />
       <div>{item.name}</div>
+      <DeleteOutlineOutlinedIcon
+        onClick={() => deleteOrderItem(item)}
+        className="order-item-icon-delete"
+      />
     </div>
   );
 };
