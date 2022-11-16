@@ -8,17 +8,23 @@ import "./OrderCard.scss";
 
 export interface IOrderCardProps {
   percent: number;
-  items: { ingredients: string[] }[]
+  percentageCompleted: number;
+  items: { ingredients: string[] }[];
   name: string;
 }
 
-const OrderCard: React.FC<IOrderCardProps> = ({ percent, items, name }): JSX.Element => {
+const OrderCard: React.FC<IOrderCardProps> = ({
+  percent,
+  items,
+  name,
+  percentageCompleted,
+}): JSX.Element => {
   return (
     <div className="order-card">
       <GlassContainer border shadow>
         <div className="order-card-content">
           <div className="order-card-content-person">
-            <div className="order-card-content-person-name">{name}</div>
+            <div className="order-card-content-person-name">{`${name} - ${percentageCompleted}`}</div>
             <img src={imgChef} alt="chef" />
             <div className="order-card-content-person-progressBar">
               <div
@@ -31,13 +37,13 @@ const OrderCard: React.FC<IOrderCardProps> = ({ percent, items, name }): JSX.Ele
             <AddIcon />
           </div>
           <div className="order-card-content-items">
-            {items.map((item, index) =>
+            {items.map((item, index) => (
               <div className="order-card-content-items-item" key={index}>
-                {item.ingredients.map((i, index) =>
+                {item.ingredients.map((i, index) => (
                   <img src={i} key={index} />
-                )}
-              </div>)
-            }
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </GlassContainer>

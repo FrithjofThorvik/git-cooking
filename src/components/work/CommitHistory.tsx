@@ -1,9 +1,8 @@
 import React from "react";
 import Tooltip from "@mui/material/Tooltip";
 
-import { ICommit } from "types/gameDataInterfaces";
-
 import "./CommitHistory.scss";
+import { ICommit } from "types/gitInterfaces";
 
 interface ICommitHistoryProps {
   commits: ICommit[];

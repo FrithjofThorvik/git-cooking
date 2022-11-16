@@ -21,7 +21,6 @@ interface IItemProps {
   orders: IOrder[];
   selectedItemIds: string[];
   closeOrderItem: (item: IOrderItem) => void;
-  modifyOrderItem: (item: IOrderItem) => void;
   addIngredientToOrderItem: (
     orderItem: IOrderItem,
     ingredient: IIngredient
@@ -35,7 +34,6 @@ const Item: React.FC<IItemProps> = ({
   orders,
   selectedItemIds,
   closeOrderItem,
-  modifyOrderItem,
   addIngredientToOrderItem,
   removeIngredientFromOrderItem,
   setOrderItemType,
@@ -48,14 +46,12 @@ const Item: React.FC<IItemProps> = ({
   );
 
   useEffect(() => {
-    let tempActiveItem = activeItem;
-    if (selectedItems.filter((i) => i.id === activeItem?.id).length === 0) {
-      tempActiveItem = null;
+    let tempActiveItemIndex = selectedItems.findIndex((i) => i.id === activeItem?.id);
+    if (tempActiveItemIndex === -1) {
       setActiveItem(null);
     }
-    if (tempActiveItem === null && selectedItems.length > 0)
-      setActiveItem(selectedItems[0]);
-  }, [selectedItems]);
+    else if (selectedItems.length > 0) setActiveItem(selectedItems[tempActiveItemIndex]);
+  }, [orders, selectedItems]);
 
   useEffect(() => {
     const oldSelectedItemIds = selectedItems.map((i) => i.id);
@@ -68,7 +64,7 @@ const Item: React.FC<IItemProps> = ({
     }
 
     setSelectedItems(getOrderItemsFromIds(orders, selectedItemIds));
-  }, [selectedItemIds]);
+  }, [selectedItemIds, orders]);
 
   return (
     <div className="item">
@@ -81,7 +77,6 @@ const Item: React.FC<IItemProps> = ({
       />
       <ItemInterface
         activeItem={activeItem}
-        modifyOrderItem={modifyOrderItem}
         setOrderItemType={setOrderItemType}
         addIngredientToOrderItem={addIngredientToOrderItem}
         removeIngredientFromOrderItem={removeIngredientFromOrderItem}

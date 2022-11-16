@@ -1,6 +1,8 @@
 import { IOrderItem } from "types/gameDataInterfaces";
 import { IArcProgressClock } from "types/interfaces";
 
+var _ = require("lodash");
+
 export const formatClock = (
   timeLapsed: number,
   baseDayLength: number,
@@ -60,12 +62,16 @@ export const compareOrders = (
   orderItems: IOrderItem[]
 ) => {
   let similarity = 0;
+
   createdItems.forEach((createdItem) => {
     const highestMatch = orderItems.reduce((max, orderItem) => {
       let total = 0;
       for (let i = 0; i < createdItem.ingredients.length; i++) {
-        createdItem.ingredients.at(i) === orderItem.ingredients.at(i) &&
-          (total += 1);
+        const createdItemIngredient = createdItem.ingredients.at(i);
+        const orderItemIngredient = orderItem.ingredients.at(i);
+        if (createdItemIngredient && orderItemIngredient)
+          objectsEqual(createdItemIngredient, orderItemIngredient) &&
+            (total += 1);
       }
 
       total /= orderItem.ingredients.length;
@@ -76,7 +82,6 @@ export const compareOrders = (
   });
 
   similarity /= orderItems.length;
-
   return similarity;
 };
 
@@ -84,3 +89,17 @@ export const randomIntFromInterval = (min: number, max: number): number => {
   // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
+
+export const copyObjectWithoutRef = (obj: any): any => {
+  let clone: any = _.cloneDeep(obj);
+
+  return clone;
+};
+
+export const objectsEqual = (o1: Object, o2: Object): boolean =>
+  typeof o1 === "object" && Object.keys(o1).length > 0
+    ? Object.keys(o1).length === Object.keys(o2).length &&
+      Object.keys(o1).every((p: string) =>
+        objectsEqual(o1[p as keyof typeof o1], o2[p as keyof typeof o2])
+      )
+    : o1 === o2;

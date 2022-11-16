@@ -76,7 +76,7 @@ class OrderGenerator {
     setGameData: (gameData: IGitCooking) => void
   ): void => {
     // Filter out locked items
-    const unlockedItems = gameData.directory.foods.filter((food) => {
+    const unlockedItems = gameData.git.workingDirectory.foods.filter((food) => {
       return food.unlocked;
     });
 
@@ -84,14 +84,18 @@ class OrderGenerator {
     const newOrder = this.generateRandomOrder(
       unlockedItems,
       gameTime,
-      gameData.directory.orders.map((o) => o.name)
+      gameData.git.workingDirectory.orders.map((o) => o.name)
     );
 
+    // add new order to gamedata
     setGameData({
       ...gameData,
-      directory: {
-        ...gameData.directory,
-        orders: [...gameData.directory.orders, newOrder],
+      git: {
+        ...gameData.git,
+        workingDirectory: {
+          ...gameData.git.workingDirectory,
+          orders: [...gameData.git.workingDirectory.orders, newOrder],
+        },
       },
     });
   };
@@ -101,18 +105,18 @@ class OrderGenerator {
     gameData: IGitCooking,
     setGameData: (gameData: IGitCooking) => void
   ): void => {
-    if (gameData.directory.orders.length === 0) {
+    if (gameData.git.workingDirectory.orders.length === 0) {
       this.generateNewOrder(gameTime, gameData, setGameData);
     }
     if (
       gameTime > gameData.baseDayLength / 3 &&
-      gameData.directory.orders.length === 1
+      gameData.git.workingDirectory.orders.length === 1
     ) {
       this.generateNewOrder(gameTime, gameData, setGameData);
     }
     if (
       gameTime > gameData.baseDayLength / 2 &&
-      gameData.directory.orders.length === 2
+      gameData.git.workingDirectory.orders.length === 2
     ) {
       this.generateNewOrder(gameTime, gameData, setGameData);
     }

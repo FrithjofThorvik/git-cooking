@@ -1,6 +1,6 @@
-import { gitCommands } from "data/gitData";
 import { IGitCooking } from "types/gameDataInterfaces";
 import { IGitResponse, ICommandArg } from "types/interfaces";
+import { gitCommands } from "./gitCommandController";
 
 /**
  * Git command response.
