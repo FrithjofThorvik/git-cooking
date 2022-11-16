@@ -1,10 +1,8 @@
 import React from "react";
 
-import { IOrder, IOrderItem, Item } from "types/gameDataInterfaces";
+import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { useGameData, setGameData } from "hooks/useGameData";
 import Directory from "components/work/Directory";
-import { IngredientType } from "types/enums";
-import { v4 } from "uuid";
 import {
   getNewOrderItem,
   doesOrderItemExist,
@@ -20,12 +18,18 @@ const DirectoryController: React.FC<
   const gameData = useGameData();
 
   const createOrderFolder = (order: IOrder) => {
-    const updatedOrders = gameData.directory.orders
+    const updatedOrders = gameData.git.workingDirectory.orders
       .filter((o) => o.id !== order.id)
       .concat([{ ...order, isCreated: true }]);
     setGameData({
       ...gameData,
-      directory: { ...gameData.directory, orders: updatedOrders },
+      git: {
+        ...gameData.git,
+        workingDirectory: {
+          ...gameData.git.workingDirectory,
+          orders: updatedOrders,
+        },
+      },
     });
   };
 
@@ -33,27 +37,39 @@ const DirectoryController: React.FC<
     if (doesOrderItemExist(order, name)) return;
 
     const newOrderItem: IOrderItem = getNewOrderItem(order, name);
-    const updatedModifiedItems = gameData.gitModifiedItems.concat([
+    const updatedModifiedItems = gameData.git.modifiedItems.concat([
       newOrderItem,
     ]);
-    const updatedOrders = gameData.directory.orders
+    const updatedOrders = gameData.git.workingDirectory.orders
       .filter((o) => o.id !== order.id)
       .concat([{ ...order, items: order.items.concat([newOrderItem]) }]);
 
     setGameData({
       ...gameData,
-      gitModifiedItems: updatedModifiedItems,
-      directory: { ...gameData.directory, orders: updatedOrders },
+      git: {
+        ...gameData.git,
+        workingDirectory: {
+          ...gameData.git.workingDirectory,
+          orders: updatedOrders,
+        },
+        modifiedItems: updatedModifiedItems,
+      },
     });
   };
 
   const deleteOrderItem = (orderItem: IOrderItem) => {
-    const order = getOrderFromOrderItem(gameData.directory.orders, orderItem);
+    const order = getOrderFromOrderItem(
+      gameData.git.workingDirectory.orders,
+      orderItem
+    );
     if (!order) return;
 
     const updatedOrderItems = order.items.filter((i) => i.id !== orderItem.id);
-    const orderIndex = getIndexOfOrder(gameData.directory.orders, order);
-    let updatedOrders = gameData.directory.orders;
+    const orderIndex = getIndexOfOrder(
+      gameData.git.workingDirectory.orders,
+      order
+    );
+    let updatedOrders = gameData.git.workingDirectory.orders;
     updatedOrders[orderIndex].items = updatedOrderItems;
 
     let updatedSelectedItems = gameData.selectedItems;
@@ -65,7 +81,13 @@ const DirectoryController: React.FC<
 
     setGameData({
       ...gameData,
-      directory: { ...gameData.directory, orders: updatedOrders },
+      git: {
+        ...gameData.git,
+        workingDirectory: {
+          ...gameData.git.workingDirectory,
+          orders: updatedOrders,
+        },
+      },
       selectedItems: updatedSelectedItems,
     });
   };
@@ -81,9 +103,9 @@ const DirectoryController: React.FC<
 
   return (
     <Directory
-      directory={gameData.directory}
-      stagedItems={gameData.gitStagedItems}
-      modifiedItems={gameData.gitModifiedItems}
+      directory={gameData.git.workingDirectory}
+      stagedItems={gameData.git.stagedItems}
+      modifiedItems={gameData.git.modifiedItems}
       selectOrderItem={selectOrderItem}
       createOrderFolder={createOrderFolder}
       createOrderItem={createOrderItem}

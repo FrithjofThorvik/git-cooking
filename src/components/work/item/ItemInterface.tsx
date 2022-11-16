@@ -17,7 +17,6 @@ interface IItemInterfaceProps {
     orderItem: IOrderItem,
     ingredient: IIngredient
   ) => void;
-  modifyOrderItem: (item: IOrderItem) => void;
   setOrderItemType: (orderItem: IOrderItem, type: IngredientType) => void;
   removeIngredientFromOrderItem: (orderItem: IOrderItem, index: number) => void;
 }
@@ -25,7 +24,6 @@ interface IItemInterfaceProps {
 const ItemInterface: React.FC<IItemInterfaceProps> = ({
   activeItem,
   foods,
-  modifyOrderItem,
   setOrderItemType,
   addIngredientToOrderItem,
   removeIngredientFromOrderItem,

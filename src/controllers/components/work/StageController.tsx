@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import Stage, { IStageProps } from "components/work/Stage";
 import { useGameData } from "hooks/useGameData";
@@ -9,38 +9,42 @@ interface IStageControllerProps {}
 
 const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
-  let orders: IStageProps["orders"] = [];
-  let stagedItemsWithOrder: { items: IOrderItem[]; order: IOrder }[] = [];
+  const [orders, setOrders] = useState<IStageProps["orders"]>([]);
 
-  gameData.gitStagedItems.forEach((item: Item) => {
-    if (isOrderItem(item)) {
-      const relatedOrder = gameData.directory.orders
-        .filter((o: IOrder) => o.id === item.orderId)
-        .at(0);
+  useEffect(() => {
+    let stagedItemsWithOrder: { items: IOrderItem[]; order: IOrder }[] = [];
+    gameData.git.stagedItems.forEach((item: Item) => {
+      if (isOrderItem(item)) {
+        const relatedOrder = gameData.git.workingDirectory.orders
+          .filter((o: IOrder) => o.id === item.orderId)
+          .at(0);
 
-      const elementIndex = stagedItemsWithOrder.findIndex(
-        (element) => element.order.name === relatedOrder?.name
-      );
+        const elementIndex = stagedItemsWithOrder.findIndex(
+          (element) => element.order.name === relatedOrder?.name
+        );
 
-      if (relatedOrder && elementIndex === -1) {
-        stagedItemsWithOrder.push({
-          items: [item],
-          order: relatedOrder,
-        });
-      } else {
-        stagedItemsWithOrder[elementIndex].items.push(item);
+        if (relatedOrder && elementIndex === -1) {
+          stagedItemsWithOrder.push({
+            items: [item],
+            order: relatedOrder,
+          });
+        } else {
+          stagedItemsWithOrder[elementIndex].items.push(item);
+        }
       }
-    }
-  });
+    });
 
-  // update percent
-  orders = stagedItemsWithOrder.map((o) => {
-    return {
-      name: o.order.name,
-      percent: Math.round(compareOrders(o.items, o.order.orderItems) * 100),
-      files: o.items.map((i) => i.name),
-    };
-  });
+    // update percent
+    setOrders(
+      stagedItemsWithOrder.map((o) => {
+        return {
+          name: o.order.name,
+          percent: Math.round(compareOrders(o.items, o.order.orderItems) * 100),
+          files: o.items.map((i) => i.name),
+        };
+      })
+    );
+  }, [gameData.git.stagedItems]);
 
   return <Stage orders={orders} />;
 };

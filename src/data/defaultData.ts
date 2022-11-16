@@ -1,7 +1,7 @@
+import { v4 } from "uuid";
 import { upgrades } from "./upgrades";
 import { foodItems } from "./ingredients";
 import {
-  IBranch,
   IBurger,
   IDirectory,
   IFries,
@@ -9,6 +9,7 @@ import {
 } from "types/gameDataInterfaces";
 import { GameState, IngredientType } from "types/enums";
 import { foodBuilder } from "services/foodBuilders";
+import { ICommit, IGitTree } from "types/gitInterfaces";
 
 export const defaultDirectory: IDirectory = {
   orders: [],
@@ -32,10 +33,28 @@ export const defaultDirectory: IDirectory = {
   ],
 };
 
-const defaultBranch: IBranch = {
-  name: "master",
+const defaultCommit: ICommit = {
+  id: v4(),
+  root: true,
+  parents: [],
+  message: "root commit",
   directory: defaultDirectory,
-  commits: [],
+};
+
+const defaultGit: IGitTree = {
+  branches: [
+    {
+      name: "master",
+      targetCommitId: defaultCommit.id,
+    },
+  ],
+  commits: [defaultCommit],
+  HEAD: {
+    targetId: "master",
+  },
+  workingDirectory: defaultDirectory,
+  stagedItems: [],
+  modifiedItems: [],
 };
 
 export const defaultGameData: IGitCooking = {
@@ -44,12 +63,8 @@ export const defaultGameData: IGitCooking = {
   baseDayLength: 60000, // in milliseconds
   gameState: GameState.WORKING,
   upgrades: upgrades,
-  directory: defaultDirectory,
+  git: defaultGit,
   selectedItems: [],
-  gitActiveBranch: defaultBranch,
-  gitBranches: [defaultBranch],
-  gitModifiedItems: [],
-  gitStagedItems: [],
 };
 
 export const emptyGameData: IGitCooking = {
@@ -58,10 +73,23 @@ export const emptyGameData: IGitCooking = {
   baseDayLength: 60000, // in milliseconds
   gameState: GameState.LOADING,
   upgrades: [],
-  directory: { orders: [], foods: [] },
+  git: {
+    branches: [],
+    workingDirectory: defaultDirectory,
+    commits: [
+      {
+        id: v4(),
+        root: true,
+        parents: [],
+        message: "root commit",
+        directory: defaultDirectory,
+      },
+    ],
+    HEAD: {
+      targetId: "master",
+    },
+    stagedItems: [],
+    modifiedItems: [],
+  },
   selectedItems: [],
-  gitActiveBranch: defaultBranch,
-  gitBranches: [],
-  gitModifiedItems: [],
-  gitStagedItems: [],
 };

@@ -1,4 +1,5 @@
 import { GameState, IngredientType, UpgradeType } from "./enums";
+import { IGitTree, ICommit } from "./gitInterfaces";
 
 export interface IDirectory {
   orders: IOrder[];
@@ -74,20 +75,6 @@ export interface IUpgrade {
   type: UpgradeType;
 }
 
-export interface IBranch {
-  name: string;
-  directory: IDirectory;
-  commits: ICommit[];
-}
-
-export interface ICommit {
-  id: string;
-  message: string;
-  branch: IBranch;
-  parent: ICommit | null;
-  child: ICommit | null;
-}
-
 export interface ICommitHistory {
   commits: ICommit[];
 }
@@ -97,11 +84,7 @@ export interface IGitCooking {
   cash: number;
   baseDayLength: number;
   gameState: GameState;
-  directory: IDirectory;
   upgrades: IUpgrade[];
   selectedItems: string[];
-  gitStagedItems: Item[];
-  gitModifiedItems: Item[];
-  gitBranches: IBranch[];
-  gitActiveBranch: IBranch;
+  git: IGitTree;
 }
