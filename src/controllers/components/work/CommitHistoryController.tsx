@@ -3,7 +3,6 @@ import React from "react";
 import { ICommit } from "types/gitInterfaces";
 import { useGameData } from "hooks/useGameData";
 import CommitHistory from "components/work/CommitHistory";
-import { gitHelper } from "services/gitHelper";
 
 interface ICommitHistoryControllerProps {}
 
@@ -16,7 +15,7 @@ const CommitHistoryController: React.FC<
     alert(`${commit.id}: ${commit.message}`);
     console.log(JSON.stringify(commit.directory));
   };
-  const commits = gitHelper.getCommitHistory(gameData.git);
+  const commits = gameData.git.getCommitHistory();
   return <CommitHistory commits={commits} handleClick={handleClickOnCommit} />;
 };
 

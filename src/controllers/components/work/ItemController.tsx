@@ -1,16 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-import { IIngredient, IOrder, IOrderItem } from "types/gameDataInterfaces";
-import { setGameData, useGameData } from "hooks/useGameData";
-import Item from "components/work/Item";
-import { IngredientType } from "types/enums";
 import {
   getIndexOfOrder,
   getIndexOfOrderItem,
   getOrderFromOrderItem,
 } from "services/gameDataHelper";
-import { gitHelper } from "services/gitHelper";
+import { IngredientType } from "types/enums";
+import { setGameData, useGameData } from "hooks/useGameData";
+import { IIngredient, IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { copyObjectWithoutRef, isOrderItem } from "services/helpers";
+import Item from "components/work/Item";
 
 interface IItemControllerProps {}
 
@@ -29,7 +28,7 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
     orderItem: IOrderItem,
     updatedOrders: IOrder[]
   ) => {
-    const isModified = gitHelper.isItemModified(orderItem, gameData.git);
+    const isModified = gameData.git.isItemModified(orderItem);
 
     let newModifiedItems = gameData.git.modifiedItems;
 
