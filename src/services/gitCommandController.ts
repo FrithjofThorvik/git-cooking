@@ -1,28 +1,9 @@
-import { IBranch, IGitTree } from "types/gitInterfaces";
-import { gitHelper } from "services/gitHelper";
-import { ICommandArg } from "types/interfaces";
 import { Item } from "types/gameDataInterfaces";
+import { ICommandArg } from "types/interfaces";
+import { IBranch, IGitTree } from "types/gitInterfaces";
+import { getIndexOfOrderItem } from "./gameDataHelper";
 import { gitCommandDoesNotExist, gitRes } from "services/git";
 import { copyObjectWithoutRef, isOrderItem } from "services/helpers";
-import { getIndexOfOrderItem } from "./gameDataHelper";
-
-export const successMessages = {
-  gitInitialized: "Initialized empty Git repository in <PATH>/.git/",
-  gitAddNonModifiedFile: "",
-};
-
-export const errorMessages = {
-  gitCommandDoesNotExist: "git: '<CMD>' is not a git command.",
-  gitNotFound:
-    "fatal: not a git repository (or any of the parent directories): .git",
-  gitAddNoFolderOrFile: "Nothing specified, nothing added.",
-  gitCheckoutUnknownBranch:
-    "error: pathspec '<BRANCH>' did not match any file(s) known to git",
-  gitBranchAlreadyExists: "fatal: A branch named '<BRANCH>' already exists.",
-  gitAddNonExistentFile: "fatal: pathspec '<PATH>' did not match any files",
-  gitCommitWithCleanTree: "nothing to commit, working tree clean",
-  gitCheckoutBWithNoValue: "error: switch `b' requires a value",
-};
 
 export const gitCommands: ICommandArg[] = [
   {
@@ -66,12 +47,10 @@ export const gitCommands: ICommandArg[] = [
         isDynamic: true,
         args: [],
         cmd: (gameData, setGameData, branchName) => {
-          const branches = gameData.git.branches;
-
           if (typeof branchName !== "string")
             return gitRes(`Error: '${branchName} is invalid'`, false);
 
-          if (gitHelper.branchIsActive(branchName, gameData.git.HEAD))
+          if (gameData.git.branchIsActive(branchName))
             return gitRes(`Error: already on ${branchName}`, false);
 
           if (
@@ -83,12 +62,15 @@ export const gitCommands: ICommandArg[] = [
               false
             );
 
-          const newBranch = gitHelper.getBranch(branchName, branches);
+          const newBranch = gameData.git.getBranch(branchName);
           if (!newBranch)
             return gitRes(`Error: '${branchName} does not exist'`, false);
 
-          let copyGit = gameData.git;
-          copyGit.HEAD.targetId = newBranch.name;
+          // switch branch
+          const copyGit = gameData.git.getGitTreeWithSwitchedBranch(
+            newBranch.name
+          );
+
           setGameData({
             ...gameData,
             git: copyGit,
@@ -105,30 +87,28 @@ export const gitCommands: ICommandArg[] = [
             isDynamic: true,
             args: [],
             cmd: (gameData, setGameData, branchName) => {
-              const branches = gameData.git.branches;
-
               if (typeof branchName !== "string")
                 return gitRes(`Error: '${branchName} is an invalid'`, false);
 
-              if (gitHelper.branchNameExists(branchName, branches))
+              if (gameData.git.branchNameExists(branchName))
                 return gitRes(`Error: '${branchName} already exist'`, false);
 
-              const newBranch: IBranch = {
-                name: branchName,
-                targetCommitId: gitHelper.getHeadCommitId(
-                  gameData.git.HEAD,
-                  branches
-                ),
-              };
-              let copyGit = gameData.git;
+              const activeCommit = gameData.git.getHeadCommit();
+              if (activeCommit) {
+                const newBranch: IBranch = {
+                  name: branchName,
+                  targetCommitId: activeCommit.id,
+                };
+                let copyGit = gameData.git;
 
-              // add new branch to gitTree
-              copyGit.branches.push(newBranch);
+                // add new branch to gitTree
+                copyGit.branches.push(newBranch);
 
-              // update HEAD to point at new branch
-              copyGit.HEAD.targetId = newBranch.name;
+                // switch branch
+                copyGit = copyGit.getGitTreeWithSwitchedBranch(newBranch.name);
 
-              setGameData({ ...gameData, git: copyGit });
+                setGameData({ ...gameData, git: copyGit });
+              }
 
               return gitRes(`Switched to a new branch '${branchName}'`, true);
             },
@@ -150,17 +130,14 @@ export const gitCommands: ICommandArg[] = [
           if (typeof path !== "string")
             return gitRes(`Error: '${path} is invalid'`, false);
 
-          let itemToStage: Item | null = gitHelper.getModifiedFile(
-            path,
-            gameData.git.modifiedItems
-          );
+          let itemToStage: Item | null = gameData.git.getModifiedFile(path);
 
           if (!itemToStage)
             return gitRes(`Error: '${path}' did not match any files`, false);
 
           const newStagedItems = gameData.git.stagedItems;
 
-          gitHelper.updateExistingOrAddNew(itemToStage, newStagedItems);
+          gameData.git.updateExistingOrAddNew(itemToStage, newStagedItems);
 
           const newModifiedItems = gameData.git.modifiedItems.filter(
             (item) => item.path !== path
@@ -188,7 +165,7 @@ export const gitCommands: ICommandArg[] = [
           const newStagedItems = gameData.git.stagedItems;
 
           gameData.git.modifiedItems.forEach((modifiedItem) =>
-            gitHelper.updateExistingOrAddNew(modifiedItem, newStagedItems)
+            gameData.git.updateExistingOrAddNew(modifiedItem, newStagedItems)
           );
 
           setGameData({
@@ -224,10 +201,7 @@ export const gitCommands: ICommandArg[] = [
                 return gitRes("Error: nothing to commit", false);
 
               const nrItemsToCommit = gameData.git.stagedItems.length;
-              const updatedGit = gitHelper.updateGitTreeWithNewCommit(
-                gameData.git,
-                message
-              );
+              const updatedGit = gameData.git.getGitTreeWithNewCommit(message);
 
               setGameData({
                 ...gameData,
@@ -270,10 +244,7 @@ export const gitCommands: ICommandArg[] = [
           if (typeof path !== "string")
             return gitRes(`Error: '${path} is invalid'`, false);
 
-          let itemToRestore: Item | null = gitHelper.getModifiedFile(
-            path,
-            gameData.git.modifiedItems
-          );
+          let itemToRestore: Item | null = gameData.git.getModifiedFile(path);
 
           if (!itemToRestore)
             return gitRes(`Error: '${path}' did not match any files`, false);
@@ -284,14 +255,7 @@ export const gitCommands: ICommandArg[] = [
 
           let copyGit: IGitTree = copyObjectWithoutRef(gameData.git);
 
-          const activeCommitId = gitHelper.getHeadCommitId(
-            copyGit.HEAD,
-            copyGit.branches
-          );
-
-          const activeCommit = copyGit.commits.find(
-            (c) => c.id === activeCommitId
-          );
+          const activeCommit = copyGit.getHeadCommit();
 
           const restoredItem = activeCommit?.directory.orders
             .find((o) => {
@@ -334,14 +298,7 @@ export const gitCommands: ICommandArg[] = [
         key: ".",
         args: [],
         cmd: (gameData, setGameData) => {
-          const activeCommitId = gitHelper.getHeadCommitId(
-            gameData.git.HEAD,
-            gameData.git.branches
-          );
-
-          const activeCommit = gameData.git.commits.find(
-            (c) => c.id === activeCommitId
-          );
+          const activeCommit = gameData.git.getHeadCommit();
 
           if (activeCommit)
             setGameData({

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import Orders, { IOrdersProps } from "components/work/Orders";
-import { setGameData, useGameData } from "hooks/useGameData";
-import { orderGenerator } from "services/orderGenerator";
 import { useGameTime } from "hooks/useGameTime";
 import { compareOrders } from "services/helpers";
-import { gitHelper } from "services/gitHelper";
+import { orderGenerator } from "services/orderGenerator";
+import { setGameData, useGameData } from "hooks/useGameData";
+import Orders, { IOrdersProps } from "components/work/Orders";
 
-interface IOrdersControllerProps { }
+interface IOrdersControllerProps {}
 
 const OrdersController: React.FC<IOrdersControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
@@ -21,11 +20,7 @@ const OrdersController: React.FC<IOrdersControllerProps> = (): JSX.Element => {
   }, [gameTime, gameData]);
 
   useEffect(() => {
-    const parentCommitId = gitHelper.getHeadCommitId(
-      gameData.git.HEAD,
-      gameData.git.branches
-    );
-    const parentCommit = gitHelper.getCommitFromId(parentCommitId, gameData.git.commits)
+    const parentCommit = gameData.git.getHeadCommit();
     const prevDirectory = parentCommit?.directory;
 
     setFormattedOrders(
