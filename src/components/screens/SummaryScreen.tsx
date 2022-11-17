@@ -1,26 +1,28 @@
 import React from "react";
 
-import SummaryModal, {
-  ISummaryModalProps,
-} from "components/summary/SummaryModal";
 import MenuButton from "components/MenuButton";
+import SummaryModal from "components/summary/SummaryModal";
 
 import "./SummaryScreen.scss";
 
 export interface ISummaryScreenProps {
-  modal: ISummaryModalProps;
+  day: number;
+  cost: number;
+  revenue: number;
   goNext: () => void;
   goBack: () => void;
 }
 
 const SummaryScreen: React.FC<ISummaryScreenProps> = ({
-  modal,
+  day,
+  cost,
+  revenue,
   goNext,
   goBack,
 }): JSX.Element => {
   return (
     <div className="summary-screen">
-      <SummaryModal {...modal} />
+      <SummaryModal day={day} cost={cost} revenue={revenue} />
       <div className="summary-screen-buttons">
         <div className="summary-screen-buttons-back-button">
           <MenuButton onClick={goBack} text="BACK" type="default" />

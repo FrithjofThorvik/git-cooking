@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { useGameTime } from "hooks/useGameTime";
-import { compareOrders } from "services/helpers";
+import { compareOrders } from "services/gameDataHelper";
 import { orderGenerator } from "services/orderGenerator";
 import { setGameData, useGameData } from "hooks/useGameData";
 import Orders, { IOrdersProps } from "components/work/Orders";

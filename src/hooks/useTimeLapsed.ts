@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 
-import { useGameData } from "./useGameData";
+import { GameState } from "types/enums";
+import { setGameData, useGameData } from "./useGameData";
 import { setGameTime, useGameTime } from "./useGameTime";
 
-export const useTimeLapsed = (dayLengthModifier: number, ms: number): void => {
+export const useTimeLapsed = (
+  dayLengthModifier: number,
+  ms: number,
+  handleEnd: () => void
+): void => {
   const [referenceTime, setReferenceTime] = useState(Date.now());
   const gameData = useGameData();
   const timeLapsed = useGameTime();
@@ -18,9 +23,11 @@ export const useTimeLapsed = (dayLengthModifier: number, ms: number): void => {
 
       let newTimeLapsed = prevTime + dt;
       const dayLength = gameData.baseDayLength * dayLengthModifier;
-      if (newTimeLapsed > dayLength) newTimeLapsed = dayLength;
 
-      setGameTime(newTimeLapsed);
+      if (newTimeLapsed > dayLength) {
+        handleEnd();
+        setGameTime(0);
+      } else setGameTime(newTimeLapsed);
     }, ms);
 
     return () => {

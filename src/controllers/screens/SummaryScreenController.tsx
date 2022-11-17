@@ -1,7 +1,8 @@
-import React from "react";
-import SummaryScreen, {
-  ISummaryScreenProps,
-} from "components/screens/SummaryScreen";
+import React, { useEffect, useState } from "react";
+
+import { useGameData } from "hooks/useGameData";
+import { calculateRevenueAndCost } from "services/gameDataHelper";
+import SummaryScreen from "components/screens/SummaryScreen";
 
 interface ISummaryScreenControllerProps {
   goNext: () => void;
@@ -12,19 +13,25 @@ const SummaryScreenController: React.FC<ISummaryScreenControllerProps> = ({
   goNext,
   goBack,
 }): JSX.Element => {
-  const props: ISummaryScreenProps = {
-    modal: {
-      title: "Day 3",
-      textLines: [
-        { text: "Revenue:", value: 70 },
-        { text: "Ingredients:", value: -50 },
-        { text: "Profit:", value: 20 },
-      ],
-    },
-    goNext: goNext,
-    goBack: goBack,
-  };
-  return <SummaryScreen {...props} />;
+  const [revenue, setRevenue] = useState<number>(0);
+  const [cost, setCost] = useState<number>(0);
+  const gameData = useGameData();
+
+  useEffect(() => {
+    const { revenue, cost } = calculateRevenueAndCost(gameData.git);
+    setRevenue(revenue);
+    setCost(cost);
+  }, []);
+
+  return (
+    <SummaryScreen
+      cost={cost}
+      revenue={revenue}
+      day={gameData.day}
+      goNext={goNext}
+      goBack={goBack}
+    />
+  );
 };
 
 export default SummaryScreenController;

@@ -32,7 +32,7 @@ export const defaultDirectory: IDirectory = {
       name: "Burger",
       type: IngredientType.BURGER,
       unlocked: true,
-      ingredients: foodItems.burger,
+      ingredients: copyObjectWithoutRef(foodItems.burger),
       builder: (ingredients) => foodBuilder.buildBurger(ingredients as IBurger),
     },
     {
@@ -40,7 +40,7 @@ export const defaultDirectory: IDirectory = {
       name: "Fries",
       unlocked: true,
       type: IngredientType.EXTRA,
-      ingredients: foodItems.fries,
+      ingredients: copyObjectWithoutRef(foodItems.fries),
       builder: (ingredients) => foodBuilder.buildFries(ingredients as IFries),
     },
   ],
@@ -51,21 +51,21 @@ const defaultCommit: ICommit = {
   root: true,
   parents: [],
   message: "root commit",
-  directory: defaultDirectory,
+  directory: copyObjectWithoutRef(defaultDirectory),
 };
 
-const defaultGit: IGitTree = {
+export const defaultGit: IGitTree = {
   branches: [
     {
       name: "master",
       targetCommitId: defaultCommit.id,
     },
   ],
-  commits: [defaultCommit],
+  commits: [copyObjectWithoutRef(defaultCommit)],
   HEAD: {
     targetId: "master",
   },
-  workingDirectory: defaultDirectory,
+  workingDirectory: copyObjectWithoutRef(defaultDirectory),
   stagedItems: [],
   modifiedItems: [],
   branchIsActive: function (branchName: string) {
@@ -266,8 +266,8 @@ export const defaultGameData: IGitCooking = {
   cash: 250,
   baseDayLength: 60000, // in milliseconds
   gameState: GameState.WORKING,
-  upgrades: upgrades,
-  git: defaultGit,
+  upgrades: copyObjectWithoutRef(upgrades),
+  git: copyObjectWithoutRef(defaultGit),
   selectedItems: [],
 };
 
@@ -277,6 +277,6 @@ export const emptyGameData: IGitCooking = {
   baseDayLength: 60000, // in milliseconds
   gameState: GameState.LOADING,
   upgrades: [],
-  git: defaultGit,
+  git: copyObjectWithoutRef(defaultGit),
   selectedItems: [],
 };

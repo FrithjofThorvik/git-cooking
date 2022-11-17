@@ -57,34 +57,6 @@ export const formatClock = (
 export const isOrderItem = (arg: any): arg is IOrderItem =>
   arg.orderId !== undefined;
 
-export const compareOrders = (
-  createdItems: IOrderItem[],
-  orderItems: IOrderItem[]
-) => {
-  let similarity = 0;
-
-  createdItems.forEach((createdItem) => {
-    const highestMatch = orderItems.reduce((max, orderItem) => {
-      let total = 0;
-      for (let i = 0; i < createdItem.ingredients.length; i++) {
-        const createdItemIngredient = createdItem.ingredients.at(i);
-        const orderItemIngredient = orderItem.ingredients.at(i);
-        if (createdItemIngredient && orderItemIngredient)
-          objectsEqual(createdItemIngredient, orderItemIngredient) &&
-            (total += 1);
-      }
-
-      total /= orderItem.ingredients.length;
-      return total > max ? total : max;
-    }, 0);
-
-    similarity += highestMatch;
-  });
-
-  similarity /= orderItems.length;
-  return similarity;
-};
-
 export const randomIntFromInterval = (min: number, max: number): number => {
   // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
