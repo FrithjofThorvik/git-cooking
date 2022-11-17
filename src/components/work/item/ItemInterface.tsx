@@ -72,15 +72,17 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
       <div className="item-interface-section">
         <div>Ingredients: </div>
         <div className="item-interface-section-ingredients">
-          {activeItem.ingredients.map((ing, i) => (
-            <div
-              key={i}
-              className="item-interface-section-ingredients-ingredient"
-              onClick={() => removeIngredientFromOrderItem(activeItem, i)}
-            >
-              {ing.name}
-            </div>
-          ))}
+          {activeItem.ingredients
+            .filter((i) => i.purchased)
+            .map((ing, i) => (
+              <div
+                key={i}
+                className="item-interface-section-ingredients-ingredient"
+                onClick={() => removeIngredientFromOrderItem(activeItem, i)}
+              >
+                {ing.name}
+              </div>
+            ))}
         </div>
         {availableIngredients &&
           Object.values(availableIngredients).map((ing, i) => (

@@ -6,47 +6,45 @@ import GlassContainer from "components/GlassContainer";
 import "./SummaryModal.scss";
 
 export interface ISummaryModalProps {
-  title: string;
-  textLines: { text: string; value: number }[];
+  day: number;
+  cost: number;
+  revenue: number;
 }
 
 const SummaryModal: React.FC<ISummaryModalProps> = ({
-  title,
-  textLines,
+  day,
+  cost,
+  revenue,
 }): JSX.Element => {
-  const endText = textLines.slice(-1).pop();
-  let endTextColor = "color-default";
-  if (endText && endText?.value < 0) endTextColor = "color-negative";
-
   return (
     <div className="summary-modal">
       <GlassContainer triangle={false} border>
         <div className="summary-modal-content">
           <div className="summary-modal-content-top">
-            <div className="summary-modal-content-top-title">{title}</div>
+            <div className="summary-modal-content-top-title">{`Day ${day}`}</div>
             <div className="summary-modal-content-top-text">
-              {textLines.slice(0, -1).map((textLine, index) => {
-                let color = "color-default";
-                if (textLine?.value < 0) color = "color-negative";
-
-                return (
-                  <div
-                    className="summary-modal-content-top-text-line"
-                    key={index}
-                  >
-                    <p>{textLine?.text}</p>
-                    <p className={color}>
-                      {textLine?.value} <PaidOutlinedIcon />
-                    </p>
-                  </div>
-                );
-              })}
+              <div className="summary-modal-content-top-text-line">
+                <p>Revenue: </p>
+                <p className="color-default">
+                  {revenue} <PaidOutlinedIcon />
+                </p>
+              </div>
+              <div className="summary-modal-content-top-text-line">
+                <p>Cost: </p>
+                <p className="color-negative">
+                  {cost} <PaidOutlinedIcon />
+                </p>
+              </div>
             </div>
           </div>
           <div className="summary-modal-content-bottom">
-            <p>{endText?.text}</p>
-            <p className={endTextColor}>
-              {endText?.value} <PaidOutlinedIcon />
+            <p>Profit: </p>
+            <p
+              className={`${
+                revenue - cost > 0 ? "color-default" : "color-negative"
+              }`}
+            >
+              {revenue - cost} <PaidOutlinedIcon />
             </p>
           </div>
         </div>

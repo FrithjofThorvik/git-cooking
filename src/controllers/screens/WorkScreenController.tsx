@@ -11,13 +11,13 @@ import DirectoryController from "controllers/components/work/DirectoryController
 import CommitHistoryController from "controllers/components/work/CommitHistoryController";
 
 interface IWorkScreenControllerProps {
-  goToSummary: () => void;
+  endDay: () => void;
 }
 
 const WorkScreenController: React.FC<IWorkScreenControllerProps> = ({
-  goToSummary,
+  endDay,
 }): JSX.Element => {
-  useTimeLapsed(1, 500);
+  useTimeLapsed(1, 500, () => endDay());
 
   return (
     <WorkScreen

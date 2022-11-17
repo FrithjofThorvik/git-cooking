@@ -29,16 +29,18 @@ const FoodFolder: React.FC<IFoodFolderProps> = ({
       </div>
       {isOpen && (
         <div className="food-folder-container">
-          {Object.values(food.ingredients).map((item, i) => {
-            return (
-              <IngredientItem
-                item={item}
-                stagedItems={stagedItems}
-                modifiedItems={modifiedItems}
-                key={i}
-              />
-            );
-          })}
+          {Object.values(food.ingredients)
+            .filter((i) => i.purchased)
+            .map((item, i) => {
+              return (
+                <IngredientItem
+                  item={item}
+                  stagedItems={stagedItems}
+                  modifiedItems={modifiedItems}
+                  key={i}
+                />
+              );
+            })}
         </div>
       )}
     </div>
