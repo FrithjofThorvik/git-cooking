@@ -22,7 +22,7 @@ import { upgrades } from "./upgrades";
 import { foodItems } from "./ingredients";
 import { foodBuilder } from "services/foodBuilders";
 import { GameState, IngredientType } from "types/enums";
-import { IBranch, ICommit, IGitTree } from "types/gitInterfaces";
+import { IBranch, ICommit, IGitTree, IModifiedItem } from "types/gitInterfaces";
 
 export const defaultDirectory: IDirectory = {
   orders: [],
@@ -120,29 +120,83 @@ export const defaultGit: IGitTree = {
     return branch;
   },
   getModifiedFile: function (path: string) {
-    let itemToStage: Item | null = null;
     for (let i = 0; i < this.modifiedItems.length; i++) {
-      const item = this.modifiedItems[i];
-      if (item.path === path) itemToStage = item;
+      const modifiedItem = this.modifiedItems[i];
+      if (modifiedItem.item.path === path) return modifiedItem;
     }
-    return itemToStage;
   },
-  isItemModified: function (orderItem: IOrderItem) {
-    let isItemModified = false;
-    const parentCommit = this.getHeadCommit();
-    const prevDirectory = parentCommit?.directory;
+  isItemModified: function (orderItem: IOrderItem, deleted = false) {
+    let isModified: boolean = false;
+    let isAdded: boolean = false;
+    const indexInStaged = this.stagedItems.findIndex(
+      (s) => s.item.path === orderItem.path
+    );
 
-    if (prevDirectory) {
-      const order = getOrderFromOrderItem(prevDirectory.orders, orderItem);
-      if (!order) return true;
-      const indexOfOrder = getIndexOfOrder(prevDirectory.orders, order);
-      const indexOfOrderItem = getIndexOfOrderItem(order, orderItem);
+    if (indexInStaged != -1) {
+      // compare with staged
+      const staged = this.stagedItems[indexInStaged];
+      if (staged.deleted && !deleted) {
+        isAdded = true;
+      } else if (!(staged.deleted && deleted)) {
+        isModified = !objectsEqual(staged.item, orderItem);
+      }
+    } else {
+      // compare with past commit
+      const parentCommit = this.getHeadCommit();
+      const prevDirectory = parentCommit?.directory;
 
-      let prevItem = prevDirectory.orders[indexOfOrder].items[indexOfOrderItem];
-      isItemModified = !objectsEqual(prevItem, orderItem);
+      if (prevDirectory) {
+        const order = getOrderFromOrderItem(prevDirectory.orders, orderItem);
+        if (!order) isAdded = true;
+        else {
+          const indexOfOrder = getIndexOfOrder(prevDirectory.orders, order);
+          const indexOfOrderItem = getIndexOfOrderItem(order, orderItem);
+
+          if (indexOfOrderItem === -1) isAdded = true;
+          let prevItem =
+            prevDirectory.orders[indexOfOrder].items[indexOfOrderItem];
+          isModified = !objectsEqual(prevItem, orderItem);
+        }
+      }
     }
 
-    return isItemModified;
+    return {
+      modified: isModified,
+      added: isAdded,
+    };
+  },
+  handleModifyItem: function (orderItem, deleteItem = false) {
+    let newModifiedItems = this.modifiedItems;
+    const modification = this.isItemModified(orderItem, deleteItem);
+
+    const updateModifiedItem = (added: boolean, deleted: boolean) => {
+      const indexInModified = newModifiedItems.findIndex(
+        (i) => i.item.path === orderItem.path
+      );
+      let newItem = {
+        item: orderItem,
+        added: added,
+        deleted: deleted,
+      };
+      if (deleted && added) {
+        newModifiedItems = newModifiedItems.filter(
+          (i) => i.item.path !== orderItem.path
+        );
+      } else if (indexInModified === -1) {
+        newModifiedItems = this.modifiedItems.concat([newItem]);
+      } else {
+        newModifiedItems[indexInModified] = newItem;
+      }
+    };
+
+    if (modification.modified || modification.added || deleteItem) {
+      updateModifiedItem(modification.added, deleteItem);
+    } else {
+      newModifiedItems = newModifiedItems.filter(
+        (i) => i.item.path != orderItem.path
+      );
+    }
+    return newModifiedItems;
   },
   addStagedOnPrevDirectory: function (prevDirectory: IDirectory) {
     let newDirectory: IDirectory = copyObjectWithoutRef(prevDirectory);
@@ -150,7 +204,8 @@ export const defaultGit: IGitTree = {
       this.workingDirectory
     );
 
-    this.stagedItems.forEach((item) => {
+    this.stagedItems.forEach((stagedItem) => {
+      const item = stagedItem.item;
       if (isOrderItem(item)) {
         let relatedOrderIndex = newDirectory.orders.findIndex(
           (o) => o.id === item.orderId
@@ -173,7 +228,7 @@ export const defaultGit: IGitTree = {
 
         const prevItemIndex = newDirectory.orders[
           relatedOrderIndex
-        ].items.findIndex((i) => i.id === item.id);
+        ].items.findIndex((i) => i.path === item.path);
 
         if (prevItemIndex === -1) {
           // add the item to new directory
@@ -244,15 +299,44 @@ export const defaultGit: IGitTree = {
     if (newActiveCommit) copyGit.workingDirectory = newActiveCommit.directory;
     return copyGit;
   },
-  updateExistingOrAddNew: function (modifiedItem: Item, newArray: Item[]) {
+  getRestoredFile: function (itemToRestore: Item) {
+    const indexInStaged = this.stagedItems.findIndex(
+      (s) => s.item.path === itemToRestore.path
+    );
+
+    if (indexInStaged != -1) {
+      // restore from staged
+      const stagedItem = this.stagedItems[indexInStaged];
+      return stagedItem;
+    } else {
+      // restore from last commit
+      const activeCommit = this.getHeadCommit();
+
+      const restoredItem = activeCommit?.directory.orders
+        .find((o) => {
+          if (isOrderItem(itemToRestore)) return o.id === itemToRestore.orderId;
+        })
+        ?.items.find((i) => i.path === itemToRestore.path);
+      if (restoredItem === undefined) return undefined;
+      return { item: restoredItem };
+    }
+  },
+  updateExistingOrAddNew: function (
+    modifiedItem: IModifiedItem,
+    newArray: IModifiedItem[]
+  ) {
     const indexInStaged = newArray.findIndex(
-      (s) => s.path === modifiedItem.path
+      (s) => s.item.path === modifiedItem.item.path
     );
 
     // if modified item is in array
     if (indexInStaged != -1) {
       // update item
-      newArray[indexInStaged] = modifiedItem;
+      if (modifiedItem.deleted)
+        newArray = newArray.filter(
+          (i) => i.item.path != modifiedItem.item.path
+        );
+      else newArray[indexInStaged] = modifiedItem;
     } else {
       // add item
       newArray.push(modifiedItem);

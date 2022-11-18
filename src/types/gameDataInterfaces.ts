@@ -7,7 +7,6 @@ export interface IDirectory {
 }
 
 export interface IOrderItem {
-  id: string;
   name: string;
   path: string;
   orderId: string;

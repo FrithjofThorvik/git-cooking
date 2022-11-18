@@ -4,6 +4,7 @@ import { useGameData } from "hooks/useGameData";
 import { isOrderItem } from "services/helpers";
 import { compareOrders } from "services/gameDataHelper";
 import { IOrder, Item, IOrderItem } from "types/gameDataInterfaces";
+import { IModifiedItem } from "types/gitInterfaces";
 import Stage, { IStageProps } from "components/work/Stage";
 
 interface IStageControllerProps {}
@@ -14,8 +15,8 @@ const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
 
   useEffect(() => {
     let stagedItemsWithOrder: { items: IOrderItem[]; order: IOrder }[] = [];
-    console.log(gameData.git.stagedItems);
-    gameData.git.stagedItems.forEach((item: Item) => {
+    gameData.git.stagedItems.forEach((stagedItem: IModifiedItem) => {
+      const item = stagedItem.item;
       if (isOrderItem(item)) {
         const relatedOrder = gameData.git.workingDirectory.orders
           .filter((o: IOrder) => o.id === item.orderId)

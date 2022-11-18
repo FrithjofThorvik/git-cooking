@@ -77,9 +77,9 @@ const ItemSelector: React.FC<IItemSelectorProps> = ({
             {og.isOpen &&
               og.items.map((i) => (
                 <div
-                  key={i.id}
+                  key={i.path}
                   className={`item-selector-group-items-item ${
-                    activeItem?.id === i.id &&
+                    activeItem?.path === i.path &&
                     "item-selector-group-items-item-selected"
                   }`}
                   onClick={() => setActiveItem(i)}

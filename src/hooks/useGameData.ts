@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 
 import { IGitCooking } from "types/gameDataInterfaces";
 import { singletonHook } from "react-singleton-hook";
-import { defaultGameData, emptyGameData } from "data/defaultData";
+import { defaultGameData, defaultGit, emptyGameData } from "data/defaultData";
+import { copyObjectWithoutRef } from "services/helpers";
+
+var _ = require("lodash");
 
 const init = emptyGameData;
 let globalSetMode: any = () => {
@@ -19,7 +22,12 @@ const useGameDataIml = () => {
       const data = localStorage.getItem("git-cooking");
       if (data) {
         const updatedGameData: IGitCooking = JSON.parse(data);
-        setData(updatedGameData);
+        const gameDataWithFunctions = copyObjectWithoutRef(defaultGameData);
+        const updatedGameDataWithFunctions: IGitCooking = _.defaultsDeep(
+          updatedGameData,
+          gameDataWithFunctions
+        );
+        setData(updatedGameDataWithFunctions);
       }
     }
   }, []);

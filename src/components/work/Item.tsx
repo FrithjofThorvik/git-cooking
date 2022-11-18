@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { IngredientType } from "types/enums";
 import {
-  getOrderItemFromId,
-  getOrderItemsFromIds,
+  getOrderItemFromPath,
+  getOrderItemsFromPaths,
 } from "services/gameDataHelper";
 import {
   IFood,
@@ -39,32 +39,34 @@ const Item: React.FC<IItemProps> = ({
   setOrderItemType,
 }): JSX.Element => {
   const [selectedItems, setSelectedItems] = useState<IOrderItem[]>(
-    getOrderItemsFromIds(orders, selectedItemIds)
+    getOrderItemsFromPaths(orders, selectedItemIds)
   );
   const [activeItem, setActiveItem] = useState<IOrderItem | null>(
     selectedItems[0] ?? null
   );
 
   useEffect(() => {
-    let tempActiveItemIndex = selectedItems.findIndex((i) => i.id === activeItem?.id);
+    let tempActiveItemIndex = selectedItems.findIndex(
+      (i) => i.path === activeItem?.path
+    );
     if (tempActiveItemIndex === -1) {
       setActiveItem(null);
-    }
-    else if (selectedItems.length > 0) setActiveItem(selectedItems[tempActiveItemIndex]);
+    } else if (selectedItems.length > 0)
+      setActiveItem(selectedItems[tempActiveItemIndex]);
   }, [orders, selectedItems]);
 
   useEffect(() => {
-    const oldSelectedItemIds = selectedItems.map((i) => i.id);
+    const oldSelectedItemIds = selectedItems.map((i) => i.path);
 
     for (let i = 0; i < selectedItemIds.length; i++) {
       if (!oldSelectedItemIds.includes(selectedItemIds[i])) {
-        const newActiveItem = getOrderItemFromId(orders, selectedItemIds[i]);
+        const newActiveItem = getOrderItemFromPath(orders, selectedItemIds[i]);
         if (newActiveItem) setActiveItem(newActiveItem);
       }
     }
 
-    setSelectedItems(getOrderItemsFromIds(orders, selectedItemIds));
-  }, [selectedItemIds, orders]);
+    setSelectedItems(getOrderItemsFromPaths(orders, selectedItemIds));
+  }, [selectedItemIds, JSON.stringify(orders)]);
 
   return (
     <div className="item">

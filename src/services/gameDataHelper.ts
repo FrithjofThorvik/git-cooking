@@ -7,7 +7,6 @@ import { IngredientType } from "types/enums";
 
 export const getNewOrderItem = (order: IOrder, name: string): IOrderItem => {
   return {
-    id: v4(),
     name: name,
     path: `orders/${order.name}/${name}`,
     orderId: order.id,
@@ -38,26 +37,26 @@ export const getIndexOfOrderItem = (
   order: IOrder,
   orderItem: IOrderItem
 ): number => {
-  return order.items.findIndex((i) => i.id === orderItem.id);
+  return order.items.findIndex((i) => i.path === orderItem.path);
 };
 
-export const getOrderItemsFromIds = (orders: IOrder[], ids: string[]) => {
+export const getOrderItemsFromPaths = (orders: IOrder[], paths: string[]) => {
   let selectedOrderItems: IOrderItem[] = [];
 
   orders.forEach((o) => {
     o.items.forEach((i) => {
-      if (ids.includes(i.id)) selectedOrderItems.push(i);
+      if (paths.includes(i.path)) selectedOrderItems.push(i);
     });
   });
 
   return selectedOrderItems;
 };
 
-export const getOrderItemFromId = (orders: IOrder[], id: string) => {
+export const getOrderItemFromPath = (orders: IOrder[], path: string) => {
   let order: IOrderItem | null = null;
   orders.forEach((o) => {
     o.items.forEach((i) => {
-      if (i.id === id) {
+      if (i.path === path) {
         order = i;
       }
     });
