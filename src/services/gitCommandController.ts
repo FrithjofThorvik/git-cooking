@@ -1,6 +1,6 @@
 import { Item } from "types/gameDataInterfaces";
 import { ICommandArg } from "types/interfaces";
-import { IBranch, IGitTree } from "types/gitInterfaces";
+import { IBranch, IGitTree, IModifiedItem } from "types/gitInterfaces";
 import { getIndexOfOrderItem } from "./gameDataHelper";
 import { gitCommandDoesNotExist, gitRes } from "services/git";
 import { copyObjectWithoutRef, isOrderItem } from "services/helpers";
@@ -130,17 +130,18 @@ export const gitCommands: ICommandArg[] = [
           if (typeof path !== "string")
             return gitRes(`Error: '${path} is invalid'`, false);
 
-          let itemToStage: Item | null = gameData.git.getModifiedFile(path);
+          let itemToStage = gameData.git.getModifiedFile(path);
 
           if (!itemToStage)
             return gitRes(`Error: '${path}' did not match any files`, false);
 
-          const newStagedItems = gameData.git.stagedItems;
-
-          gameData.git.updateExistingOrAddNew(itemToStage, newStagedItems);
+          const newStagedItems = gameData.git.updateExistingOrAddNew(
+            itemToStage,
+            gameData.git.stagedItems
+          );
 
           const newModifiedItems = gameData.git.modifiedItems.filter(
-            (item) => item.path !== path
+            (modifiedItem: IModifiedItem) => modifiedItem.item.path !== path
           );
 
           setGameData({
@@ -162,10 +163,14 @@ export const gitCommands: ICommandArg[] = [
           if (gameData.git.modifiedItems.length === 0)
             return gitRes("Error: No files have been modified", false);
 
-          const newStagedItems = gameData.git.stagedItems;
+          let newStagedItems = gameData.git.stagedItems;
 
-          gameData.git.modifiedItems.forEach((modifiedItem) =>
-            gameData.git.updateExistingOrAddNew(modifiedItem, newStagedItems)
+          gameData.git.modifiedItems.forEach(
+            (modifiedItem: IModifiedItem) =>
+              (newStagedItems = gameData.git.updateExistingOrAddNew(
+                modifiedItem,
+                copyObjectWithoutRef(newStagedItems)
+              ))
           );
 
           setGameData({
@@ -223,12 +228,27 @@ export const gitCommands: ICommandArg[] = [
     cmd: (gameData) => {
       let status = "";
       status += `On branch ${gameData.git.HEAD.targetId}\n`;
+
+      if (gameData.git.stagedItems.length != 0)
+        status += `\nChanges to be committed: \n`;
       for (let i = 0; i < gameData.git.stagedItems.length; i++) {
-        status += `\t added: \t\t${gameData.git.stagedItems[i].path}\n`;
+        const stagedItem = gameData.git.stagedItems[i];
+        let prefix = "modified";
+        if (stagedItem.added) prefix = "added";
+        if (stagedItem.deleted) prefix = "deleted";
+        status += `\t ${prefix}: \t${stagedItem.item.path}\n`;
       }
+
+      if (gameData.git.modifiedItems.length != 0)
+        status += `\nChanges not staged for commit: \n`;
       for (let i = 0; i < gameData.git.modifiedItems.length; i++) {
-        status += `\t modified: \t${gameData.git.modifiedItems[i].path}\n`;
+        const modifiedItem = gameData.git.modifiedItems[i];
+        let prefix = "modified";
+        if (modifiedItem.added) prefix = "added";
+        if (modifiedItem.deleted) prefix = "deleted";
+        status += `\t ${prefix}: \t${modifiedItem.item.path}\n`;
       }
+
       if (status) return gitRes(status, true);
       else return gitRes("Nothing to commit, working tree clean", true);
     },
@@ -244,36 +264,32 @@ export const gitCommands: ICommandArg[] = [
           if (typeof path !== "string")
             return gitRes(`Error: '${path} is invalid'`, false);
 
-          let itemToRestore: Item | null = gameData.git.getModifiedFile(path);
+          let modifiedItem = gameData.git.getModifiedFile(path);
+          let itemToRestore: Item | undefined = modifiedItem?.item;
 
-          if (!itemToRestore)
+          if (itemToRestore === undefined)
             return gitRes(`Error: '${path}' did not match any files`, false);
 
-          const newModifiedItems = gameData.git.modifiedItems.filter(
-            (item) => item.path !== path
-          );
+          if (modifiedItem?.added) return gitRes(``, false);
 
-          let copyGit: IGitTree = copyObjectWithoutRef(gameData.git);
+          const restoredItem = gameData.git.getRestoredFile(itemToRestore);
 
-          const activeCommit = copyGit.getHeadCommit();
+          if (isOrderItem(itemToRestore) && isOrderItem(restoredItem)) {
+            let copyGit = gameData.git;
 
-          const restoredItem = activeCommit?.directory.orders
-            .find((o) => {
-              if (isOrderItem(itemToRestore))
-                return o.id === itemToRestore.orderId;
-            })
-            ?.items.find((i) => {
-              if (isOrderItem(itemToRestore)) return i.id === itemToRestore.id;
-            });
-
-          if (restoredItem) {
             const relatedOrderIndex = copyGit.workingDirectory.orders.findIndex(
               (o) => {
                 if (isOrderItem(itemToRestore))
                   return o.id === itemToRestore.orderId;
               }
             );
-            if (isOrderItem(itemToRestore)) {
+
+            if (modifiedItem?.deleted) {
+              copyGit.workingDirectory.orders[relatedOrderIndex].items =
+                copyGit.workingDirectory.orders[relatedOrderIndex].items.concat(
+                  [restoredItem]
+                );
+            } else {
               const itemToRestoreIndex = getIndexOfOrderItem(
                 copyGit.workingDirectory.orders[relatedOrderIndex],
                 itemToRestore
@@ -283,13 +299,19 @@ export const gitCommands: ICommandArg[] = [
                 itemToRestoreIndex
               ] = restoredItem;
             }
-          }
 
-          copyGit.modifiedItems = newModifiedItems;
-          setGameData({
-            ...gameData,
-            git: copyGit,
-          });
+            const newModifiedItems = copyGit.modifiedItems.filter(
+              (modifiedItem: IModifiedItem) =>
+                modifiedItem.item.path !== itemToRestore?.path
+            );
+
+            copyGit.modifiedItems = newModifiedItems;
+
+            setGameData({
+              ...gameData,
+              git: copyGit,
+            });
+          }
 
           return gitRes(`Restored '${path}'`, true);
         },
@@ -298,17 +320,58 @@ export const gitCommands: ICommandArg[] = [
         key: ".",
         args: [],
         cmd: (gameData, setGameData) => {
-          const activeCommit = gameData.git.getHeadCommit();
+          let copyGit = gameData.git;
 
-          if (activeCommit)
-            setGameData({
-              ...gameData,
-              git: {
-                ...gameData.git,
-                workingDirectory: activeCommit.directory,
-                modifiedItems: [],
-              },
-            });
+          copyGit.modifiedItems.forEach((modifiedItem) => {
+            if (modifiedItem?.added) return;
+            let itemToRestore = modifiedItem.item;
+
+            const restored = copyGit.getRestoredFile(itemToRestore);
+            const restoredItem = restored?.item;
+
+            const relatedOrderIndex = copyGit.workingDirectory.orders.findIndex(
+              (o) => {
+                if (isOrderItem(itemToRestore))
+                  return o.id === itemToRestore.orderId;
+              }
+            );
+            if (restoredItem === undefined || restored?.deleted) {
+              copyGit.workingDirectory.orders[relatedOrderIndex].items =
+                copyGit.workingDirectory.orders[relatedOrderIndex].items.filter(
+                  (i) => i.path !== itemToRestore.path
+                );
+            } else if (
+              isOrderItem(itemToRestore) &&
+              isOrderItem(restoredItem)
+            ) {
+              if (modifiedItem.deleted) {
+                copyGit.workingDirectory.orders[relatedOrderIndex].items =
+                  copyGit.workingDirectory.orders[
+                    relatedOrderIndex
+                  ].items.concat([restoredItem]);
+              } else {
+                const itemToRestoreIndex = getIndexOfOrderItem(
+                  copyGit.workingDirectory.orders[relatedOrderIndex],
+                  itemToRestore
+                );
+
+                copyGit.workingDirectory.orders[relatedOrderIndex].items[
+                  itemToRestoreIndex
+                ] = restoredItem;
+              }
+            }
+            const newModifiedItems = copyGit.modifiedItems.filter(
+              (modifiedItem: IModifiedItem) =>
+                modifiedItem.item.path !== itemToRestore?.path
+            );
+
+            copyGit.modifiedItems = newModifiedItems;
+          });
+
+          setGameData({
+            ...gameData,
+            git: copyGit,
+          });
           return gitRes("Restored modified files", true);
         },
       },

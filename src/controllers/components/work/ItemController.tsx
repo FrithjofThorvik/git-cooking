@@ -8,7 +8,7 @@ import {
 import { IngredientType } from "types/enums";
 import { setGameData, useGameData } from "hooks/useGameData";
 import { IIngredient, IOrder, IOrderItem } from "types/gameDataInterfaces";
-import { copyObjectWithoutRef, isOrderItem } from "services/helpers";
+import { copyObjectWithoutRef } from "services/helpers";
 import Item from "components/work/Item";
 
 interface IItemControllerProps {}
@@ -17,9 +17,9 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
 
   const closeOrderItem = (item: IOrderItem) => {
-    if (!gameData.selectedItems.includes(item.id)) return;
+    if (!gameData.selectedItems.includes(item.path)) return;
     const updatedSelectedFiles = gameData.selectedItems.filter(
-      (id) => id !== item.id
+      (id) => id !== item.path
     );
     setGameData({ ...gameData, selectedItems: updatedSelectedFiles });
   };
@@ -28,24 +28,7 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
     orderItem: IOrderItem,
     updatedOrders: IOrder[]
   ) => {
-    const isModified = gameData.git.isItemModified(orderItem);
-
-    let newModifiedItems = gameData.git.modifiedItems;
-
-    if (isModified) {
-      const indexInModified = newModifiedItems.findIndex((i) => {
-        if (isOrderItem(i)) return i.id === orderItem.id;
-      });
-      if (indexInModified === -1) {
-        newModifiedItems = gameData.git.modifiedItems.concat([orderItem]);
-      } else {
-        newModifiedItems[indexInModified] = orderItem;
-      }
-    } else {
-      newModifiedItems = newModifiedItems.filter((i) => {
-        if (isOrderItem(i)) return i.id != orderItem.id;
-      });
-    }
+    const newModifiedItems = gameData.git.handleModifyItem(orderItem);
 
     setGameData({
       ...gameData,

@@ -37,9 +37,7 @@ const DirectoryController: React.FC<
     if (doesOrderItemExist(order, name)) return;
 
     const newOrderItem: IOrderItem = getNewOrderItem(order, name);
-    const updatedModifiedItems = gameData.git.modifiedItems.concat([
-      newOrderItem,
-    ]);
+    const updatedModifiedItems = gameData.git.handleModifyItem(newOrderItem);
     const updatedOrders = gameData.git.workingDirectory.orders
       .filter((o) => o.id !== order.id)
       .concat([{ ...order, items: order.items.concat([newOrderItem]) }]);
@@ -64,7 +62,10 @@ const DirectoryController: React.FC<
     );
     if (!order) return;
 
-    const updatedOrderItems = order.items.filter((i) => i.id !== orderItem.id);
+    const updatedModifiedItems = gameData.git.handleModifyItem(orderItem, true);
+    const updatedOrderItems = order.items.filter(
+      (i) => i.path !== orderItem.path
+    );
     const orderIndex = getIndexOfOrder(
       gameData.git.workingDirectory.orders,
       order
@@ -73,9 +74,9 @@ const DirectoryController: React.FC<
     updatedOrders[orderIndex].items = updatedOrderItems;
 
     let updatedSelectedItems = gameData.selectedItems;
-    if (gameData.selectedItems.includes(orderItem.id)) {
+    if (gameData.selectedItems.includes(orderItem.path)) {
       updatedSelectedItems = updatedSelectedItems.filter(
-        (id) => id !== orderItem.id
+        (id) => id !== orderItem.path
       );
     }
 
@@ -87,25 +88,26 @@ const DirectoryController: React.FC<
           ...gameData.git.workingDirectory,
           orders: updatedOrders,
         },
+        modifiedItems: updatedModifiedItems,
       },
       selectedItems: updatedSelectedItems,
     });
   };
 
   const selectOrderItem = (orderItem: IOrderItem) => {
-    if (gameData.selectedItems.includes(orderItem.id)) return;
+    if (gameData.selectedItems.includes(orderItem.path)) return;
 
     setGameData({
       ...gameData,
-      selectedItems: [...gameData.selectedItems, orderItem.id],
+      selectedItems: [...gameData.selectedItems, orderItem.path],
     });
   };
 
   return (
     <Directory
       directory={gameData.git.workingDirectory}
-      stagedItems={gameData.git.stagedItems}
-      modifiedItems={gameData.git.modifiedItems}
+      stagedItems={gameData.git.stagedItems.map((i) => i.item)}
+      modifiedItems={gameData.git.modifiedItems.map((i) => i.item)}
       selectOrderItem={selectOrderItem}
       createOrderFolder={createOrderFolder}
       createOrderItem={createOrderItem}

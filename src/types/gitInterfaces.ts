@@ -17,12 +17,18 @@ export interface ICommit {
   directory: IDirectory;
 }
 
+export interface IModifiedItem {
+  item: Item;
+  added?: boolean;
+  deleted?: boolean;
+}
+
 export interface IGitTree {
   HEAD: IHead;
   commits: ICommit[];
   branches: IBranch[];
-  stagedItems: Item[];
-  modifiedItems: Item[];
+  stagedItems: IModifiedItem[];
+  modifiedItems: IModifiedItem[];
   workingDirectory: IDirectory;
   branchIsActive: (branchName: string) => boolean;
   getCommitFromId: (commitId: string) => ICommit | undefined;
@@ -30,11 +36,25 @@ export interface IGitTree {
   getHeadCommit: () => ICommit | undefined;
   branchNameExists: (branchName: string) => boolean;
   getBranch: (branchName: string) => IBranch | null;
-  getModifiedFile: (path: string) => Item | null;
-  isItemModified: (orderItem: IOrderItem) => boolean;
+  getModifiedFile: (path: string) => IModifiedItem | undefined;
+  isItemModified: (
+    orderItem: IOrderItem,
+    deleted: boolean
+  ) => {
+    modified: boolean;
+    added: boolean;
+  };
+  handleModifyItem: (
+    orderItem: IOrderItem,
+    deleteItem?: boolean
+  ) => IModifiedItem[];
   addStagedOnPrevDirectory: (prevDirectory: IDirectory) => IDirectory;
   getNewCommit: (commitMessage: string) => ICommit;
   getGitTreeWithNewCommit: (commitMessage: string) => IGitTree;
   getGitTreeWithSwitchedBranch: (branchName: string) => IGitTree;
-  updateExistingOrAddNew: (modifiedItem: Item, newArray: Item[]) => Item[];
+  getRestoredFile: (itemToRestore: Item) => IModifiedItem | undefined;
+  updateExistingOrAddNew: (
+    modifiedItem: IModifiedItem,
+    newArray: IModifiedItem[]
+  ) => IModifiedItem[];
 }
