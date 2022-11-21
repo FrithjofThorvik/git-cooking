@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import { IngredientType } from "types/enums";
 import {
   getOrderItemFromPath,
   getOrderItemsFromPaths,
 } from "services/gameDataHelper";
-import {
-  IFood,
-  IIngredient,
-  IOrder,
-  IOrderItem,
-} from "types/gameDataInterfaces";
+import { IFood } from "types/foodInterfaces";
+import { IngredientType } from "types/enums";
+import { IIngredient, IOrder, IOrderItem } from "types/gameDataInterfaces";
 import ItemSelector from "./item/ItemSelector";
 import ItemInterface from "./item/ItemInterface";
 
@@ -21,12 +17,14 @@ interface IItemProps {
   orders: IOrder[];
   selectedItemIds: string[];
   closeOrderItem: (item: IOrderItem) => void;
-  addIngredientToOrderItem: (
+  modifyOrderItem: (
     orderItem: IOrderItem,
-    ingredient: IIngredient
+    data: {
+      type?: IngredientType;
+      addIngredient?: IIngredient;
+      removeIngredientAtIndex?: number;
+    }
   ) => void;
-  removeIngredientFromOrderItem: (orderItem: IOrderItem, index: number) => void;
-  setOrderItemType: (orderItem: IOrderItem, type: IngredientType) => void;
 }
 
 const Item: React.FC<IItemProps> = ({
@@ -34,9 +32,7 @@ const Item: React.FC<IItemProps> = ({
   orders,
   selectedItemIds,
   closeOrderItem,
-  addIngredientToOrderItem,
-  removeIngredientFromOrderItem,
-  setOrderItemType,
+  modifyOrderItem,
 }): JSX.Element => {
   const [selectedItems, setSelectedItems] = useState<IOrderItem[]>(
     getOrderItemsFromPaths(orders, selectedItemIds)
@@ -79,9 +75,7 @@ const Item: React.FC<IItemProps> = ({
       />
       <ItemInterface
         activeItem={activeItem}
-        setOrderItemType={setOrderItemType}
-        addIngredientToOrderItem={addIngredientToOrderItem}
-        removeIngredientFromOrderItem={removeIngredientFromOrderItem}
+        modifyOrderItem={modifyOrderItem}
         foods={foods}
       />
     </div>

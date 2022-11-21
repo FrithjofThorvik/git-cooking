@@ -1,10 +1,8 @@
-import { IBurger, IFries, IIngredient } from "types/gameDataInterfaces";
-import { randomIntFromInterval } from "./helpers";
+import { IIngredient } from "types/gameDataInterfaces";
+import { IBurger, IFries } from "types/foodInterfaces";
 
 class FoodBuilder {
   public buildBurger = (burger: IBurger): IIngredient[] => {
-    // const toppings = [burger.onions, burger.salad, burger.paddy];
-    // const unlockedToppings = toppings.filter((i) => i.purchased);
 
     return [burger.bunTop, burger.paddy, burger.bunBottom];
   };

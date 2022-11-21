@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-import { IOrder, IOrderItem, Item } from "types/gameDataInterfaces";
+import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import OrderItem from "./OrderItem";
 
 import "./OrderFolder.scss";
@@ -10,8 +10,8 @@ import Input from "./Input";
 
 interface IOrderFolderProps {
   order: IOrder;
-  stagedItems: Item[];
-  modifiedItems: Item[];
+  stagedItems: IOrderItem[];
+  modifiedItems: IOrderItem[];
   selectOrderItem: (order: IOrderItem) => void;
   createOrderItem: (order: IOrder, name: string) => void;
   deleteOrderItem: (orderItem: IOrderItem) => void;

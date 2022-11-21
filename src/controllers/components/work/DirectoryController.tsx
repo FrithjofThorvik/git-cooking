@@ -1,14 +1,12 @@
 import React from "react";
 
-import { IOrder, IOrderItem } from "types/gameDataInterfaces";
-import { useGameData, setGameData } from "hooks/useGameData";
-import Directory from "components/work/Directory";
 import {
-  getNewOrderItem,
+  createNewOrderItem,
   doesOrderItemExist,
-  getOrderFromOrderItem,
-  getIndexOfOrder,
 } from "services/gameDataHelper";
+import { IOrder, IOrderItem } from "types/gameDataInterfaces";
+import { setGameData, useGameData } from "hooks/useGameData";
+import Directory from "components/work/Directory";
 
 interface IDirectoryControllerProps {}
 
@@ -18,17 +16,14 @@ const DirectoryController: React.FC<
   const gameData = useGameData();
 
   const createOrderFolder = (order: IOrder) => {
-    const updatedOrders = gameData.git.workingDirectory.orders
-      .filter((o) => o.id !== order.id)
-      .concat([{ ...order, isCreated: true }]);
+    const updatedDirectory =
+      gameData.git.workingDirectory.createOrderFolder(order);
+
     setGameData({
       ...gameData,
       git: {
         ...gameData.git,
-        workingDirectory: {
-          ...gameData.git.workingDirectory,
-          orders: updatedOrders,
-        },
+        workingDirectory: updatedDirectory,
       },
     });
   };
@@ -36,58 +31,36 @@ const DirectoryController: React.FC<
   const createOrderItem = (order: IOrder, name: string) => {
     if (doesOrderItemExist(order, name)) return;
 
-    const newOrderItem: IOrderItem = getNewOrderItem(order, name);
+    const newOrderItem: IOrderItem = createNewOrderItem(order, name);
     const updatedModifiedItems = gameData.git.handleModifyItem(newOrderItem);
-    const updatedOrders = gameData.git.workingDirectory.orders
-      .filter((o) => o.id !== order.id)
-      .concat([{ ...order, items: order.items.concat([newOrderItem]) }]);
+    const updatedDirectory = gameData.git.workingDirectory.addOrderItemToOrder(
+      order,
+      newOrderItem
+    );
 
     setGameData({
       ...gameData,
       git: {
         ...gameData.git,
-        workingDirectory: {
-          ...gameData.git.workingDirectory,
-          orders: updatedOrders,
-        },
+        workingDirectory: updatedDirectory,
         modifiedItems: updatedModifiedItems,
       },
     });
   };
 
   const deleteOrderItem = (orderItem: IOrderItem) => {
-    const order = getOrderFromOrderItem(
-      gameData.git.workingDirectory.orders,
-      orderItem
-    );
-    if (!order) return;
-
     const updatedModifiedItems = gameData.git.handleModifyItem(orderItem, true);
-    const updatedOrderItems = order.items.filter(
-      (i) => i.path !== orderItem.path
+    const updatedDirectory =
+      gameData.git.workingDirectory.deleteOrderItem(orderItem);
+    const updatedSelectedItems = gameData.selectedItems.filter(
+      (id) => id !== orderItem.path
     );
-    const orderIndex = getIndexOfOrder(
-      gameData.git.workingDirectory.orders,
-      order
-    );
-    let updatedOrders = gameData.git.workingDirectory.orders;
-    updatedOrders[orderIndex].items = updatedOrderItems;
-
-    let updatedSelectedItems = gameData.selectedItems;
-    if (gameData.selectedItems.includes(orderItem.path)) {
-      updatedSelectedItems = updatedSelectedItems.filter(
-        (id) => id !== orderItem.path
-      );
-    }
 
     setGameData({
       ...gameData,
       git: {
         ...gameData.git,
-        workingDirectory: {
-          ...gameData.git.workingDirectory,
-          orders: updatedOrders,
-        },
+        workingDirectory: updatedDirectory,
         modifiedItems: updatedModifiedItems,
       },
       selectedItems: updatedSelectedItems,

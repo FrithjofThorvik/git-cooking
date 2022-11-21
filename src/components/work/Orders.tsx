@@ -8,9 +8,7 @@ export interface IOrdersProps {
   orders: IOrderCardProps[];
 }
 
-const Orders: React.FC<IOrdersProps> = ({
-  orders,
-}): JSX.Element => {
+const Orders: React.FC<IOrdersProps> = ({ orders }): JSX.Element => {
   return (
     <div className="orders">
       {orders &&

@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-
-import { isOrderItem } from "services/helpers";
-import { IOrderItem, Item } from "types/gameDataInterfaces";
+import { IOrderItem } from "types/gameDataInterfaces";
 
 import "./OrderItem.scss";
 
 interface IOrderItemProps {
   item: IOrderItem;
-  stagedItems: Item[];
-  modifiedItems: Item[];
+  stagedItems: IOrderItem[];
+  modifiedItems: IOrderItem[];
   selectOrderItem: (order: IOrderItem) => void;
   deleteOrderItem: (orderItem: IOrderItem) => void;
 }
@@ -46,9 +44,7 @@ const OrderItem: React.FC<IOrderItemProps> = ({
       style={{
         color: `${isModified ? "orange" : isStaged ? "green" : "white"}`,
       }}
-      onClick={() => {
-        if (isOrderItem(item)) selectOrderItem(item);
-      }}
+      onClick={() => selectOrderItem(item)}
     >
       <DescriptionOutlinedIcon className="order-item-icon" />
       <div>{item.name}</div>

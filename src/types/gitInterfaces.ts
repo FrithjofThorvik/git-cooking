@@ -1,4 +1,4 @@
-import { IDirectory, IOrderItem, Item } from "./gameDataInterfaces";
+import { IDirectory, IOrderItem } from "./gameDataInterfaces";
 
 export interface IHead {
   targetId: string;
@@ -18,7 +18,7 @@ export interface ICommit {
 }
 
 export interface IModifiedItem {
-  item: Item;
+  item: IOrderItem;
   added?: boolean;
   deleted?: boolean;
 }
@@ -52,9 +52,14 @@ export interface IGitTree {
   getNewCommit: (commitMessage: string) => ICommit;
   getGitTreeWithNewCommit: (commitMessage: string) => IGitTree;
   getGitTreeWithSwitchedBranch: (branchName: string) => IGitTree;
-  getRestoredFile: (itemToRestore: Item) => IModifiedItem | undefined;
+  getRestoredFile: (itemToRestore: IOrderItem) => IModifiedItem | undefined;
   updateExistingOrAddNew: (
     modifiedItem: IModifiedItem,
     newArray: IModifiedItem[]
   ) => IModifiedItem[];
+  getGitTreeWithNewBranch: (branchName: string) => IGitTree;
+  getGitTreeWithStagedItem: (itemToStage: IModifiedItem) => IGitTree;
+  getGitTreeWithAllStagedItems: () => IGitTree;
+  restoreAllFiles: () => IGitTree;
+  restoreFile: (modifiedItem: IModifiedItem) => IGitTree;
 }

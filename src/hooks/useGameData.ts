@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { IGitCooking } from "types/gameDataInterfaces";
 import { singletonHook } from "react-singleton-hook";
-import { defaultGameData, defaultGit, emptyGameData } from "data/defaultData";
+import { defaultGameData, emptyGameData } from "data/defaultData";
 import { copyObjectWithoutRef } from "services/helpers";
 
 var _ = require("lodash");

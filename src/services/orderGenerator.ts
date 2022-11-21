@@ -1,12 +1,9 @@
 import { v4 } from "uuid";
-import {
-  IFood,
-  IGitCooking,
-  IOrder,
-  IOrderItem,
-} from "types/gameDataInterfaces";
-import { randomIntFromInterval } from "./helpers";
+
 import { names } from "data/names";
+import { IFood } from "types/foodInterfaces";
+import { randomIntFromInterval } from "./helpers";
+import { IGitCooking, IOrder, IOrderItem } from "types/gameDataInterfaces";
 
 class OrderGenerator {
   private maxItems = 3;
@@ -48,13 +45,12 @@ class OrderGenerator {
     // Generate the orderItems
     const orderItems: IOrderItem[] = choosenItems.map((item) => {
       return {
-        ...item,
         id: v4(),
         name: item.name,
         orderId: orderId,
         path: `${pathPrefx}/${item.name}`,
         type: item.type,
-        ingredients: item.builder(item.ingredients),
+        ingredients: item.builder(),
       };
     });
 
@@ -67,6 +63,11 @@ class OrderGenerator {
       isCreated: false,
       orderItems: orderItems,
       items: [],
+      addItemToOrders: function (item) {
+        let copy = this;
+        copy.items.push(item);
+        return copy;
+      },
     };
   };
 
@@ -76,7 +77,7 @@ class OrderGenerator {
     setGameData: (gameData: IGitCooking) => void
   ): void => {
     // Filter out locked items
-    const unlockedItems = gameData.git.workingDirectory.foods.filter((food) => {
+    const unlockedItems = gameData.store.foods.filter((food) => {
       return food.unlocked;
     });
 

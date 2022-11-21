@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { GameState } from "types/enums";
-import { setGameData, useGameData } from "./useGameData";
+import { useGameData } from "./useGameData";
 import { setGameTime, useGameTime } from "./useGameTime";
 
 export const useTimeLapsed = (
