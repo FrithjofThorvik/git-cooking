@@ -1,23 +1,16 @@
 import React, { useState } from "react";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-import {
-  IDirectory,
-  IFood,
-  IOrder,
-  IOrderItem,
-  Item,
-} from "types/gameDataInterfaces";
+import { IDirectory, IOrder, IOrderItem } from "types/gameDataInterfaces";
 import Button from "./directory/Button";
-import FoodsFolder from "./directory/FoodFolder";
 import OrdersFolder from "./directory/OrderFolder";
 
 import "./Directory.scss";
 
 interface IDirectoryProps {
   directory: IDirectory;
-  stagedItems: Item[];
-  modifiedItems: Item[];
+  stagedItems: IOrderItem[];
+  modifiedItems: IOrderItem[];
   selectOrderItem: (orderItem: IOrderItem) => void;
   createOrderFolder: (order: IOrder) => void;
   createOrderItem: (order: IOrder, name: string) => void;
@@ -34,7 +27,6 @@ const Directory: React.FC<IDirectoryProps> = ({
   deleteOrderItem,
 }): JSX.Element => {
   const [isOrdersOpen, setIsOrdersOpen] = useState<boolean>(true);
-  const [isIngredientsOpen, setIsIngredientsOpen] = useState<boolean>(true);
 
   return (
     <div className="directory">
@@ -76,31 +68,6 @@ const Directory: React.FC<IDirectoryProps> = ({
                     key={order.id}
                   />
                 ))}
-            </div>
-          )}
-        </div>
-        <div className="directory-content-folder">
-          <div
-            className="directory-content-folder-info"
-            onClick={() => setIsIngredientsOpen(!isIngredientsOpen)}
-          >
-            <ChevronRightIcon
-              style={{
-                transform: `rotate(${isIngredientsOpen ? "90deg" : "0deg"})`,
-              }}
-            />
-            <div>Ingredients</div>
-          </div>
-          {isIngredientsOpen && (
-            <div className="directory-content-folder-content">
-              {directory.foods.map((food: IFood) => (
-                <FoodsFolder
-                  food={food}
-                  stagedItems={stagedItems}
-                  modifiedItems={modifiedItems}
-                  key={food.id}
-                />
-              ))}
             </div>
           )}
         </div>

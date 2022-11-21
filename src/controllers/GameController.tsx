@@ -2,10 +2,10 @@ import React from "react";
 
 import { IGitTree } from "types/gitInterfaces";
 import { GameState } from "types/enums";
-import { defaultGit } from "data/defaultData";
+import { defaultGitTree } from "data/defaultGitTree";
 import { copyObjectWithoutRef } from "services/helpers";
 import { calculateRevenueAndCost } from "services/gameDataHelper";
-import { useGameData, setGameData } from "hooks/useGameData";
+import { setGameData, useGameData } from "hooks/useGameData";
 import WorkScreenController from "controllers/screens/WorkScreenController";
 import SummaryScreenController from "controllers/screens/SummaryScreenController";
 import UpgradeScreenController from "controllers/screens/UpgradeScreenController";
@@ -18,16 +18,18 @@ const GameController: React.FC = (): JSX.Element => {
     setGameData({
       ...gameData,
       gameState: GameState.SUMMARY,
-      cash: gameData.cash + (revenue - cost),
+      store: {
+        ...gameData.store,
+        cash: gameData.store.cash + (revenue - cost),
+      },
     });
   };
 
   const startDay = () => {
-    const foods = gameData.git.workingDirectory.foods;
-    const gitReset: IGitTree = copyObjectWithoutRef(defaultGit);
+    const gitReset: IGitTree = copyObjectWithoutRef(defaultGitTree);
     const gitUpdated: IGitTree = {
       ...gitReset,
-      workingDirectory: { ...gitReset.workingDirectory, foods: foods },
+      workingDirectory: { ...gitReset.workingDirectory },
     };
 
     setGameData({
@@ -82,6 +84,7 @@ const GameController: React.FC = (): JSX.Element => {
               onClick={() => {
                 localStorage.removeItem("git-cooking");
                 localStorage.removeItem("git-cooking-time");
+                location.reload();
               }}
             >
               Refresh local storage

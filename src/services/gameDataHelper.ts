@@ -1,11 +1,9 @@
-import { v4 } from "uuid";
-
-import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { IGitTree } from "types/gitInterfaces";
 import { objectsEqual } from "./helpers";
 import { IngredientType } from "types/enums";
+import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 
-export const getNewOrderItem = (order: IOrder, name: string): IOrderItem => {
+export const createNewOrderItem = (order: IOrder, name: string): IOrderItem => {
   return {
     name: name,
     path: `orders/${order.name}/${name}`,

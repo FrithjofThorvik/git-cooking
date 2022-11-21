@@ -1,40 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { IngredientType } from "types/enums";
 
-import {
-  FoodType,
-  IFood,
-  IIngredient,
-  IOrderItem,
-} from "types/gameDataInterfaces";
+import { IngredientType } from "types/enums";
+import { FoodType, IFood } from "types/foodInterfaces";
+import { IIngredient, IOrderItem } from "types/gameDataInterfaces";
 
 import "./ItemInterface.scss";
 
 interface IItemInterfaceProps {
   activeItem: IOrderItem | null;
   foods: IFood[];
-  addIngredientToOrderItem: (
+  modifyOrderItem: (
     orderItem: IOrderItem,
-    ingredient: IIngredient
+    data: {
+      type?: IngredientType;
+      addIngredient?: IIngredient;
+      removeIngredientAtIndex?: number;
+    }
   ) => void;
-  setOrderItemType: (orderItem: IOrderItem, type: IngredientType) => void;
-  removeIngredientFromOrderItem: (orderItem: IOrderItem, index: number) => void;
 }
 
 const ItemInterface: React.FC<IItemInterfaceProps> = ({
   activeItem,
   foods,
-  setOrderItemType,
-  addIngredientToOrderItem,
-  removeIngredientFromOrderItem,
+  modifyOrderItem,
 }): JSX.Element => {
-  const [availableIngredients, setAvailableIngredients] = useState<FoodType>();
-  const [ingredients, setIngredients] = useState<IIngredient[]>([]);
+  const [foodTypeIngredients, setFoodTypeIngredients] = useState<FoodType>();
 
   const handleTypeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     Object.values(IngredientType).forEach((val) => {
       if (val === e.target.value && activeItem) {
-        setOrderItemType(activeItem, val);
+        modifyOrderItem(activeItem, { type: val });
       }
     });
   };
@@ -42,7 +37,7 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
   useEffect(() => {
     for (let i = 0; i < foods.length; i++) {
       if (foods[i].type === activeItem?.type) {
-        setAvailableIngredients(foods[i].ingredients);
+        setFoodTypeIngredients(foods[i].ingredients);
       }
     }
   }, [activeItem?.type]);
@@ -78,21 +73,27 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
               <div
                 key={i}
                 className="item-interface-section-ingredients-ingredient"
-                onClick={() => removeIngredientFromOrderItem(activeItem, i)}
+                onClick={() =>
+                  modifyOrderItem(activeItem, { removeIngredientAtIndex: i })
+                }
               >
                 {ing.name}
               </div>
             ))}
         </div>
-        {availableIngredients &&
-          Object.values(availableIngredients).map((ing, i) => (
-            <button
-              key={i}
-              onClick={() => addIngredientToOrderItem(activeItem, ing)}
-            >
-              {ing.name}
-            </button>
-          ))}
+        {foodTypeIngredients &&
+          Object.values(foodTypeIngredients)
+            .filter((i) => i.purchased)
+            .map((ing, i) => (
+              <button
+                key={i}
+                onClick={() =>
+                  modifyOrderItem(activeItem, { addIngredient: ing })
+                }
+              >
+                {ing.name}
+              </button>
+            ))}
       </div>
     </div>
   );

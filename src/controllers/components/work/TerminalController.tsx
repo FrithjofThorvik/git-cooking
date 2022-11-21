@@ -3,7 +3,7 @@ import React from "react";
 import { git } from "services/git";
 import { IGitResponse } from "types/interfaces";
 import { IGitCooking } from "types/gameDataInterfaces";
-import { useGameData, setGameData } from "hooks/useGameData";
+import { setGameData, useGameData } from "hooks/useGameData";
 import Terminal from "components/work/Terminal";
 
 interface ITerminalControllerProps {}

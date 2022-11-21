@@ -1,4 +1,3 @@
-import { IOrderItem } from "types/gameDataInterfaces";
 import { IArcProgressClock } from "types/interfaces";
 
 var _ = require("lodash");
@@ -53,9 +52,6 @@ export const formatClock = (
     color: progress === 1 ? "#dc3c76" : "#14c299",
   };
 };
-
-export const isOrderItem = (arg: any): arg is IOrderItem =>
-  arg.orderId !== undefined;
 
 export const randomIntFromInterval = (min: number, max: number): number => {
   // min and max included

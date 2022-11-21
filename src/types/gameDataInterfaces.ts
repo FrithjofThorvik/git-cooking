@@ -1,9 +1,21 @@
+import { IFood } from "./foodInterfaces";
+import { IGitTree } from "./gitInterfaces";
 import { GameState, IngredientType, UpgradeType } from "./enums";
-import { IGitTree, ICommit } from "./gitInterfaces";
 
 export interface IDirectory {
   orders: IOrder[];
-  foods: IFood[];
+  deleteOrderItem: (orderItem: IOrderItem) => IDirectory;
+  modifyOrderItem: (
+    orderItem: IOrderItem,
+    data: {
+      type?: IngredientType;
+      addIngredient?: IIngredient;
+      removeIngredientAtIndex?: number;
+    },
+    modify: (orderItem: IOrderItem) => void
+  ) => IDirectory;
+  createOrderFolder: (order: IOrder) => IDirectory;
+  addOrderItemToOrder: (order: IOrder, orderItem: IOrderItem) => IDirectory;
 }
 
 export interface IOrderItem {
@@ -22,68 +34,40 @@ export interface IOrder {
   timeEnd: number;
   orderItems: IOrderItem[];
   items: IOrderItem[];
+  addItemToOrders: (item: IOrderItem) => IOrder;
 }
 
-export type Item = IOrderItem | IIngredient;
+export interface IStore {
+  foods: IFood[];
+  upgrades: IUpgrade[];
+  cash: number;
+  purchaseIngredient: (ingredient: IIngredient) => IStore;
+  purchaseUpgrade: (upgrade: IUpgrade) => IStore;
+}
 
-export interface IFood {
+export interface IPurchasable {
   id: string;
   name: string;
-  unlocked: boolean;
-  type: IngredientType;
-  builder: (ingredients: FoodType) => IIngredient[];
-  ingredients: FoodType;
-}
-
-export type FoodType = IBurger | IFries;
-
-export interface FoodDict {
-  [key: string]: IIngredient;
-}
-
-export interface IBurger extends FoodDict {
-  bunTop: IIngredient;
-  paddy: IIngredient;
-  salad: IIngredient;
-  onions: IIngredient;
-  bunBottom: IIngredient;
-}
-
-export interface IFries extends FoodDict {
-  cheese: IIngredient;
-  normal: IIngredient;
-}
-
-export interface IIngredient {
-  name: string;
   cost: number;
-  path: string;
   image: string;
   purchased: boolean;
+}
+
+export interface IIngredient extends IPurchasable {
   type: IngredientType;
 }
 
-export interface IUpgrade {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  purchased: boolean;
+export interface IUpgrade extends IPurchasable {
+  type: UpgradeType;
   unlocked: boolean;
   description: string;
-  type: UpgradeType;
-}
-
-export interface ICommitHistory {
-  commits: ICommit[];
 }
 
 export interface IGitCooking {
   day: number;
-  cash: number;
-  baseDayLength: number;
-  gameState: GameState;
-  upgrades: IUpgrade[];
-  selectedItems: string[];
   git: IGitTree;
+  store: IStore;
+  gameState: GameState;
+  baseDayLength: number;
+  selectedItems: string[];
 }

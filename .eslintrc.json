@@ -12,8 +12,18 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["react", "@typescript-eslint", "prettier"],
-  "rules": {},
+  "plugins": ["react", "@typescript-eslint", "prettier", "unused-imports"],
+  "rules": {
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "unused-imports/no-unused-imports": "error",
+    "sort-imports": [
+      "error",
+      {
+        "ignoreDeclarationSort": true
+      }
+    ]
+  },
   "settings": {
     "react": {
       "version": "detect"

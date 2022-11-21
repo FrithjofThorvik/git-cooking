@@ -23,7 +23,7 @@ const UpgradeCard: React.FC<IUpgradeCardProps> = ({
         upgrade.purchased
           ? "purchased"
           : upgrade.unlocked
-          ? cash >= upgrade.price
+          ? cash >= upgrade.cost
             ? ""
             : "notafford"
           : "locked"
@@ -52,7 +52,7 @@ const UpgradeCard: React.FC<IUpgradeCardProps> = ({
               ) : (
                 <p className="card-content-buy-button-price">
                   <PaidOutlinedIcon />
-                  {upgrade.price}
+                  {upgrade.cost}
                 </p>
               )}
             </button>
