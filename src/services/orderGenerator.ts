@@ -45,7 +45,6 @@ class OrderGenerator {
     // Generate the orderItems
     const orderItems: IOrderItem[] = choosenItems.map((item) => {
       return {
-        id: v4(),
         name: item.name,
         orderId: orderId,
         path: `${pathPrefx}/${item.name}`,
@@ -63,11 +62,6 @@ class OrderGenerator {
       isCreated: false,
       orderItems: orderItems,
       items: [],
-      addItemToOrders: function (item) {
-        let copy = this;
-        copy.items.push(item);
-        return copy;
-      },
     };
   };
 

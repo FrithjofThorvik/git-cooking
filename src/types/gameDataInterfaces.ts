@@ -34,7 +34,6 @@ export interface IOrder {
   timeEnd: number;
   orderItems: IOrderItem[];
   items: IOrderItem[];
-  addItemToOrders: (item: IOrderItem) => IOrder;
 }
 
 export interface IStore {
