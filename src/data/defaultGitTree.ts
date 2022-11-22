@@ -1,11 +1,6 @@
 import { v4 } from "uuid";
 
 import {
-  getIndexOfOrder,
-  getIndexOfOrderItem,
-  getOrderFromOrderItem,
-} from "services/gameDataHelper";
-import {
   IDirectory,
   IIngredient,
   IOrder,
@@ -97,7 +92,7 @@ export const defaultGitTree: IGitTree = {
   workingDirectory: copyObjectWithoutRef(defaultDirectory),
   stagedItems: [],
   modifiedItems: [],
-  branchIsActive: function (branchName: string) {
+  isBranchActive: function (branchName: string) {
     return this.HEAD.targetId === branchName;
   },
   getCommitFromId: function (commitId: string) {
@@ -134,7 +129,7 @@ export const defaultGitTree: IGitTree = {
     }
     return this.getCommitFromId(this.HEAD.targetId);
   },
-  branchNameExists: function (branchName: string) {
+  doesBranchNameExists: function (branchName: string) {
     for (let i = 0; i < this.branches.length; i++) {
       if (branchName === this.branches[i].name) return true;
     }
@@ -142,10 +137,9 @@ export const defaultGitTree: IGitTree = {
   },
   getBranch: function (branchName: string) {
     let branch: IBranch | null = null;
-    for (let i = 0; i < this.branches.length; i++) {
-      let currentBranch = this.branches[i];
-      if (branchName === currentBranch.name) branch = currentBranch;
-    }
+    this.branches.forEach((b) => {
+      if (branchName === b.name) branch = b;
+    });
     return branch;
   },
   getModifiedFile: function (path: string) {
@@ -154,39 +148,37 @@ export const defaultGitTree: IGitTree = {
       if (modifiedItem.item.path === path) return modifiedItem;
     }
   },
-  isItemModified: function (orderItem: IOrderItem, deleted = false) {
+  isItemModified: function (orderItem: IOrderItem, deleteItem = false) {
     let isModified: boolean = false;
     let isAdded: boolean = false;
-    const indexInStaged = this.stagedItems.findIndex(
-      (s) => s.item.path === orderItem.path
-    );
 
-    if (indexInStaged != -1) {
-      // compare with staged
-      const staged = this.stagedItems[indexInStaged];
-      if (staged.deleted && !deleted) {
-        isAdded = true;
-      } else if (!(staged.deleted && deleted)) {
-        isModified = !objectsEqual(staged.item, orderItem);
-      }
-    } else {
-      // compare with past commit
-      const parentCommit = this.getHeadCommit();
-      const prevDirectory = parentCommit?.directory;
-
-      if (prevDirectory) {
-        const order = getOrderFromOrderItem(prevDirectory.orders, orderItem);
-        if (!order) isAdded = true;
-        else {
-          const indexOfOrder = getIndexOfOrder(prevDirectory.orders, order);
-          const indexOfOrderItem = getIndexOfOrderItem(order, orderItem);
-
-          if (indexOfOrderItem === -1) isAdded = true;
-          let prevItem =
-            prevDirectory.orders[indexOfOrder].items[indexOfOrderItem];
-          isModified = !objectsEqual(prevItem, orderItem);
+    let itemIsInStaged = false;
+    this.stagedItems.forEach((staged) => {
+      if (staged.item.path === orderItem.path) {
+        itemIsInStaged = true;
+        if (staged.deleted && !deleteItem) {
+          isAdded = true;
+        } else if (!(staged.deleted && deleteItem)) {
+          isModified = !objectsEqual(staged.item, orderItem);
         }
       }
+    });
+
+    if (!itemIsInStaged) {
+      isAdded = true; // assumed a new file was added
+
+      // compare with past commit
+      const parentCommit = this.getHeadCommit();
+      parentCommit?.directory?.orders.forEach((o) => {
+        if (o.id === orderItem.orderId) {
+          o.items.forEach((i) => {
+            if (i.path === orderItem.path) {
+              isAdded = false; // the item existed before
+              isModified = !objectsEqual(i, orderItem);
+            }
+          });
+        }
+      });
     }
 
     return {
@@ -201,98 +193,114 @@ export const defaultGitTree: IGitTree = {
     const modification = this.isItemModified(orderItem, deleteItem);
 
     const updateModifiedItem = (added: boolean, deleted: boolean) => {
-      const indexInModified = newModifiedItems.findIndex(
-        (i) => i.item.path === orderItem.path
-      );
       let newItem = {
         item: orderItem,
         added: added,
         deleted: deleted,
       };
-      if (deleted && added) {
-        newModifiedItems = newModifiedItems.filter(
-          (i) => i.item.path !== orderItem.path
-        );
-      } else if (indexInModified === -1) {
+
+      let itemInModified = false;
+      newModifiedItems.forEach((modifiedItem, index) => {
+        if (modifiedItem.item.path === orderItem.path) {
+          itemInModified = true;
+          // added, or deleted, in modified -> update item
+          newModifiedItems[index] = newItem;
+        }
+      });
+
+      if (!itemInModified) {
+        // not in modified -> add to modified
         newModifiedItems = this.modifiedItems.concat([newItem]);
-      } else {
-        newModifiedItems[indexInModified] = newItem;
       }
     };
 
-    if (modification.modified || modification.added || deleteItem) {
+    // if added then deleted -> not modified
+    if (
+      modification.modified || modification.added ? !deleteItem : deleteItem
+    ) {
       updateModifiedItem(modification.added, deleteItem);
     } else {
       newModifiedItems = newModifiedItems.filter(
         (i) => i.item.path != orderItem.path
       );
     }
+
     return copyObjectWithoutRef(newModifiedItems);
   },
-  addStagedOnPrevDirectory: function (prevDirectory: IDirectory) {
-    let newDirectory: IDirectory = copyObjectWithoutRef(prevDirectory);
-    const safeCopyWorkingDirectory: IDirectory = copyObjectWithoutRef(
-      this.workingDirectory
-    );
-
-    this.stagedItems.forEach((stagedItem) => {
-      const item = copyObjectWithoutRef(stagedItem.item);
-      let relatedOrderIndex = newDirectory.orders.findIndex(
-        (o) => o.id === item.orderId
+  commit: function (commitMessage: string) {
+    const getNewCommit = (commitMessage: string) => {
+      const parentCommit: ICommit | undefined = copyObjectWithoutRef(
+        this.getHeadCommit()
       );
+      let newCommit: ICommit = {
+        id: v4(),
+        message: commitMessage,
+        parents: [],
+        directory: this.workingDirectory,
+      };
 
-      // if order did not exist -> add it to new directory from working directory
-      if (relatedOrderIndex === -1) {
-        let newRelatedOrder = safeCopyWorkingDirectory.orders.find(
-          (o) => o.id === item.orderId
-        );
+      if (parentCommit) {
+        newCommit.parents = [parentCommit.id];
+        const prevDirectory = copyObjectWithoutRef(parentCommit.directory);
 
-        if (newRelatedOrder) {
-          newRelatedOrder.items = [item];
-          newDirectory.orders.push(newRelatedOrder);
-          relatedOrderIndex = newDirectory.orders.findIndex(
-            (o) => o.id === newRelatedOrder?.id
-          );
+        if (prevDirectory) {
+          const addStagedOnPrevDirectory = (
+            prevCommitDirectory: IDirectory
+          ) => {
+            let newCommitDirectory: IDirectory =
+              copyObjectWithoutRef(prevCommitDirectory);
+            const safeCopyWorkingDirectory: IDirectory = copyObjectWithoutRef(
+              this.workingDirectory
+            );
+
+            this.stagedItems.forEach((stagedItem) => {
+              const item = copyObjectWithoutRef(stagedItem.item);
+
+              let existsInOrders = false;
+              newCommitDirectory.orders.forEach((o, orderIndex) => {
+                if (o.id === item.orderId) {
+                  existsInOrders = true;
+                  let existsInItems = false;
+
+                  o.items.forEach((i, itemIndex) => {
+                    if (i.path === item.path) {
+                      existsInItems = true;
+                      // update the item
+                      newCommitDirectory.orders[orderIndex].items[itemIndex] =
+                        item;
+                    }
+                  });
+
+                  if (!existsInItems) {
+                    // add the item to new directory
+                    newCommitDirectory.orders[orderIndex].items.push(item);
+                  }
+                }
+              });
+
+              // if order did not exist -> add it to new directory from working directory
+              if (!existsInOrders) {
+                safeCopyWorkingDirectory.orders.forEach((o) => {
+                  if (o.id === item.orderId) {
+                    o.items = [item];
+                    newCommitDirectory.orders.push(o);
+                  }
+                });
+              }
+            });
+
+            return newCommitDirectory;
+          };
+
+          // Update directory with staged files
+          newCommit.directory = addStagedOnPrevDirectory(prevDirectory);
         }
       }
 
-      const prevItemIndex = newDirectory.orders[
-        relatedOrderIndex
-      ].items.findIndex((i) => i.path === item.path);
-
-      if (prevItemIndex === -1) {
-        // add the item to new directory
-        newDirectory.orders[relatedOrderIndex].items.push(item);
-      } else {
-        // update the item
-        newDirectory.orders[relatedOrderIndex].items[prevItemIndex] = item;
-      }
-    });
-
-    return newDirectory;
-  },
-  getNewCommit: function (commitMessage: string) {
-    const parentCommit = copyObjectWithoutRef(this.getHeadCommit());
-    let newCommit: ICommit = {
-      id: v4(),
-      message: commitMessage,
-      parents: [],
-      directory: this.workingDirectory,
+      return newCommit;
     };
-    if (parentCommit) {
-      newCommit.parents = [parentCommit.id];
-      const prevDirectory = copyObjectWithoutRef(parentCommit.directory);
 
-      if (prevDirectory) {
-        // Update directory with staged files
-        newCommit.directory = this.addStagedOnPrevDirectory(prevDirectory);
-      }
-    }
-
-    return newCommit;
-  },
-  getGitTreeWithNewCommit: function (commitMessage: string) {
-    const newCommit = this.getNewCommit(commitMessage);
+    const newCommit = getNewCommit(commitMessage);
     let copyGit: IGitTree = copyObjectWithoutRef(this);
 
     // add new commit
@@ -315,8 +323,8 @@ export const defaultGitTree: IGitTree = {
 
     return copyGit;
   },
-  getGitTreeWithSwitchedBranch: function (branchName: string) {
-    if (!this.branchNameExists(branchName)) return this;
+  switchBranch: function (branchName: string) {
+    if (!this.doesBranchNameExists(branchName)) return this;
 
     let copyGit: IGitTree = copyObjectWithoutRef(this);
     copyGit.HEAD.targetId = branchName;
@@ -353,29 +361,7 @@ export const defaultGitTree: IGitTree = {
       return { item: restoredOrderItem };
     }
   },
-  updateExistingOrAddNew: function (
-    modifiedItem: IModifiedItem,
-    newArray: IModifiedItem[]
-  ) {
-    const indexInStaged = newArray.findIndex(
-      (s) => s.item.path === modifiedItem.item.path
-    );
-
-    // if modified item is in array
-    if (indexInStaged != -1) {
-      // update item
-      if (modifiedItem.deleted)
-        newArray = newArray.filter(
-          (i) => i.item.path != modifiedItem.item.path
-        );
-      else newArray[indexInStaged] = modifiedItem;
-    } else {
-      // add item
-      newArray.push(modifiedItem);
-    }
-    return newArray;
-  },
-  getGitTreeWithNewBranch: function (branchName: string) {
+  addNewBranch: function (branchName: string) {
     let copyGit: IGitTree = copyObjectWithoutRef(this);
     const activeCommit = this.getHeadCommit();
     if (activeCommit) {
@@ -388,13 +374,44 @@ export const defaultGitTree: IGitTree = {
       copyGit.branches.push(newBranch);
 
       // switch branch
-      copyGit = copyGit.getGitTreeWithSwitchedBranch(newBranch.name);
+      copyGit = copyGit.switchBranch(newBranch.name);
     }
     return copyGit;
   },
-  getGitTreeWithStagedItem: function (itemToStage: IModifiedItem) {
+  stageItem: function (itemToStage: IModifiedItem) {
+    const updateExistingOrAddNew = (
+      itemToStage: IModifiedItem,
+      stagedItems: IModifiedItem[]
+    ) => {
+      const indexInStaged = stagedItems.findIndex(
+        (x) => x.item.path === itemToStage.item.path
+      );
+
+      // if itemToStage is in staged
+      if (indexInStaged != -1) {
+        // update item
+        if (itemToStage.deleted) {
+          stagedItems = stagedItems.filter(
+            (i) => i.item.path != itemToStage.item.path
+          );
+        } else if (itemToStage.added && stagedItems[indexInStaged].deleted) {
+          // if deleted in staged, but added in modified -> modified in staged
+          let newItemToStage = itemToStage;
+          newItemToStage.added = false;
+          newItemToStage.deleted = false;
+          stagedItems[indexInStaged] = newItemToStage;
+        } else {
+          stagedItems[indexInStaged] = itemToStage;
+        }
+      } else {
+        // add item
+        stagedItems.push(itemToStage);
+      }
+      return stagedItems;
+    };
+
     let copyGit: IGitTree = copyObjectWithoutRef(this);
-    const newStagedItems = this.updateExistingOrAddNew(
+    const newStagedItems = updateExistingOrAddNew(
       itemToStage,
       copyObjectWithoutRef(this.stagedItems)
     );
@@ -409,10 +426,10 @@ export const defaultGitTree: IGitTree = {
     copyGit.modifiedItems = copyObjectWithoutRef(newModifiedItems);
     return copyGit;
   },
-  getGitTreeWithAllStagedItems: function () {
+  stageAllItems: function () {
     let copyGit: IGitTree = copyObjectWithoutRef(this);
     this.modifiedItems.forEach((modifiedItem: IModifiedItem) => {
-      copyGit = copyGit.getGitTreeWithStagedItem(modifiedItem);
+      copyGit = copyGit.stageItem(modifiedItem);
     });
     return copyGit;
   },
@@ -424,29 +441,31 @@ export const defaultGitTree: IGitTree = {
     const restored = copyGit.getRestoredFile(itemToRestore);
     const restoredItem = restored?.item;
 
-    const relatedOrderIndex = copyGit.workingDirectory.orders.findIndex(
-      (o) => o.id === itemToRestore.orderId
-    );
+    // if restored item doesn't exist or is delted -> remove it
     if (restoredItem === undefined || restored?.deleted) {
-      copyGit.workingDirectory.orders[relatedOrderIndex].items =
-        copyGit.workingDirectory.orders[relatedOrderIndex].items.filter(
-          (i) => i.path !== itemToRestore.path
-        );
+      copyGit.workingDirectory.orders.forEach((o) => {
+        if (o.id === itemToRestore.orderId) {
+          o.items = o.items.filter((i) => i.path !== itemToRestore.path);
+        }
+      });
     } else {
       if (modifiedItem.deleted) {
-        copyGit.workingDirectory.orders[relatedOrderIndex].items =
-          copyGit.workingDirectory.orders[relatedOrderIndex].items.concat([
-            restoredItem,
-          ]);
+        // if itemToRestore deleted -> restore item
+        copyGit.workingDirectory.orders.forEach((o) => {
+          if (o.id === itemToRestore.orderId) {
+            o.items.push(restoredItem);
+          }
+        });
       } else {
-        const itemToRestoreIndex = getIndexOfOrderItem(
-          copyGit.workingDirectory.orders[relatedOrderIndex],
-          itemToRestore
-        );
-
-        copyGit.workingDirectory.orders[relatedOrderIndex].items[
-          itemToRestoreIndex
-        ] = restoredItem;
+        // update the item with the restored item
+        copyGit.workingDirectory.orders.forEach((o) => {
+          if (o.id === itemToRestore.orderId) {
+            o.items.forEach((i, index) => {
+              if (i.path === itemToRestore.path)
+                o.items[index] = copyObjectWithoutRef(restoredItem);
+            });
+          }
+        });
       }
     }
     const newModifiedItems = copyGit.modifiedItems.filter(
