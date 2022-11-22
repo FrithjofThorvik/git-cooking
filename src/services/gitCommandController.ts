@@ -50,7 +50,7 @@ export const gitCommands: ICommandArg[] = [
           if (typeof branchName !== "string")
             return gitRes(`Error: '${branchName} is invalid'`, false);
 
-          if (gameData.git.branchIsActive(branchName))
+          if (gameData.git.isBranchActive(branchName))
             return gitRes(`Error: already on ${branchName}`, false);
 
           if (
@@ -67,8 +67,9 @@ export const gitCommands: ICommandArg[] = [
             return gitRes(`Error: '${branchName} does not exist'`, false);
 
           // switch branch
-          const gitTreeWithSwitchedBranch =
-            gameData.git.getGitTreeWithSwitchedBranch(newBranch.name);
+          const gitTreeWithSwitchedBranch = gameData.git.switchBranch(
+            newBranch.name
+          );
 
           setGameData({
             ...gameData,
@@ -89,11 +90,11 @@ export const gitCommands: ICommandArg[] = [
               if (typeof branchName !== "string")
                 return gitRes(`Error: '${branchName} is an invalid'`, false);
 
-              if (gameData.git.branchNameExists(branchName))
+              if (gameData.git.doesBranchNameExists(branchName))
                 return gitRes(`Error: '${branchName} already exist'`, false);
 
               const gitTreeWithNewBranch =
-                gameData.git.getGitTreeWithNewBranch(branchName);
+                gameData.git.addNewBranch(branchName);
 
               setGameData({ ...gameData, git: gitTreeWithNewBranch });
 
@@ -122,8 +123,7 @@ export const gitCommands: ICommandArg[] = [
           if (!itemToStage)
             return gitRes(`Error: '${path}' did not match any files`, false);
 
-          const updatedGitTree =
-            gameData.git.getGitTreeWithStagedItem(itemToStage);
+          const updatedGitTree = gameData.git.stageItem(itemToStage);
 
           setGameData({
             ...gameData,
@@ -140,7 +140,7 @@ export const gitCommands: ICommandArg[] = [
           if (gameData.git.modifiedItems.length === 0)
             return gitRes("Error: No files have been modified", false);
 
-          let updatedGitTree = gameData.git.getGitTreeWithAllStagedItems();
+          let updatedGitTree = gameData.git.stageAllItems();
 
           setGameData({
             ...gameData,
@@ -171,7 +171,7 @@ export const gitCommands: ICommandArg[] = [
                 return gitRes("Error: nothing to commit", false);
 
               const nrItemsToCommit = gameData.git.stagedItems.length;
-              const updatedGit = gameData.git.getGitTreeWithNewCommit(message);
+              const updatedGit = gameData.git.commit(message);
 
               setGameData({
                 ...gameData,

@@ -40,27 +40,27 @@ const modifyOrderItem = (
 
 let git: IGitTree;
 let burger: IFood;
-describe("restore", () => {
-  beforeEach(() => {
-    git = defaultGameData.git;
+beforeEach(() => {
+  git = defaultGameData.git;
 
-    /** Create a order to be used in testing**/
-    let newOrder: IOrder = {
-      id: "id",
-      name: "test folder",
-      timeStart: 0,
-      timeEnd: 1,
-      isCreated: false,
-      orderItems: [],
-      items: [],
-    };
-    const newOrderItem: IOrderItem = createNewOrderItem(newOrder, "test item");
-    burger = defaultGameData.store.foods[0];
-    newOrderItem.ingredients = burger.builder();
-    newOrder.orderItems = [newOrderItem];
-    git.workingDirectory.orders = [newOrder];
-    git.workingDirectory = git.workingDirectory.createOrderFolder(newOrder);
-  });
+  /** Create a order to be used in testing**/
+  let newOrder: IOrder = {
+    id: "id",
+    name: "test folder",
+    timeStart: 0,
+    timeEnd: 1,
+    isCreated: false,
+    orderItems: [],
+    items: [],
+  };
+  const newOrderItem: IOrderItem = createNewOrderItem(newOrder, "test item");
+  burger = defaultGameData.store.foods[0];
+  newOrderItem.ingredients = burger.builder();
+  newOrder.orderItems = [newOrderItem];
+  git.workingDirectory.orders = [newOrder];
+  git.workingDirectory = git.workingDirectory.createOrderFolder(newOrder);
+});
+describe("restore", () => {
   test("new file -> should not restore", () => {
     // create new file
     const newOrderItem = createNewFile(git, "test item");
@@ -93,7 +93,7 @@ describe("restore", () => {
     const newOrderItem = createNewFile(git, "test item");
 
     // stage the file
-    git = git.getGitTreeWithAllStagedItems();
+    git = git.stageAllItems();
 
     // modify file
     const ingredient = burger.ingredients.paddy;
@@ -140,7 +140,7 @@ describe("restore", () => {
     const newOrderItem = createNewFile(git, "test item");
 
     // stage the file
-    git = git.getGitTreeWithAllStagedItems();
+    git = git.stageAllItems();
 
     // delete file
     deleteFile(git, newOrderItem);
@@ -180,10 +180,10 @@ describe("restore", () => {
     const newOrderItem = createNewFile(git, "test item");
 
     // stage the file
-    git = git.getGitTreeWithAllStagedItems();
+    git = git.stageAllItems();
 
     // commit the file
-    git = git.getGitTreeWithNewCommit("first commit");
+    git = git.commit("first commit");
 
     // modify file
     const ingredient = burger.ingredients.paddy;
@@ -229,10 +229,10 @@ describe("restore", () => {
     const newOrderItem = createNewFile(git, "test item");
 
     // stage the file
-    git = git.getGitTreeWithAllStagedItems();
+    git = git.stageAllItems();
 
     // commit the file
-    git = git.getGitTreeWithNewCommit("first commit");
+    git = git.commit("first commit");
 
     // delete file
     deleteFile(git, newOrderItem);
@@ -277,10 +277,10 @@ describe("restore", () => {
     const newOrderItem = createNewFile(git, "test item");
 
     // stage the file
-    git = git.getGitTreeWithAllStagedItems();
+    git = git.stageAllItems();
 
     // commit the file
-    git = git.getGitTreeWithNewCommit("first commit");
+    git = git.commit("first commit");
 
     // delete file
     deleteFile(git, newOrderItem);
@@ -291,7 +291,7 @@ describe("restore", () => {
     );
 
     // stage the deleted file
-    git = git.getGitTreeWithAllStagedItems();
+    git = git.stageAllItems();
 
     // should not be in modified items array
     expect(git.modifiedItems).not.toContainEqual({
@@ -327,6 +327,191 @@ describe("restore", () => {
     expect(git.stagedItems).toContainEqual({
       added: false,
       deleted: true,
+      item: newOrderItem,
+    });
+  });
+});
+describe("staging", () => {
+  test("new file + stage + modify + stage -> should be added in stagedItems, and modified in modifiedItems", () => {
+    // create new file
+    const newOrderItem = createNewFile(git, "test item");
+
+    // should be in modified
+    expect(git.modifiedItems).toContainEqual({
+      added: true,
+      deleted: false,
+      item: newOrderItem,
+    });
+
+    // working directory should relfect the changes
+    expect(git.workingDirectory.orders[0].items).toContainEqual(newOrderItem);
+
+    // stage the file
+    git = git.stageAllItems();
+
+    // stage now contain the item
+    expect(git.stagedItems).toContainEqual({
+      added: true,
+      deleted: false,
+      item: newOrderItem,
+    });
+
+    // should not be in modified
+    expect(git.modifiedItems).not.toContainEqual({
+      added: true,
+      deleted: false,
+      item: newOrderItem,
+    });
+
+    // working directory should should still have the file
+    expect(git.workingDirectory.orders[0].items).toContainEqual(newOrderItem);
+
+    // modify file
+    const ingredient = burger.ingredients.paddy;
+    modifyOrderItem(git, newOrderItem, {
+      addIngredient: ingredient,
+    });
+
+    // should be in modified, but not added
+    expect(git.modifiedItems).toContainEqual({
+      added: false,
+      deleted: false,
+      item: {
+        ...newOrderItem,
+        ingredients: [ingredient],
+      },
+    });
+
+    // stage should not contain the new change
+    expect(git.stagedItems).not.toContainEqual({
+      added: false,
+      deleted: false,
+      item: {
+        ...newOrderItem,
+        ingredients: [ingredient],
+      },
+    });
+
+    // stage the file
+    git = git.stageAllItems();
+
+    // stage now contain the item
+    expect(git.stagedItems).toContainEqual({
+      added: false,
+      deleted: false,
+      item: {
+        ...newOrderItem,
+        ingredients: [ingredient],
+      },
+    });
+
+    // should not be in modified
+    expect(git.modifiedItems).not.toContainEqual({
+      added: false,
+      deleted: false,
+      item: {
+        ...newOrderItem,
+        ingredients: [ingredient],
+      },
+    });
+
+    // working directory should should still have the file
+    expect(git.workingDirectory.orders[0].items).toContainEqual({
+      ...newOrderItem,
+      ingredients: [ingredient],
+    });
+  });
+  test("new file + stage + delete -> should be added in stagedItems, but deleted in modifiedItems", () => {
+    // create new file
+    const newOrderItem = createNewFile(git, "test item");
+
+    // stage the file
+    git = git.stageAllItems();
+
+    // delete file
+    deleteFile(git, newOrderItem);
+
+    // should be deleted in modified
+    expect(git.modifiedItems).toContainEqual({
+      added: false,
+      deleted: true,
+      item: newOrderItem,
+    });
+
+    // should be added in staged
+    expect(git.stagedItems).toContainEqual({
+      added: true,
+      deleted: false,
+      item: newOrderItem,
+    });
+
+    // working directory should not still have the file
+    expect(git.workingDirectory.orders[0].items).not.toContainEqual(
+      newOrderItem
+    );
+  });
+  test("new file + stage + commit + delete + stage + new file, same name -> should be deleted in stagedItems, but added in modifiedItems", () => {
+    // create new file
+    const newOrderItem = createNewFile(git, "test item");
+
+    // stage the file
+    git = git.stageAllItems();
+
+    // commit the file
+    git = git.commit("first commit");
+
+    // delete file
+    deleteFile(git, newOrderItem);
+
+    // stage the change
+    git = git.stageAllItems();
+
+    // create a new file with same name
+    const newerOrderItem = createNewFile(git, "test item");
+
+    // should be added in modified
+    expect(git.modifiedItems).toContainEqual({
+      added: true,
+      deleted: false,
+      item: newerOrderItem,
+    });
+
+    // should be deleted in staged
+    expect(git.stagedItems).toContainEqual({
+      added: false,
+      deleted: true,
+      item: newOrderItem,
+    });
+
+    // working directory should have the new file
+    expect(git.workingDirectory.orders[0].items).toContainEqual(newerOrderItem);
+  });
+  test("new file + stage + commit + delete + stage + new file, same name + add -> should be modified in stagedItems", () => {
+    // create new file
+    const newOrderItem = createNewFile(git, "test item");
+
+    // stage the file
+    git = git.stageAllItems();
+
+    // commit the file
+    git = git.commit("first commit");
+
+    // delete file
+    deleteFile(git, newOrderItem);
+
+    // stage the change
+    git = git.stageAllItems();
+
+    // create a new file with same name
+    const newerOrderItem = createNewFile(git, "test item");
+
+    // stage the change
+    git = git.stageAllItems();
+
+    // should be modified in staged
+    expect(git.stagedItems).toContainEqual({
+      added: false,
+      deleted: false,
       item: newOrderItem,
     });
   });
