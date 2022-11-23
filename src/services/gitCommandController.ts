@@ -1,6 +1,7 @@
 import { ICommandArg } from "types/interfaces";
 import { IOrderItem } from "types/gameDataInterfaces";
 import { gitCommandDoesNotExist, gitRes } from "services/git";
+import { GameState } from "types/enums";
 
 export const gitCommands: ICommandArg[] = [
   {
@@ -33,7 +34,16 @@ export const gitCommands: ICommandArg[] = [
         cmd: () => {
           localStorage.removeItem("git-cooking");
           localStorage.removeItem("git-cooking-time");
+          location.reload();
           return gitRes("Removed localstorage. Please refresh page...", true);
+        },
+      },
+      {
+        key: "end-day",
+        args: [],
+        cmd: (gameData, setGameData) => {
+          setGameData({ ...gameData, gameState: GameState.SUMMARY });
+          return gitRes("Ended day", true);
         },
       },
     ],

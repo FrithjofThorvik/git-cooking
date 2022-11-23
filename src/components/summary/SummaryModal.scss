@@ -1,45 +1,52 @@
 @import "styles/imports/colors";
+@import "styles/imports/mixins";
 
 .summary-modal {
+  @include blurBackground;
   margin: auto;
-  width: 500px;
+  overflow: hidden;
+  border: 5px solid $gray;
+  box-shadow: 0 10px 5px 2px rgba($black, 0.6);
+  width: 400px;
   height: 500px;
-  border-radius: 50px;
+  border-radius: 75px;
+  color: $white;
 
   &-content {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     font-size: 32px;
-    text-align: center;
 
     p {
       margin: 0;
     }
 
     &-top {
-      padding: 0 50px 0 50px;
       box-sizing: border-box;
       height: 80%;
       width: 100%;
+      padding: 0 50px;
 
       &-title {
         display: flex;
         flex-direction: column;
         justify-content: center;
         font-size: 64px;
-        font-weight: bolder;
-        height: 30%;
+        font-weight: 900;
+        margin-top: 50px;
       }
 
       &-text {
-        width: 100%;
-        height: 70%;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        width: 90%;
+        margin: 0 auto;
+        margin-top: 50px;
 
         &-line {
           display: flex;
@@ -49,25 +56,23 @@
     }
 
     &-bottom {
-      height: 20%;
-      width: 100%;
-      font-weight: bold;
-      height: 20%;
-      width: 100%;
       display: flex;
-      gap: 10px;
-      justify-content: center;
+      font-weight: bold;
       align-items: center;
-      border-top: 2px dashed $white;
+      justify-content: center;
+      border-top: 1px dashed $gray;
       background-color: rgba($black, 0.4);
+      gap: 10px;
+      width: 100%;
+      height: 20%;
     }
   }
 }
 
 .color-default {
-  color: $green;
+  color: $line-green;
 }
 
 .color-negative {
-  color: $red;
+  color: $line-red;
 }

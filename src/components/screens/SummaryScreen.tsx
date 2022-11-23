@@ -25,10 +25,10 @@ const SummaryScreen: React.FC<ISummaryScreenProps> = ({
       <SummaryModal day={day} cost={cost} revenue={revenue} />
       <div className="summary-screen-buttons">
         <div className="summary-screen-buttons-back-button">
-          <MenuButton onClick={goBack} text="BACK" type="default" />
+          <MenuButton onClick={goBack} text="Back" type="default" />
         </div>
         <div className="summary-screen-buttons-next-button">
-          <MenuButton onClick={goNext} text="NEXT" type="green" />
+          <MenuButton onClick={goNext} text="Next" type="green" />
         </div>
       </div>
     </div>

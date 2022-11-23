@@ -1,4 +1,5 @@
 import React from "react";
+import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 
 import "./MenuButton.scss";
 
@@ -15,7 +16,11 @@ const MenuButton: React.FC<IMenuButtonProps> = ({
 }): JSX.Element => {
   return (
     <button className={`menu-button ${type}`} onClick={onClick}>
-      {text}
+      {type === "default" && (
+        <ChevronRightOutlinedIcon style={{ transform: "rotate(180deg)" }} />
+      )}
+      <div>{text}</div>
+      {type === "green" && <ChevronRightOutlinedIcon />}
     </button>
   );
 };

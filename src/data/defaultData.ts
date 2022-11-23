@@ -6,7 +6,7 @@ import { defaultStore } from "./defaultStore";
 
 export const defaultGameData: IGitCooking = {
   day: 0,
-  baseDayLength: 600000, // in milliseconds
+  baseDayLength: 60000, // in milliseconds
   gameState: GameState.WORKING,
   selectedItems: [],
   store: copyObjectWithoutRef(defaultStore),

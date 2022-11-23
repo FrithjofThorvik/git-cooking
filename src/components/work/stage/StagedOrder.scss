@@ -1,21 +1,13 @@
 @import "styles/imports/colors";
+@import "styles/imports/mixins";
 
 .staged-order {
+  @include blurBackground;
   display: flex;
   align-items: center;
   flex-direction: column;
   box-sizing: border-box;
   justify-content: flex-start;
-  backdrop-filter: blur(20px);
-  background: radial-gradient(
-    90% 140% at 15% 21%,
-    rgba(165, 239, 255, 0.2) 0%,
-    rgba(110, 191, 244, 0.0447917) 77%,
-    rgba(70, 144, 213, 0) 100%
-  );
-  margin: 0 auto;
-  background-blend-mode: overlay, normal;
-  box-shadow: 0 5px 5px 2px rgba(#000, 0.2);
   width: 95%;
   padding: 10px 10px;
   border-radius: 10px;

@@ -1,6 +1,6 @@
 import { IFood } from "./foodInterfaces";
 import { IGitTree } from "./gitInterfaces";
-import { GameState, IngredientType, UpgradeType } from "./enums";
+import { GameState, GitCommandType, IngredientType } from "./enums";
 
 export interface IDirectory {
   orders: IOrder[];
@@ -39,9 +39,9 @@ export interface IOrder {
 export interface IStore {
   foods: IFood[];
   upgrades: IUpgrade[];
+  gitCommands: IGitCommand[];
   cash: number;
-  purchaseIngredient: (ingredient: IIngredient) => IStore;
-  purchaseUpgrade: (upgrade: IUpgrade) => IStore;
+  purchase: (purchasable: IPurchasable) => IStore;
 }
 
 export interface IPurchasable {
@@ -50,6 +50,9 @@ export interface IPurchasable {
   cost: number;
   image: string;
   purchased: boolean;
+  unlocked?: boolean;
+  description?: string;
+  gitCommandType?: GitCommandType;
 }
 
 export interface IIngredient extends IPurchasable {
@@ -57,9 +60,14 @@ export interface IIngredient extends IPurchasable {
 }
 
 export interface IUpgrade extends IPurchasable {
-  type: UpgradeType;
   unlocked: boolean;
   description: string;
+}
+
+export interface IGitCommand extends IPurchasable {
+  unlocked: boolean;
+  description: string;
+  gitCommandType: GitCommandType;
 }
 
 export interface IGitCooking {

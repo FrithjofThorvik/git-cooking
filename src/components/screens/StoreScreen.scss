@@ -1,0 +1,74 @@
+@import "styles/imports/colors";
+
+.store-screen {
+  display: flex;
+  background-image: url("../../assets/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 100vw;
+  height: 100vh;
+
+  &-left {
+    width: 200px;
+    min-width: 200px;
+  }
+
+  &-right {
+    box-sizing: border-box;
+    width: 80%;
+    padding: 0 50px 0 50px;
+
+    &-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 85%;
+
+      &-items {
+        display: flex;
+        overflow-x: scroll;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 50px;
+        width: 100%;
+        padding: 20px;
+
+        &::-webkit-scrollbar {
+          width: 90%;
+          height: 10px;
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-track {
+          display: none;
+          background-color: rgba($white, 0.1);
+          box-shadow: inset 0 0 5px 1px rgba($black, 0.6);
+          border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: rgba($gray, 1);
+          box-shadow: inset 0 0 6px rgba($black, 1);
+          border-radius: 10px;
+
+          &:hover {
+            box-shadow: inset 0 0 10px rgba($black, 1);
+          }
+        }
+      }
+    }
+
+    &-bottom {
+      width: 80%;
+      height: 15%;
+      margin: 25px auto;
+
+      &-buttons {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+  }
+}
