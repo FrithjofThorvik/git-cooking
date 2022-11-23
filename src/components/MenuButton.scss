@@ -1,23 +1,31 @@
 @import "../styles/imports/colors";
 
 .menu-button {
-  border-radius: 50px;
-  width: 200px;
-  height: 75px;
-  border: 5px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: $white;
-  font-size: 24px;
+  border: 3px solid;
+  width: 150px;
+  height: 45px;
+  font-size: 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 4px 0 rgba($black, 0.6);
 
   &:hover {
     cursor: pointer;
+    box-shadow: 0 2px 4px 0px rgba($black, 0.6);
+    transition: box-shadow 0.1s ease-in-out;
   }
 }
 .default {
-  background-color: $dark;
   border-color: $white;
+  background-color: $dark;
+  padding-right: 20px;
 }
 
 .green {
   background-color: $green;
   border-color: $line-green;
+  padding-left: 20px;
 }

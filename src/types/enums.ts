@@ -24,7 +24,7 @@ export enum IngredientType {
   DRINKS = "Drinks",
 }
 
-export enum UpgradeType {
+export enum PurchaseType {
   UPGRADES = "Upgrades",
   COMMANDS = "Git Commands",
   INGREDIENTS = "Ingredients",
@@ -35,4 +35,10 @@ export enum GitStatus {
   DELETED,
   MODIFIED,
   UNMODIFIED,
+}
+
+export enum GitCommandType {
+  RESTORE,
+  CHECKOUT,
+  BRANCH,
 }

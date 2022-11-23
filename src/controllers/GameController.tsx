@@ -8,7 +8,7 @@ import { calculateRevenueAndCost } from "services/gameDataHelper";
 import { setGameData, useGameData } from "hooks/useGameData";
 import WorkScreenController from "controllers/screens/WorkScreenController";
 import SummaryScreenController from "controllers/screens/SummaryScreenController";
-import UpgradeScreenController from "controllers/screens/UpgradeScreenController";
+import UpgradeScreenController from "controllers/screens/StoreScreenController";
 
 const GameController: React.FC = (): JSX.Element => {
   const gameData = useGameData();

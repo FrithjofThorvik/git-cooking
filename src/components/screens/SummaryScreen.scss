@@ -3,6 +3,7 @@
   align-items: center;
   flex-direction: column;
   justify-content: center;
+  position: relative;
   background-image: url("../../assets/background.png");
   background-size: cover;
   background-repeat: no-repeat;
@@ -12,7 +13,11 @@
 
   &-buttons {
     display: flex;
+    position: absolute;
     justify-content: space-between;
+    transform: translate(-50%, 50%);
+    bottom: 25px;
+    left: 50%;
     width: 80%;
     margin: 25px auto;
   }

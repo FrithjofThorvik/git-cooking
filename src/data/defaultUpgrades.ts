@@ -1,63 +1,27 @@
 import { v4 } from "uuid";
 
-import { imgLogo } from "assets";
 import { IUpgrade } from "types/gameDataInterfaces";
-import { UpgradeType } from "types/enums";
+import { imgClock, imgDiscount } from "assets";
 
 export const defaultUpgrades: IUpgrade[] = [
   {
     id: v4(),
-    image: imgLogo,
-    name: "Salad",
-    description:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo",
-    cost: 250,
-    unlocked: true,
-    purchased: true,
-    type: UpgradeType.INGREDIENTS,
-  },
-  {
-    id: v4(),
-    image: imgLogo,
-    name: "Salad",
+    image: imgClock,
+    name: "Day Length x1.3",
     description:
       "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo",
     cost: 250,
     unlocked: true,
     purchased: false,
-    type: UpgradeType.INGREDIENTS,
   },
   {
     id: v4(),
-    image: imgLogo,
-    name: "Salad",
+    image: imgDiscount,
+    name: "10% Discount",
     description:
       "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo",
     cost: 250,
     unlocked: true,
     purchased: false,
-    type: UpgradeType.COMMANDS,
-  },
-  {
-    id: v4(),
-    image: imgLogo,
-    name: "Salad",
-    description:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo",
-    cost: 250,
-    unlocked: false,
-    purchased: false,
-    type: UpgradeType.INGREDIENTS,
-  },
-  {
-    id: v4(),
-    image: imgLogo,
-    name: "Salad",
-    description:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo",
-    cost: 250,
-    unlocked: false,
-    purchased: false,
-    type: UpgradeType.UPGRADES,
   },
 ];
