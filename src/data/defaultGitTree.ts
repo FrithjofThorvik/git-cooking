@@ -161,15 +161,12 @@ export const defaultGitTree: IGitTree = {
       if (modifiedItem.item.path === path) return modifiedItem;
     }
   },
-<<<<<<< HEAD
   getStagedFile: function (path: string) {
     for (let i = 0; i < this.stagedItems.length; i++) {
       const stagedItem = this.stagedItems[i];
       if (stagedItem.item.path === path) return stagedItem;
     }
   },
-=======
->>>>>>> dev
   isItemModified: function (orderItem: IOrderItem, deleteItem = false) {
     let isModified: boolean = false;
     let isAdded: boolean = false;
@@ -518,7 +515,7 @@ export const defaultGitTree: IGitTree = {
     // update modified
     let newModifiedItems = copyGit.modifiedItems;
     copyGit.workingDirectory.orders.forEach((o) =>
-      o.items.forEach((i) => {
+      o.createdItems.forEach((i) => {
         if (i.path === stagedItem.item.path) {
           newModifiedItems = copyGit.handleModifyItem(i);
         }
