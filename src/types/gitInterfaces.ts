@@ -37,6 +37,7 @@ export interface IGitTree {
   doesBranchNameExists: (branchName: string) => boolean;
   getBranch: (branchName: string) => IBranch | null;
   getModifiedFile: (path: string) => IModifiedItem | undefined;
+  getStagedFile: (path: string) => IModifiedItem | undefined;
   isItemModified: (
     orderItem: IOrderItem,
     deleted: boolean
@@ -56,4 +57,6 @@ export interface IGitTree {
   stageAllItems: () => IGitTree;
   restoreAllFiles: () => IGitTree;
   restoreFile: (modifiedItem: IModifiedItem) => IGitTree;
+  restoreAllStagedFiles: () => IGitTree;
+  restoreStagedFile: (mstagedItem: IModifiedItem) => IGitTree;
 }

@@ -272,6 +272,56 @@ export const gitCommands: ICommandArg[] = [
           return gitRes("Restored modified files", true);
         },
       },
+      {
+        key: "--staged",
+        args: [
+          {
+            key: "<PATH>",
+            isDynamic: true,
+            args: [],
+            cmd: (gameData, setGameData, path) => {
+              if (typeof path !== "string")
+                return gitRes(`Error: '${path} is invalid'`, false);
+
+              let stagedFile = gameData.git.getStagedFile(path);
+              let itemToRestore: IOrderItem | undefined = stagedFile?.item;
+
+              if (itemToRestore === undefined)
+                return gitRes(
+                  `Error: '${path}' did not match any files`,
+                  false
+                );
+
+              if (stagedFile) {
+                let copyGit = gameData.git;
+
+                copyGit = copyGit.restoreStagedFile(stagedFile);
+
+                setGameData({
+                  ...gameData,
+                  git: copyGit,
+                });
+              }
+
+              return gitRes(`Restored '${path}'`, true);
+            },
+          },
+          {
+            key: ".",
+            args: [],
+            cmd: (gameData, setGameData) => {
+              const copyGit = gameData.git.restoreAllStagedFiles();
+
+              setGameData({
+                ...gameData,
+                git: copyGit,
+              });
+              return gitRes("Restored staged files", true);
+            },
+          },
+        ],
+        cmd: () => gitRes("Error: switch '--staged' requires a value", false),
+      },
     ],
     cmd: () => gitRes("Error: no path specified", false),
   },
