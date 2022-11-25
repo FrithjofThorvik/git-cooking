@@ -6,19 +6,20 @@ import { IIngredient, IOrderItem } from "types/gameDataInterfaces";
 import { setGameData, useGameData } from "hooks/useGameData";
 import Item from "components/work/Item";
 
-interface IItemControllerProps {}
+interface IItemControllerProps { }
 
 const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
 
-  const closeOrderItem = (item: IOrderItem) => {
-    if (!gameData.selectedItems.includes(item.path)) return;
-
-    const updatedSelectedFiles = gameData.selectedItems.filter(
-      (id) => id !== item.path
-    );
-    setGameData({ ...gameData, selectedItems: updatedSelectedFiles });
+  const closeOrderItem = (orderItem: IOrderItem) => {
+    const updatedItemInterface = gameData.itemInterface.closeItem(orderItem);
+    setGameData({ ...gameData, itemInterface: updatedItemInterface });
   };
+
+  const openOrderItem = (orderItem: IOrderItem) => {
+    const updatedItemInterface = gameData.itemInterface.openItem(orderItem);
+    setGameData({ ...gameData, itemInterface: updatedItemInterface });
+  }
 
   const modifyOrderItem = (
     orderItem: IOrderItem,
@@ -46,7 +47,9 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
 
   return (
     <Item
-      selectedItemIds={gameData.selectedItems}
+      selectedItemIds={gameData.itemInterface.selectedItemIds}
+      activeItemId={gameData.itemInterface.activeItemId}
+      openOrderItem={openOrderItem}
       closeOrderItem={closeOrderItem}
       modifyOrderItem={modifyOrderItem}
       foods={gameData.store.foods}

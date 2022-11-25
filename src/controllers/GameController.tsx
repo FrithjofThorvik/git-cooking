@@ -2,7 +2,9 @@ import React from "react";
 
 import { IGitTree } from "types/gitInterfaces";
 import { GameState } from "types/enums";
+import { IItemInterface } from "types/gameDataInterfaces";
 import { defaultGitTree } from "data/defaultGitTree";
+import { defaultItemData } from "data/defaultItemData";
 import { copyObjectWithoutRef } from "services/helpers";
 import { calculateRevenueAndCost } from "services/gameDataHelper";
 import { setGameData, useGameData } from "hooks/useGameData";
@@ -27,6 +29,7 @@ const GameController: React.FC = (): JSX.Element => {
 
   const startDay = () => {
     const gitReset: IGitTree = copyObjectWithoutRef(defaultGitTree);
+    const itemInterfaceReset: IItemInterface = copyObjectWithoutRef(defaultItemData)
     const gitUpdated: IGitTree = {
       ...gitReset,
       workingDirectory: { ...gitReset.workingDirectory },
@@ -36,7 +39,7 @@ const GameController: React.FC = (): JSX.Element => {
       ...gameData,
       day: gameData.day + 1,
       git: gitUpdated,
-      selectedItems: [],
+      itemInterface: itemInterfaceReset,
       gameState: GameState.WORKING,
     });
   };

@@ -61,7 +61,8 @@ class OrderGenerator {
       timeEnd: gameTime + this.orderDuration,
       isCreated: false,
       orderItems: orderItems,
-      items: [],
+      percentageCompleted: 0,
+      createdItems: [],
     };
   };
 

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+
 import { IOrderItem } from "types/gameDataInterfaces";
 
 import "./OrderItem.scss";
 
 interface IOrderItemProps {
+  active: boolean;
   item: IOrderItem;
   stagedItems: IOrderItem[];
   modifiedItems: IOrderItem[];
@@ -17,6 +19,7 @@ const OrderItem: React.FC<IOrderItemProps> = ({
   item,
   stagedItems,
   modifiedItems,
+  active,
   selectOrderItem,
   deleteOrderItem,
 }): JSX.Element => {
@@ -38,18 +41,20 @@ const OrderItem: React.FC<IOrderItemProps> = ({
     setIsStaged(newIsStaged);
   }, [stagedItems, modifiedItems]);
 
+  const handleDelete = (e: React.MouseEvent) => {
+    if (e && e.stopPropagation) e.stopPropagation()
+    deleteOrderItem(item)
+  }
+
   return (
     <div
-      className="order-item"
-      style={{
-        color: `${isModified ? "orange" : isStaged ? "green" : "white"}`,
-      }}
+      className={`order-item ${active ? "active" : ""}  ${isModified ? "modified" : isStaged ? "staged" : ""}`}
       onClick={() => selectOrderItem(item)}
     >
       <DescriptionOutlinedIcon className="order-item-icon" />
       <div>{item.name}</div>
       <DeleteOutlineOutlinedIcon
-        onClick={() => deleteOrderItem(item)}
+        onClick={(e) => handleDelete(e)}
         className="order-item-icon-delete"
       />
     </div>

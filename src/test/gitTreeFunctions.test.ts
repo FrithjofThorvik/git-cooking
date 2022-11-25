@@ -50,8 +50,9 @@ beforeEach(() => {
     timeStart: 0,
     timeEnd: 1,
     isCreated: false,
+    percentageCompleted: 0,
     orderItems: [],
-    items: [],
+    createdItems: [],
   };
   const newOrderItem: IOrderItem = createNewOrderItem(newOrder, "test item");
   burger = defaultGameData.store.foods[0];
@@ -73,7 +74,7 @@ describe("restore", () => {
     });
 
     // working directory should relfect the changes
-    expect(git.workingDirectory.orders[0].items).toContainEqual(newOrderItem);
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual(newOrderItem);
 
     // restore all items
     git = git.restoreAllFiles();
@@ -86,7 +87,7 @@ describe("restore", () => {
     });
 
     // working directory should should still have the file
-    expect(git.workingDirectory.orders[0].items).toContainEqual(newOrderItem);
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual(newOrderItem);
   });
   test("new file + staged + modified -> should restore to staged", () => {
     // create new file
@@ -112,7 +113,7 @@ describe("restore", () => {
     });
 
     // check that working directory reflect the changes
-    expect(git.workingDirectory.orders[0].items).toContainEqual({
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual({
       ...newOrderItem,
       ingredients: [ingredient],
     });
@@ -124,7 +125,7 @@ describe("restore", () => {
     expect(git.modifiedItems).toEqual([]);
 
     // working directory items should now equal staged item
-    expect(git.workingDirectory.orders[0].items).toContainEqual(
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual(
       git.stagedItems[0].item
     );
 
@@ -153,7 +154,7 @@ describe("restore", () => {
     });
 
     // check that working directory reflect the changes
-    expect(git.workingDirectory.orders[0].items).not.toContainEqual(
+    expect(git.workingDirectory.orders[0].createdItems).not.toContainEqual(
       newOrderItem
     );
 
@@ -164,7 +165,7 @@ describe("restore", () => {
     expect(git.modifiedItems).toEqual([]);
 
     // working directory items should now equal staged item
-    expect(git.workingDirectory.orders[0].items).toContainEqual(
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual(
       git.stagedItems[0].item
     );
 
@@ -199,15 +200,15 @@ describe("restore", () => {
     });
 
     // check that working directory reflect the changes
-    expect(git.workingDirectory.orders[0].items).toContainEqual({
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual({
       ...newOrderItem,
       ingredients: [ingredient],
     });
 
     const prevCommit = git.getHeadCommit();
     // should not be the same as the previous commit
-    expect(git.workingDirectory.orders[0].items).not.toEqual(
-      prevCommit?.directory.orders[0].items
+    expect(git.workingDirectory.orders[0].createdItems).not.toEqual(
+      prevCommit?.directory.orders[0].createdItems
     );
 
     // restore all files
@@ -217,12 +218,12 @@ describe("restore", () => {
     expect(git.modifiedItems).toEqual([]);
 
     // working directory items should now equal previous commit items
-    expect(git.workingDirectory.orders[0].items).toEqual(
-      prevCommit?.directory.orders[0].items
+    expect(git.workingDirectory.orders[0].createdItems).toEqual(
+      prevCommit?.directory.orders[0].createdItems
     );
 
     // and this should be equal to the original order
-    expect(git.workingDirectory.orders[0].items).toEqual([newOrderItem]);
+    expect(git.workingDirectory.orders[0].createdItems).toEqual([newOrderItem]);
   });
   test("new file + staged + commit + delete -> should restore to previous commit", () => {
     // create new file
@@ -245,18 +246,18 @@ describe("restore", () => {
     });
 
     // check that working directory reflect the changes
-    expect(git.workingDirectory.orders[0].items).not.toContainEqual(
+    expect(git.workingDirectory.orders[0].createdItems).not.toContainEqual(
       newOrderItem
     );
 
     const prevCommit = git.getHeadCommit();
     // should not be the same as the previous commit
-    expect(git.workingDirectory.orders[0].items).not.toEqual(
-      prevCommit?.directory.orders[0].items
+    expect(git.workingDirectory.orders[0].createdItems).not.toEqual(
+      prevCommit?.directory.orders[0].createdItems
     );
 
     // and this should NOT be equal to the original order
-    expect(git.workingDirectory.orders[0].items).not.toEqual([newOrderItem]);
+    expect(git.workingDirectory.orders[0].createdItems).not.toEqual([newOrderItem]);
 
     // restore all files
     git = git.restoreAllFiles();
@@ -265,12 +266,12 @@ describe("restore", () => {
     expect(git.modifiedItems).toEqual([]);
 
     // working directory items should now equal previous commit items
-    expect(git.workingDirectory.orders[0].items).toEqual(
-      prevCommit?.directory.orders[0].items
+    expect(git.workingDirectory.orders[0].createdItems).toEqual(
+      prevCommit?.directory.orders[0].createdItems
     );
 
     // and this should be equal to the original order
-    expect(git.workingDirectory.orders[0].items).toEqual([newOrderItem]);
+    expect(git.workingDirectory.orders[0].createdItems).toEqual([newOrderItem]);
   });
   test("new file + staged + commit + delete + stage + new file (same name) -> should not restore", () => {
     // create new file
@@ -286,7 +287,7 @@ describe("restore", () => {
     deleteFile(git, newOrderItem);
 
     // check that working directory reflect the changes
-    expect(git.workingDirectory.orders[0].items).not.toContainEqual(
+    expect(git.workingDirectory.orders[0].createdItems).not.toContainEqual(
       newOrderItem
     );
 
@@ -321,7 +322,7 @@ describe("restore", () => {
     });
 
     // working directory should should still have the file
-    expect(git.workingDirectory.orders[0].items).toContainEqual(newerOrderItem);
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual(newerOrderItem);
 
     // stage should still contain the deleted file
     expect(git.stagedItems).toContainEqual({
@@ -344,7 +345,7 @@ describe("staging", () => {
     });
 
     // working directory should relfect the changes
-    expect(git.workingDirectory.orders[0].items).toContainEqual(newOrderItem);
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual(newOrderItem);
 
     // stage the file
     git = git.stageAllItems();
@@ -364,7 +365,7 @@ describe("staging", () => {
     });
 
     // working directory should should still have the file
-    expect(git.workingDirectory.orders[0].items).toContainEqual(newOrderItem);
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual(newOrderItem);
 
     // modify file
     const ingredient = burger.ingredients.paddy;
@@ -416,7 +417,7 @@ describe("staging", () => {
     });
 
     // working directory should should still have the file
-    expect(git.workingDirectory.orders[0].items).toContainEqual({
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual({
       ...newOrderItem,
       ingredients: [ingredient],
     });
@@ -446,7 +447,7 @@ describe("staging", () => {
     });
 
     // working directory should not still have the file
-    expect(git.workingDirectory.orders[0].items).not.toContainEqual(
+    expect(git.workingDirectory.orders[0].createdItems).not.toContainEqual(
       newOrderItem
     );
   });
@@ -484,7 +485,7 @@ describe("staging", () => {
     });
 
     // working directory should have the new file
-    expect(git.workingDirectory.orders[0].items).toContainEqual(newerOrderItem);
+    expect(git.workingDirectory.orders[0].createdItems).toContainEqual(newerOrderItem);
   });
   test("new file + stage + commit + delete + stage + new file, same name + add -> should be modified in stagedItems", () => {
     // create new file

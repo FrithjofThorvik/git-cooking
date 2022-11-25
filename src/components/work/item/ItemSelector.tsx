@@ -10,8 +10,9 @@ interface IItemSelectorProps {
   orders: IOrder[];
   items: IOrderItem[];
   activeItem: IOrderItem | null;
-  setActiveItem: React.Dispatch<React.SetStateAction<IOrderItem | null>>;
-  closeOrderItem: (item: IOrderItem) => void;
+  openOrderItem: (orderItem: IOrderItem) => void
+
+  closeOrderItem: (orderItem: IOrderItem) => void;
 }
 
 interface IOrderGroup {
@@ -25,8 +26,8 @@ const ItemSelector: React.FC<IItemSelectorProps> = ({
   items,
   orders,
   activeItem,
-  setActiveItem,
   closeOrderItem,
+  openOrderItem,
 }): JSX.Element => {
   const [orderGroups, setOrderGroups] = useState<IOrderGroup[]>([]);
 
@@ -78,11 +79,10 @@ const ItemSelector: React.FC<IItemSelectorProps> = ({
               og.items.map((i) => (
                 <div
                   key={i.path}
-                  className={`item-selector-group-items-item ${
-                    activeItem?.path === i.path &&
+                  className={`item-selector-group-items-item ${activeItem?.path === i.path &&
                     "item-selector-group-items-item-selected"
-                  }`}
-                  onClick={() => setActiveItem(i)}
+                    }`}
+                  onClick={() => openOrderItem(i)}
                 >
                   {i.name}
                   <CloseIcon

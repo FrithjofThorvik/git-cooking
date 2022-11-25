@@ -1,17 +1,21 @@
 import React from "react";
 
+import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import StagedOrders from "./stage/StagedOrders";
 
 import "./Stage.scss";
 
 export interface IStageProps {
-  orders: { name: string; percent: number; files: string[] }[];
+  stagedOrders: {
+    order: IOrder;
+    items: IOrderItem[];
+  }[];
 }
 
-const Stage: React.FC<IStageProps> = ({ orders }): JSX.Element => {
+const Stage: React.FC<IStageProps> = ({ stagedOrders }): JSX.Element => {
   return (
     <div className="stage">
-      <StagedOrders orders={orders} />
+      <StagedOrders stagedOrders={stagedOrders} />
     </div>
   );
 };

@@ -16,6 +16,7 @@ export interface IDirectory {
   ) => IDirectory;
   createOrderFolder: (order: IOrder) => IDirectory;
   addOrderItemToOrder: (order: IOrder, orderItem: IOrderItem) => IDirectory;
+  updatePercentageCompleted: () => IDirectory;
 }
 
 export interface IOrderItem {
@@ -32,8 +33,9 @@ export interface IOrder {
   isCreated: boolean;
   timeStart: number;
   timeEnd: number;
+  percentageCompleted: number;
   orderItems: IOrderItem[];
-  items: IOrderItem[];
+  createdItems: IOrderItem[];
 }
 
 export interface IStore {
@@ -57,6 +59,7 @@ export interface IPurchasable {
 
 export interface IIngredient extends IPurchasable {
   type: IngredientType;
+  useCost: number;
 }
 
 export interface IUpgrade extends IPurchasable {
@@ -70,11 +73,18 @@ export interface IGitCommand extends IPurchasable {
   gitCommandType: GitCommandType;
 }
 
+export interface IItemInterface {
+  selectedItemIds: string[];
+  activeItemId: string;
+  openItem: (orderItem: IOrderItem) => IItemInterface;
+  closeItem: (orderItem: IOrderItem) => IItemInterface;
+}
+
 export interface IGitCooking {
   day: number;
   git: IGitTree;
   store: IStore;
   gameState: GameState;
   baseDayLength: number;
-  selectedItems: string[];
+  itemInterface: IItemInterface;
 }

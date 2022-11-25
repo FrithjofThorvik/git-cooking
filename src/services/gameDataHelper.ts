@@ -1,7 +1,6 @@
 import { IGitTree } from "types/gitInterfaces";
-import { objectsEqual } from "./helpers";
 import { IngredientType } from "types/enums";
-import { IOrder, IOrderItem } from "types/gameDataInterfaces";
+import { IIngredient, IOrder, IOrderItem } from "types/gameDataInterfaces";
 
 export const createNewOrderItem = (order: IOrder, name: string): IOrderItem => {
   return {
@@ -14,7 +13,7 @@ export const createNewOrderItem = (order: IOrder, name: string): IOrderItem => {
 };
 
 export const doesOrderItemExist = (order: IOrder, name: string): boolean => {
-  return order.items.map((i) => i.name).includes(name);
+  return order.createdItems.map((i) => i.name).includes(name);
 };
 
 export const getOrderFromOrderItem = (
@@ -35,14 +34,14 @@ export const getIndexOfOrderItem = (
   order: IOrder,
   orderItem: IOrderItem
 ): number => {
-  return order.items.findIndex((i) => i.path === orderItem.path);
+  return order.createdItems.findIndex((i) => i.path === orderItem.path);
 };
 
 export const getOrderItemsFromPaths = (orders: IOrder[], paths: string[]) => {
   let selectedOrderItems: IOrderItem[] = [];
 
   orders.forEach((o) => {
-    o.items.forEach((i) => {
+    o.createdItems.forEach((i) => {
       if (paths.includes(i.path)) selectedOrderItems.push(i);
     });
   });
@@ -53,7 +52,7 @@ export const getOrderItemsFromPaths = (orders: IOrder[], paths: string[]) => {
 export const getOrderItemFromPath = (orders: IOrder[], path: string) => {
   let order: IOrderItem | null = null;
   orders.forEach((o) => {
-    o.items.forEach((i) => {
+    o.createdItems.forEach((i) => {
       if (i.path === path) {
         order = i;
       }
@@ -70,64 +69,106 @@ export const getOrderNameFromId = (orders: IOrder[], id: string) => {
   return name;
 };
 
+const copyArrWithoutRowAndCol = (arr: number[][], row: number, col: number) => {
+  let newArr = arr.map((a) => {
+    let b = a.slice(0);
+    b.splice(col, 1);
+    return b;
+  });
+  newArr.splice(row, 1);
+  return newArr;
+};
+
+const maximumSum = (mat: number[][], score = 0) => {
+  let highscore = 0;
+  for (let row = 0; row < mat.length; row++) {
+    for (let col = 0; col < mat[row].length; col++) {
+      let newScore = score + mat[row][col];
+      if (mat[row].length > 1 && mat.length > 1) {
+        let newMat = copyArrWithoutRowAndCol(mat, row, col);
+        let newHighscore = maximumSum(newMat, newScore);
+        if (newHighscore > highscore) highscore = newHighscore;
+      } else {
+        if (newScore > highscore) highscore = newScore;
+      }
+    }
+  }
+  return highscore;
+};
+
+const similarityPercentage = (a: IIngredient[], b: IIngredient[]) => {
+  const ingredientsA = a.map((i) => i.id);
+  const ingredientsB = b.map((i) => i.id);
+  const includedPoints =
+    (0.5 * ingredientsA.filter((idA) => ingredientsB.includes(idA)).length) /
+    Math.max(ingredientsA.length, ingredientsB.length);
+
+  const samePosPoints =
+    (0.5 * ingredientsA.filter((idA, i) => ingredientsB.at(i) === idA).length) /
+    Math.max(ingredientsA.length, ingredientsB.length);
+
+  const extraIngredientCount = ingredientsA.length - ingredientsB.length;
+  const tooManyIngredientsReductionPoints =
+    extraIngredientCount > 0 ? extraIngredientCount * 0.15 : 0;
+
+  const percentage =
+    100 * (includedPoints + samePosPoints - tooManyIngredientsReductionPoints);
+  return Math.max(percentage, 0);
+};
+
+const calculateOrderScores = (cItems: IOrderItem[], oItems: IOrderItem[]) => {
+  return cItems.map((c) => {
+    let percentageArray: number[] = [];
+    oItems.forEach((oItem) => {
+      percentageArray.push(
+        similarityPercentage(c.ingredients, oItem.ingredients)
+      );
+    });
+    return percentageArray;
+  });
+};
+
 export const compareOrders = (
   createdItems: IOrderItem[],
   orderItems: IOrderItem[]
 ) => {
-  let similarity = 0;
-
-  createdItems.forEach((createdItem) => {
-    const highestMatch = orderItems.reduce((max, orderItem) => {
-      let total = 0;
-      for (let i = 0; i < createdItem.ingredients.length; i++) {
-        const createdItemIngredient = createdItem.ingredients.at(i);
-        const orderItemIngredient = orderItem.ingredients.at(i);
-        if (createdItemIngredient && orderItemIngredient)
-          objectsEqual(createdItemIngredient, orderItemIngredient) &&
-            (total += 1);
-      }
-
-      total /= orderItem.ingredients.length;
-      return total > max ? total : max;
-    }, 0);
-
-    similarity += highestMatch;
-  });
-
-  similarity /= orderItems.length;
-  return similarity;
+  const orderScores = calculateOrderScores(createdItems, orderItems);
+  return (
+    maximumSum(orderScores) / Math.max(createdItems.length, orderItems.length)
+  );
 };
 
 export const calculateRevenueAndCost = (git: IGitTree) => {
-  const baseOrderValue = 30;
-  const baseOrderCost = 5;
-  let totalOrders = 0;
-  let totalPercentage = 0;
-  let totalCommitedOrders = 0;
-  let totalUncommitedOrders = 0;
-
+  const orderRevenueMultiplier = 1.2;
+  let revenue = 0;
+  let cost = 0;
   const parentCommit = git.getHeadCommit();
   const prevDirectory = parentCommit?.directory;
 
-  git.workingDirectory.orders.map((order) => {
-    totalOrders += 1;
-    const committedOrder = prevDirectory?.orders.find((o) => o.id === order.id);
+  prevDirectory?.orders.forEach((commitedOrder) => {
+    const percentageCompleted = commitedOrder.percentageCompleted;
+    let orderCost = 0;
+    commitedOrder.createdItems.forEach((item) => {
+      item.ingredients.forEach((ingredient) => {
+        orderCost += ingredient.useCost;
+      });
+    });
+    const orderRevenue =
+      (orderCost * orderRevenueMultiplier * percentageCompleted) / 100;
 
-    if (committedOrder) {
-      const percentageCompleted = Math.round(
-        compareOrders(committedOrder.items, order.orderItems) * 100
-      );
-      totalPercentage += percentageCompleted;
-      totalCommitedOrders += 1;
-    } else {
-      totalUncommitedOrders += 1;
-    }
+    revenue += orderRevenue;
+    cost += orderCost;
   });
 
-  const averagePercentage = totalPercentage / totalOrders;
-  const revenue = Math.round(
-    totalCommitedOrders * baseOrderValue * averagePercentage
-  );
-  const cost = Math.round(totalCommitedOrders * baseOrderCost);
   return { revenue, cost };
+};
+
+export const calculateOrderTimerPercentage = (
+  currentTime: number,
+  orderStartTime: number,
+  orderEndTime: number
+) => {
+  return (
+    ((currentTime - orderStartTime) / (orderEndTime - orderStartTime)) * 100
+  );
 };

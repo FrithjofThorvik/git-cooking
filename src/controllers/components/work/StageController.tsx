@@ -2,26 +2,35 @@ import React, { useEffect, useState } from "react";
 
 import { useGameData } from "hooks/useGameData";
 import { IModifiedItem } from "types/gitInterfaces";
-import { compareOrders } from "services/gameDataHelper";
 import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import Stage, { IStageProps } from "components/work/Stage";
+import { copyObjectWithoutRef } from "services/helpers";
 
 interface IStageControllerProps {}
 
 const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
-  const [orders, setOrders] = useState<IStageProps["orders"]>([]);
+  const [orders, setOrders] = useState<IStageProps["stagedOrders"]>([]);
 
   useEffect(() => {
     let stagedItemsWithOrder: { items: IOrderItem[]; order: IOrder }[] = [];
     gameData.git.stagedItems.forEach((stagedItem: IModifiedItem) => {
       const item = stagedItem.item;
-      const relatedOrder = gameData.git.workingDirectory.orders
-        .filter((o: IOrder) => o.id === item.orderId)
-        .at(0);
+      let relatedOrder = gameData.git.workingDirectory.orders.find(
+        (o: IOrder) => o.id === item.orderId
+      );
+
+      const headCommit = gameData.git.getHeadCommit();
+      if (headCommit) {
+        const prevDirectory = copyObjectWithoutRef(headCommit.directory);
+        relatedOrder = gameData.git
+          .addStagedOnPrevDirectory(prevDirectory)
+          .updatePercentageCompleted()
+          .orders.find((o: IOrder) => o.id === item.orderId);
+      }
 
       const elementIndex = stagedItemsWithOrder.findIndex(
-        (element) => element.order.name === relatedOrder?.name
+        (element) => element.order.id === relatedOrder?.id
       );
 
       if (relatedOrder && elementIndex === -1) {
@@ -35,18 +44,10 @@ const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
     });
 
     // update percent
-    setOrders(
-      stagedItemsWithOrder.map((o) => {
-        return {
-          name: o.order.name,
-          percent: Math.round(compareOrders(o.items, o.order.orderItems) * 100),
-          files: o.items.map((i) => i.name),
-        };
-      })
-    );
+    setOrders(stagedItemsWithOrder);
   }, [JSON.stringify(gameData.git.stagedItems)]);
 
-  return <Stage orders={orders} />;
+  return <Stage stagedOrders={orders} />;
 };
 
 export default StageController;
