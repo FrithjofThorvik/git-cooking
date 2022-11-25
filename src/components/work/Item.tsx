@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  getOrderItemFromPath,
-  getOrderItemsFromPaths,
-} from "services/gameDataHelper";
+import { getOrderItemsFromPaths } from "services/gameDataHelper";
 import { IFood } from "types/foodInterfaces";
 import { IngredientType } from "types/enums";
 import { IIngredient, IOrder, IOrderItem } from "types/gameDataInterfaces";
@@ -15,8 +12,10 @@ import "./Item.scss";
 interface IItemProps {
   foods: IFood[];
   orders: IOrder[];
+  activeItemId: string;
   selectedItemIds: string[];
-  closeOrderItem: (item: IOrderItem) => void;
+  openOrderItem: (orderItem: IOrderItem) => void;
+  closeOrderItem: (orderItem: IOrderItem) => void;
   modifyOrderItem: (
     orderItem: IOrderItem,
     data: {
@@ -30,9 +29,11 @@ interface IItemProps {
 const Item: React.FC<IItemProps> = ({
   foods,
   orders,
-  selectedItemIds,
+  activeItemId,
+  openOrderItem,
   closeOrderItem,
   modifyOrderItem,
+  selectedItemIds,
 }): JSX.Element => {
   const [selectedItems, setSelectedItems] = useState<IOrderItem[]>(
     getOrderItemsFromPaths(orders, selectedItemIds)
@@ -41,26 +42,18 @@ const Item: React.FC<IItemProps> = ({
     selectedItems[0] ?? null
   );
 
+  // Update active item
   useEffect(() => {
     let tempActiveItemIndex = selectedItems.findIndex(
-      (i) => i.path === activeItem?.path
+      (i) => i.path === activeItemId
     );
     if (tempActiveItemIndex === -1) {
       setActiveItem(null);
     } else if (selectedItems.length > 0)
       setActiveItem(selectedItems[tempActiveItemIndex]);
-  }, [orders, selectedItems]);
+  }, [selectedItems, activeItemId]);
 
   useEffect(() => {
-    const oldSelectedItemIds = selectedItems.map((i) => i.path);
-
-    for (let i = 0; i < selectedItemIds.length; i++) {
-      if (!oldSelectedItemIds.includes(selectedItemIds[i])) {
-        const newActiveItem = getOrderItemFromPath(orders, selectedItemIds[i]);
-        if (newActiveItem) setActiveItem(newActiveItem);
-      }
-    }
-
     setSelectedItems(getOrderItemsFromPaths(orders, selectedItemIds));
   }, [selectedItemIds, JSON.stringify(orders)]);
 
@@ -70,7 +63,7 @@ const Item: React.FC<IItemProps> = ({
         orders={orders}
         items={selectedItems}
         activeItem={activeItem}
-        setActiveItem={setActiveItem}
+        openOrderItem={openOrderItem}
         closeOrderItem={closeOrderItem}
       />
       <ItemInterface

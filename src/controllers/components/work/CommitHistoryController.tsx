@@ -4,7 +4,7 @@ import { ICommit } from "types/gitInterfaces";
 import { useGameData } from "hooks/useGameData";
 import CommitHistory from "components/work/CommitHistory";
 
-interface ICommitHistoryControllerProps {}
+interface ICommitHistoryControllerProps { }
 
 const CommitHistoryController: React.FC<
   ICommitHistoryControllerProps

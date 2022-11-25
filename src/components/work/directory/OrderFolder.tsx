@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import { IOrder, IOrderItem } from "types/gameDataInterfaces";
+import Input from "./Input";
+import Button from "./Button";
 import OrderItem from "./OrderItem";
 
 import "./OrderFolder.scss";
-import Button from "./Button";
-import Input from "./Input";
 
 interface IOrderFolderProps {
   order: IOrder;
   stagedItems: IOrderItem[];
   modifiedItems: IOrderItem[];
+  activeItemId: string;
   selectOrderItem: (order: IOrderItem) => void;
   createOrderItem: (order: IOrder, name: string) => void;
   deleteOrderItem: (orderItem: IOrderItem) => void;
@@ -21,6 +22,7 @@ const OrderFolder: React.FC<IOrderFolderProps> = ({
   order,
   stagedItems,
   modifiedItems,
+  activeItemId,
   selectOrderItem,
   createOrderItem,
   deleteOrderItem,
@@ -38,10 +40,7 @@ const OrderFolder: React.FC<IOrderFolderProps> = ({
       </div>
       {isOpen && (
         <div className="order-folder-container">
-          {order.items
-            .sort((a, b) =>
-              a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
-            )
+          {order.createdItems
             .map((item, i) => {
               return (
                 <OrderItem
@@ -51,6 +50,7 @@ const OrderFolder: React.FC<IOrderFolderProps> = ({
                   modifiedItems={modifiedItems}
                   selectOrderItem={selectOrderItem}
                   deleteOrderItem={deleteOrderItem}
+                  active={item.path === activeItemId}
                 />
               );
             })}

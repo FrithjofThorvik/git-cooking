@@ -49,6 +49,7 @@ export interface IGitTree {
     orderItem: IOrderItem,
     deleteItem?: boolean
   ) => IModifiedItem[];
+  addStagedOnPrevDirectory: (prevCommitDirectory: IDirectory) => IDirectory;
   commit: (commitMessage: string) => IGitTree;
   switchBranch: (branchName: string) => IGitTree;
   getRestoredFile: (itemToRestore: IOrderItem) => IModifiedItem | undefined;

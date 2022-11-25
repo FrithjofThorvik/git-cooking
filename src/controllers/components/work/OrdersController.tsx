@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 
+import { IDirectory } from "types/gameDataInterfaces";
 import { useGameTime } from "hooks/useGameTime";
-import { compareOrders } from "services/gameDataHelper";
 import { orderGenerator } from "services/orderGenerator";
+import { copyObjectWithoutRef } from "services/helpers";
 import { setGameData, useGameData } from "hooks/useGameData";
 import Orders, { IOrdersProps } from "components/work/Orders";
+import { calculateOrderTimerPercentage } from "services/gameDataHelper";
 
 interface IOrdersControllerProps {}
 
@@ -20,34 +22,45 @@ const OrdersController: React.FC<IOrdersControllerProps> = (): JSX.Element => {
   }, [gameTime, gameData]);
 
   useEffect(() => {
-    const parentCommit = gameData.git.getHeadCommit();
-    const prevDirectory = parentCommit?.directory;
-
+    const headCommit = gameData.git.getHeadCommit();
+    const prevDirectory: IDirectory = copyObjectWithoutRef(
+      headCommit?.directory
+    );
     setFormattedOrders(
       gameData.git.workingDirectory.orders.map((order) => {
-        let percentageCompleted = 0;
-        const committedOrder = prevDirectory?.orders.find(
-          (o) => o.id == order.id
+        const relatedCommitedOrder = prevDirectory.orders.find(
+          (prevOrder) => prevOrder.id === order.id
         );
-
-        if (committedOrder)
-          percentageCompleted = Math.round(
-            compareOrders(committedOrder.items, order.orderItems) * 100
-          );
-
         return {
-          percent:
-            ((gameTime - order.timeStart) / (order.timeEnd - order.timeStart)) *
-            100,
-          items: order.orderItems.map((item) => {
-            return { ingredients: item.ingredients.map((i) => i.image) };
-          }),
-          name: order.name,
-          percentageCompleted: percentageCompleted,
+          percent: calculateOrderTimerPercentage(
+            gameTime,
+            order.timeStart,
+            order.timeEnd
+          ),
+          items: order.orderItems,
+          order: order,
+          percentageCompleted: relatedCommitedOrder
+            ? relatedCommitedOrder.percentageCompleted
+            : 0,
         };
       })
     );
   }, [gameData.git.workingDirectory.orders, gameData.git.commits]);
+
+  useEffect(() => {
+    setFormattedOrders(
+      formattedOrders.map((formattedOrder) => {
+        return {
+          ...formattedOrder,
+          percent: calculateOrderTimerPercentage(
+            gameTime,
+            formattedOrder.order.timeStart,
+            formattedOrder.order.timeEnd
+          ),
+        };
+      })
+    );
+  }, [gameTime]);
 
   return <Orders orders={formattedOrders} />;
 };

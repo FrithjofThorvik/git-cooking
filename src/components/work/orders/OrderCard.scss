@@ -22,16 +22,6 @@
       height: 100%;
       margin: 0 20px 0 30px;
       gap: 10%;
-
-      &-item {
-        display: flex;
-        flex-direction: column;
-
-        img {
-          width: 30px;
-          height: auto;
-        }
-      }
     }
 
     &-person {
@@ -43,9 +33,12 @@
       top: -25px;
       left: -25px;
 
-      &-name {
+      &-info {
         position: absolute;
         white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 10px;
         left: 60px;
         width: auto;
       }
@@ -61,23 +54,7 @@
       }
 
       &-progressBar {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        box-shadow: inset 0 0 4px 1px rgba(black, 1);
-        background-color: $dark;
-        height: 2px;
-        width: 35px;
-        padding: 3px 2px;
-        margin-top: 3px;
-        border-radius: 15px;
-
-        &-progress {
-          background-color: $line-green;
-          box-shadow: 0 0 2px 0 $line-green;
-          height: 100%;
-          border-radius: 15px;
-        }
+        font-size: 12px;
       }
     }
 

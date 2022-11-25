@@ -2,35 +2,48 @@ import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 
 import { imgChef } from "assets";
+import { IOrder, IOrderItem } from "types/gameDataInterfaces";
+import DisplayItem from "../item/DisplayItem";
 import GlassContainer from "components/GlassContainer";
 
 import "./OrderCard.scss";
+import ProgressBar from "components/ProgressBar";
 
 export interface IOrderCardProps {
   percent: number;
   percentageCompleted: number;
-  items: { ingredients: string[] }[];
-  name: string;
+  items: IOrderItem[];
+  order: IOrder;
 }
 
 const OrderCard: React.FC<IOrderCardProps> = ({
   percent,
   items,
-  name,
+  order,
   percentageCompleted,
 }): JSX.Element => {
+  const borderColor = percentageCompleted >= 100 ? "#14c299" : "#94a3b8";
+  const textColor = percentageCompleted >= 100 ? "#14c299" : "#eeeeee";
+  const progressColor = percent >= 100 ? "#dc3c76" : "#14c299";
+
   return (
     <div className="order-card">
-      <GlassContainer border shadow>
+      <GlassContainer border shadow borderColor={borderColor}>
         <div className="order-card-content">
           <div className="order-card-content-person">
-            <div className="order-card-content-person-name">{`${name} - ${percentageCompleted}`}</div>
-            <img src={imgChef} alt="chef" />
+            <div
+              className="order-card-content-person-info"
+              style={{ color: textColor }}
+            >
+              {`${order.name} - ${Math.trunc(percentageCompleted)}%`}
+            </div>
+            <img
+              src={imgChef}
+              alt="chef"
+              style={{ borderColor: borderColor }}
+            />
             <div className="order-card-content-person-progressBar">
-              <div
-                className="order-card-content-person-progressBar-progress"
-                style={{ width: `${percent}%` }}
-              ></div>
+              <ProgressBar percent={percent} color={progressColor} />
             </div>
           </div>
           <div className="order-card-content-coworker">
@@ -38,11 +51,7 @@ const OrderCard: React.FC<IOrderCardProps> = ({
           </div>
           <div className="order-card-content-items">
             {items.map((item, index) => (
-              <div className="order-card-content-items-item" key={index}>
-                {item.ingredients.map((i, index) => (
-                  <img src={i} key={index} />
-                ))}
-              </div>
+              <DisplayItem item={item} key={index} />
             ))}
           </div>
         </div>

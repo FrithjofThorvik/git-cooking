@@ -1,23 +1,26 @@
 import React from "react";
+import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import StagedOrder from "./StagedOrder";
 
 import "./StagedOrders.scss";
 
 interface IStagedOrdersProps {
-  orders: { name: string; percent: number; files: string[] }[];
+  stagedOrders: {
+    order: IOrder;
+    items: IOrderItem[];
+  }[];
 }
 
 const StagedOrders: React.FC<IStagedOrdersProps> = ({
-  orders,
+  stagedOrders,
 }): JSX.Element => {
   return (
     <div className="staged-orders">
-      {orders &&
-        orders.map((order, index) => (
+      {stagedOrders &&
+        stagedOrders.map((stagedOrder, index) => (
           <StagedOrder
-            name={order.name}
-            percent={order.percent}
-            files={order.files}
+            order={stagedOrder.order}
+            items={stagedOrder.items}
             key={index}
           />
         ))}

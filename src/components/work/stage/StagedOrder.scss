@@ -31,16 +31,15 @@
     }
   }
 
-  &-extra {
+  &-items {
     display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    justify-content: center;
-    align-items: flex-start;
+    justify-content: space-evenly;
+    align-items: center;
     width: 100%;
-    font-size: 14px;
-    margin-top: 5px;
-    padding-left: 40px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    gap: 10%;
   }
 
   &:hover {

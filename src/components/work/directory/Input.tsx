@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { IOrder } from "types/gameDataInterfaces";
 import { doesOrderItemExist } from "services/gameDataHelper";
@@ -17,6 +17,11 @@ const Input: React.FC<IInputProps> = ({
   createOrderItem,
 }): JSX.Element => {
   const [value, setValue] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current) inputRef.current.focus();
+  }, [inputRef]);
 
   const handleInputEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -34,6 +39,7 @@ const Input: React.FC<IInputProps> = ({
         style={{
           color: `${!doesOrderItemExist(order, value) ? "white" : "red"}`,
         }}
+        ref={inputRef}
         type="text"
         placeholder="item name"
         value={value}

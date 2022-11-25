@@ -13,7 +13,6 @@ const Orders: React.FC<IOrdersProps> = ({ orders }): JSX.Element => {
     <div className="orders">
       {orders &&
         orders
-          .sort((a, b) => (a.percent < b.percent ? 1 : -1))
           .map((order, index) => <OrderCard {...order} key={index} />)}
     </div>
   );

@@ -11,6 +11,7 @@ interface IDirectoryProps {
   directory: IDirectory;
   stagedItems: IOrderItem[];
   modifiedItems: IOrderItem[];
+  activeItemId: string;
   selectOrderItem: (orderItem: IOrderItem) => void;
   createOrderFolder: (order: IOrder) => void;
   createOrderItem: (order: IOrder, name: string) => void;
@@ -21,6 +22,7 @@ const Directory: React.FC<IDirectoryProps> = ({
   directory,
   stagedItems,
   modifiedItems,
+  activeItemId,
   selectOrderItem,
   createOrderFolder,
   createOrderItem,
@@ -47,13 +49,13 @@ const Directory: React.FC<IDirectoryProps> = ({
             <div className="directory-content-folder-content">
               {directory.orders
                 .filter((o) => o.isCreated)
-                .sort((a, b) => (a.name > b.name ? 1 : -1))
                 .map((order: IOrder) => (
                   <OrdersFolder
                     order={order}
                     stagedItems={stagedItems}
                     modifiedItems={modifiedItems}
                     key={order.id}
+                    activeItemId={activeItemId}
                     selectOrderItem={selectOrderItem}
                     createOrderItem={createOrderItem}
                     deleteOrderItem={deleteOrderItem}

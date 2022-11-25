@@ -15,7 +15,11 @@ const ProgressBar: React.FC<IProgressBarProps> = ({
     <div className="progress-bar">
       <div
         className="progress-bar-percent"
-        style={{ width: `${percent}%`, backgroundColor: `${color}` }}
+        style={{
+          width: `${percent}%`,
+          backgroundColor: `${color}`,
+          boxShadow: `0 0 2px 0 ${color}`,
+        }}
       />
     </div>
   );

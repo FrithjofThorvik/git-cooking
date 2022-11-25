@@ -9,6 +9,7 @@ import {
 import { IngredientType } from "types/enums";
 import { copyObjectWithoutRef, objectsEqual } from "services/helpers";
 import { IBranch, ICommit, IGitTree, IModifiedItem } from "types/gitInterfaces";
+import { compareOrders } from "services/gameDataHelper";
 
 export const defaultDirectory: IDirectory = {
   orders: [],
@@ -25,7 +26,7 @@ export const defaultDirectory: IDirectory = {
     let copy = this;
     copy.orders.forEach((o) => {
       if (o.id === order.id) {
-        o.items.push(orderItem);
+        o.createdItems.push(orderItem);
       }
     });
     return copy;
@@ -34,7 +35,9 @@ export const defaultDirectory: IDirectory = {
     let copy: IDirectory = copyObjectWithoutRef(this);
     copy.orders.forEach((o) => {
       if (o.id === orderItem.orderId) {
-        o.items = o.items.filter((i) => i.path !== orderItem.path);
+        o.createdItems = o.createdItems.filter(
+          (i) => i.path !== orderItem.path
+        );
       }
     });
     return copy;
@@ -51,7 +54,7 @@ export const defaultDirectory: IDirectory = {
     let copy: IDirectory = copyObjectWithoutRef(this);
     copy.orders.forEach((o) => {
       if (o.id === orderItem.orderId) {
-        o.items.forEach((i) => {
+        o.createdItems.forEach((i) => {
           if (orderItem.path === i.path) {
             if (data.type) {
               i.type = data.type;
@@ -65,6 +68,16 @@ export const defaultDirectory: IDirectory = {
           }
         });
       }
+    });
+    return copy;
+  },
+  updatePercentageCompleted: function () {
+    let copy: IDirectory = copyObjectWithoutRef(this);
+    copy.orders.forEach((o, i) => {
+      copy.orders[i].percentageCompleted = compareOrders(
+        o.createdItems,
+        o.orderItems
+      );
     });
     return copy;
   },
@@ -180,7 +193,7 @@ export const defaultGitTree: IGitTree = {
       const parentCommit = this.getHeadCommit();
       parentCommit?.directory?.orders.forEach((o) => {
         if (o.id === orderItem.orderId) {
-          o.items.forEach((i) => {
+          o.createdItems.forEach((i) => {
             if (i.path === orderItem.path) {
               isAdded = false; // the item existed before
               isModified = !objectsEqual(i, orderItem);
@@ -236,6 +249,51 @@ export const defaultGitTree: IGitTree = {
 
     return copyObjectWithoutRef(newModifiedItems);
   },
+  addStagedOnPrevDirectory: function (prevCommitDirectory: IDirectory) {
+    let newCommitDirectory: IDirectory =
+      copyObjectWithoutRef(prevCommitDirectory);
+    const safeCopyWorkingDirectory: IDirectory = copyObjectWithoutRef(
+      this.workingDirectory
+    );
+
+    this.stagedItems.forEach((stagedItem) => {
+      const item = copyObjectWithoutRef(stagedItem.item);
+
+      let existsInOrders = false;
+      newCommitDirectory.orders.forEach((o, orderIndex) => {
+        if (o.id === item.orderId) {
+          existsInOrders = true;
+          let existsInItems = false;
+
+          o.createdItems.forEach((i, itemIndex) => {
+            if (i.path === item.path) {
+              existsInItems = true;
+              // update the item
+              newCommitDirectory.orders[orderIndex].createdItems[itemIndex] =
+                item;
+            }
+          });
+
+          if (!existsInItems) {
+            // add the item to new directory
+            newCommitDirectory.orders[orderIndex].createdItems.push(item);
+          }
+        }
+      });
+
+      // if order did not exist -> add it to new directory from working directory
+      if (!existsInOrders) {
+        safeCopyWorkingDirectory.orders.forEach((o) => {
+          if (o.id === item.orderId) {
+            o.createdItems = [item];
+            newCommitDirectory.orders.push(o);
+          }
+        });
+      }
+    });
+
+    return newCommitDirectory;
+  },
   commit: function (commitMessage: string) {
     const getNewCommit = (commitMessage: string) => {
       const parentCommit: ICommit | undefined = copyObjectWithoutRef(
@@ -253,56 +311,11 @@ export const defaultGitTree: IGitTree = {
         const prevDirectory = copyObjectWithoutRef(parentCommit.directory);
 
         if (prevDirectory) {
-          const addStagedOnPrevDirectory = (
-            prevCommitDirectory: IDirectory
-          ) => {
-            let newCommitDirectory: IDirectory =
-              copyObjectWithoutRef(prevCommitDirectory);
-            const safeCopyWorkingDirectory: IDirectory = copyObjectWithoutRef(
-              this.workingDirectory
-            );
-
-            this.stagedItems.forEach((stagedItem) => {
-              const item = copyObjectWithoutRef(stagedItem.item);
-
-              let existsInOrders = false;
-              newCommitDirectory.orders.forEach((o, orderIndex) => {
-                if (o.id === item.orderId) {
-                  existsInOrders = true;
-                  let existsInItems = false;
-
-                  o.items.forEach((i, itemIndex) => {
-                    if (i.path === item.path) {
-                      existsInItems = true;
-                      // update the item
-                      newCommitDirectory.orders[orderIndex].items[itemIndex] =
-                        item;
-                    }
-                  });
-
-                  if (!existsInItems) {
-                    // add the item to new directory
-                    newCommitDirectory.orders[orderIndex].items.push(item);
-                  }
-                }
-              });
-
-              // if order did not exist -> add it to new directory from working directory
-              if (!existsInOrders) {
-                safeCopyWorkingDirectory.orders.forEach((o) => {
-                  if (o.id === item.orderId) {
-                    o.items = [item];
-                    newCommitDirectory.orders.push(o);
-                  }
-                });
-              }
-            });
-
-            return newCommitDirectory;
-          };
-
           // Update directory with staged files
-          newCommit.directory = addStagedOnPrevDirectory(prevDirectory);
+          newCommit.directory =
+            this.addStagedOnPrevDirectory(
+              prevDirectory
+            ).updatePercentageCompleted();
         }
       }
 
@@ -365,7 +378,7 @@ export const defaultGitTree: IGitTree = {
         activeCommit?.directory.orders
       )
         .find((o: IOrder) => o.id === itemToRestore.orderId)
-        ?.items.find((i: IOrderItem) => i.path === itemToRestore.path);
+        ?.createdItems.find((i: IOrderItem) => i.path === itemToRestore.path);
       if (restoredOrderItem === undefined) return undefined;
       return { item: restoredOrderItem };
     }
@@ -450,11 +463,13 @@ export const defaultGitTree: IGitTree = {
     const restored = copyGit.getRestoredFile(itemToRestore);
     const restoredItem = restored?.item;
 
-    // if restored item doesn't exist or is delted -> remove it
+    // if restored item doesn't exist or is deleted -> remove it
     if (restoredItem === undefined || restored?.deleted) {
       copyGit.workingDirectory.orders.forEach((o) => {
         if (o.id === itemToRestore.orderId) {
-          o.items = o.items.filter((i) => i.path !== itemToRestore.path);
+          o.createdItems = o.createdItems.filter(
+            (i) => i.path !== itemToRestore.path
+          );
         }
       });
     } else {
@@ -462,16 +477,16 @@ export const defaultGitTree: IGitTree = {
         // if itemToRestore deleted -> restore item
         copyGit.workingDirectory.orders.forEach((o) => {
           if (o.id === itemToRestore.orderId) {
-            o.items.push(restoredItem);
+            o.createdItems.push(restoredItem);
           }
         });
       } else {
         // update the item with the restored item
         copyGit.workingDirectory.orders.forEach((o) => {
           if (o.id === itemToRestore.orderId) {
-            o.items.forEach((i, index) => {
+            o.createdItems.forEach((i, index) => {
               if (i.path === itemToRestore.path)
-                o.items[index] = copyObjectWithoutRef(restoredItem);
+                o.createdItems[index] = copyObjectWithoutRef(restoredItem);
             });
           }
         });

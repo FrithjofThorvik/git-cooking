@@ -41,7 +41,7 @@ const Terminal: React.FC<ITerminalProps> = ({
         event.preventDefault();
         const gitRes = parseCommand(gameData, value);
         setTerminalDisplay((prevState) => prevState + "\n" + gitRes.message);
-        setCommandHistory((prevState) => [value, ...prevState]);
+        setCommandHistory((prevState) => [value, ...prevState.filter(prev => prev !== value)]);
         setValue("");
         setCommandHistoryIndex(-1);
         break;
