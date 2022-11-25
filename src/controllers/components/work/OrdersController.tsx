@@ -5,8 +5,8 @@ import { useGameTime } from "hooks/useGameTime";
 import { orderGenerator } from "services/orderGenerator";
 import { copyObjectWithoutRef } from "services/helpers";
 import { setGameData, useGameData } from "hooks/useGameData";
-import Orders, { IOrdersProps } from "components/work/Orders";
 import { calculateOrderTimerPercentage } from "services/gameDataHelper";
+import Orders, { IOrdersProps } from "components/work/Orders";
 
 interface IOrdersControllerProps {}
 
@@ -32,7 +32,7 @@ const OrdersController: React.FC<IOrdersControllerProps> = (): JSX.Element => {
           (prevOrder) => prevOrder.id === order.id
         );
         return {
-          percent: calculateOrderTimerPercentage(
+          timerPercent: calculateOrderTimerPercentage(
             gameTime,
             order.timeStart,
             order.timeEnd
@@ -48,18 +48,19 @@ const OrdersController: React.FC<IOrdersControllerProps> = (): JSX.Element => {
   }, [gameData.git.workingDirectory.orders, gameData.git.commits]);
 
   useEffect(() => {
-    setFormattedOrders(
-      formattedOrders.map((formattedOrder) => {
-        return {
-          ...formattedOrder,
-          percent: calculateOrderTimerPercentage(
-            gameTime,
-            formattedOrder.order.timeStart,
-            formattedOrder.order.timeEnd
-          ),
-        };
-      })
-    );
+    formattedOrders.length !== 0 &&
+      setFormattedOrders(
+        formattedOrders.map((formattedOrder) => {
+          return {
+            ...formattedOrder,
+            percent: calculateOrderTimerPercentage(
+              gameTime,
+              formattedOrder.order.timeStart,
+              formattedOrder.order.timeEnd
+            ),
+          };
+        })
+      );
   }, [gameTime]);
 
   return <Orders orders={formattedOrders} />;

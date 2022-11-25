@@ -4,6 +4,7 @@ import { IGitCooking } from "types/gameDataInterfaces";
 import { singletonHook } from "react-singleton-hook";
 import { defaultGameData, emptyGameData } from "data/defaultData";
 import { copyObjectWithoutRef } from "services/helpers";
+import { defaultDirectory } from "data/defaultGitTree";
 
 var _ = require("lodash");
 
@@ -23,10 +24,18 @@ const useGameDataIml = () => {
       if (data) {
         const updatedGameData: IGitCooking = JSON.parse(data);
         const gameDataWithFunctions = copyObjectWithoutRef(defaultGameData);
-        const updatedGameDataWithFunctions: IGitCooking = _.defaultsDeep(
+        let updatedGameDataWithFunctions: IGitCooking = _.defaultsDeep(
           updatedGameData,
           gameDataWithFunctions
         );
+        updatedGameDataWithFunctions.git.commits.forEach((c, i) => {
+          const directoryWithFunctions = _.defaultsDeep(
+            copyObjectWithoutRef(c.directory),
+            copyObjectWithoutRef(defaultDirectory)
+          );
+          updatedGameDataWithFunctions.git.commits[i].directory =
+            directoryWithFunctions;
+        });
         setData(updatedGameDataWithFunctions);
       }
     }

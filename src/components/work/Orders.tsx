@@ -12,8 +12,7 @@ const Orders: React.FC<IOrdersProps> = ({ orders }): JSX.Element => {
   return (
     <div className="orders">
       {orders &&
-        orders
-          .map((order, index) => <OrderCard {...order} key={index} />)}
+        orders.map((order, index) => <OrderCard {...order} key={index} />)}
     </div>
   );
 };
