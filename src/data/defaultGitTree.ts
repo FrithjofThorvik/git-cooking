@@ -148,6 +148,15 @@ export const defaultGitTree: IGitTree = {
       if (modifiedItem.item.path === path) return modifiedItem;
     }
   },
+<<<<<<< HEAD
+  getStagedFile: function (path: string) {
+    for (let i = 0; i < this.stagedItems.length; i++) {
+      const stagedItem = this.stagedItems[i];
+      if (stagedItem.item.path === path) return stagedItem;
+    }
+  },
+=======
+>>>>>>> dev
   isItemModified: function (orderItem: IOrderItem, deleteItem = false) {
     let isModified: boolean = false;
     let isAdded: boolean = false;
@@ -480,6 +489,34 @@ export const defaultGitTree: IGitTree = {
     let copyGit: IGitTree = copyObjectWithoutRef(this);
     copyGit.modifiedItems.forEach((modifiedItem) => {
       copyGit = copyGit.restoreFile(modifiedItem);
+    });
+    return copyGit;
+  },
+  restoreStagedFile: function (stagedItem: IModifiedItem) {
+    let copyGit: IGitTree = copyObjectWithoutRef(this);
+
+    // remove stagedItem from staged
+    copyGit.stagedItems = copyGit.stagedItems.filter(
+      (i) => i.item.path !== stagedItem.item.path
+    );
+
+    // update modified
+    let newModifiedItems = copyGit.modifiedItems;
+    copyGit.workingDirectory.orders.forEach((o) =>
+      o.items.forEach((i) => {
+        if (i.path === stagedItem.item.path) {
+          newModifiedItems = copyGit.handleModifyItem(i);
+        }
+      })
+    );
+    copyGit.modifiedItems = newModifiedItems;
+
+    return copyGit;
+  },
+  restoreAllStagedFiles: function () {
+    let copyGit: IGitTree = copyObjectWithoutRef(this);
+    copyGit.stagedItems.forEach((stagedItem) => {
+      copyGit = copyGit.restoreStagedFile(stagedItem);
     });
     return copyGit;
   },
