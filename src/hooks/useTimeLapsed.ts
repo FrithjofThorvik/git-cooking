@@ -21,7 +21,7 @@ export const useTimeLapsed = (
       setReferenceTime(now);
 
       let newTimeLapsed = prevTime + dt;
-      const dayLength = gameData.baseDayLength * dayLengthModifier;
+      const dayLength = gameData.stats.dayLength.get(gameData.store.upgrades);
 
       if (newTimeLapsed > dayLength) {
         handleEnd();

@@ -1,14 +1,13 @@
 @import "./colors";
 
-@mixin blurBackground {
-  backdrop-filter: blur(20px);
+@mixin blurBackground($blur: 20px) {
+  backdrop-filter: blur($blur);
   background: radial-gradient(
     90% 140% at 15% 21%,
     rgba(165, 239, 255, 0.2) 0%,
     rgba(110, 191, 244, 0.0447917) 77%,
     rgba(70, 144, 213, 0) 100%
   );
-  margin: 0 auto;
   background-blend-mode: overlay, normal;
   box-shadow: 0 5px 5px 2px rgba(#000, 0.2);
 }

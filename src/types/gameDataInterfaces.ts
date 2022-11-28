@@ -1,6 +1,11 @@
 import { IFood } from "./foodInterfaces";
 import { IGitTree } from "./gitInterfaces";
-import { GameState, GitCommandType, IngredientType } from "./enums";
+import {
+  GameState,
+  GitCommandType,
+  IngredientType,
+  UpgradeType,
+} from "./enums";
 
 export interface IDirectory {
   orders: IOrder[];
@@ -43,34 +48,44 @@ export interface IStore {
   upgrades: IUpgrade[];
   gitCommands: IGitCommand[];
   cash: number;
-  purchase: (purchasable: IPurchasable) => IStore;
+  purchase: (purchasable: StoreItem) => IStore;
 }
+
+export type StoreItem = IIngredient | IUpgrade | IGitCommand;
 
 export interface IPurchasable {
   id: string;
-  name: string;
-  cost: number;
   image: string;
   purchased: boolean;
   unlocked?: boolean;
-  description?: string;
   gitCommandType?: GitCommandType;
 }
 
 export interface IIngredient extends IPurchasable {
   type: IngredientType;
   useCost: number;
+  name: string;
+  cost: number;
 }
 
 export interface IUpgrade extends IPurchasable {
   unlocked: boolean;
-  description: string;
+  type: UpgradeType;
+  level: number;
+  maxLevel: number;
+  name: () => string;
+  cost: () => number;
+  apply: (value: number) => number;
+  effect: () => { current: number; next: number };
+  description: () => string;
 }
 
 export interface IGitCommand extends IPurchasable {
   unlocked: boolean;
-  description: string;
   gitCommandType: GitCommandType;
+  name: () => string;
+  cost: () => number;
+  description: () => string;
 }
 
 export interface IItemInterface {
@@ -80,11 +95,23 @@ export interface IItemInterface {
   closeItem: (orderItem: IOrderItem) => IItemInterface;
 }
 
+export interface IStat {
+  base: number;
+  get: (upgrades: IUpgrade[]) => number;
+}
+
+export interface IStats {
+  discountMultiplier: IStat;
+  dayLength: IStat;
+  costReductionMultiplier: IStat;
+  revenueMultiplier: IStat;
+}
+
 export interface IGitCooking {
   day: number;
   git: IGitTree;
   store: IStore;
+  stats: IStats;
   gameState: GameState;
-  baseDayLength: number;
   itemInterface: IItemInterface;
 }

@@ -42,3 +42,10 @@ export enum GitCommandType {
   CHECKOUT,
   BRANCH,
 }
+
+export enum UpgradeType {
+  DISCOUNT,
+  DAY_LENGTH,
+  COST_REDUCTION,
+  REVENUE_MULTIPLIER,
+}

@@ -105,13 +105,13 @@ class OrderGenerator {
       this.generateNewOrder(gameTime, gameData, setGameData);
     }
     if (
-      gameTime > gameData.baseDayLength / 3 &&
+      gameTime > gameData.stats.dayLength.get(gameData.store.upgrades) / 3 &&
       gameData.git.workingDirectory.orders.length === 1
     ) {
       this.generateNewOrder(gameTime, gameData, setGameData);
     }
     if (
-      gameTime > gameData.baseDayLength / 2 &&
+      gameTime > gameData.stats.dayLength.get(gameData.store.upgrades) / 2 &&
       gameData.git.workingDirectory.orders.length === 2
     ) {
       this.generateNewOrder(gameTime, gameData, setGameData);

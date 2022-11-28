@@ -11,13 +11,15 @@ const InfoBoxController: React.FC<
 > = (): JSX.Element => {
   const gameData = useGameData();
   const timeLapsed = useGameTime();
-
   return (
     <InfoBox
       infoText="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo"
       timeLapsed={timeLapsed}
-      baseDayLength={gameData.baseDayLength}
-      dayLengthModifier={1}
+      baseDayLength={gameData.stats.dayLength.base}
+      dayLengthModifier={
+        gameData.stats.dayLength.get(gameData.store.upgrades) /
+        gameData.stats.dayLength.base
+      }
       day={gameData.day}
     />
   );

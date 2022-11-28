@@ -16,7 +16,7 @@ const GameController: React.FC = (): JSX.Element => {
   const gameData = useGameData();
 
   const endDay = () => {
-    const { revenue, cost } = calculateRevenueAndCost(gameData.git);
+    const { revenue, cost } = calculateRevenueAndCost(gameData);
     setGameData({
       ...gameData,
       gameState: GameState.SUMMARY,
@@ -29,7 +29,8 @@ const GameController: React.FC = (): JSX.Element => {
 
   const startDay = () => {
     const gitReset: IGitTree = copyObjectWithoutRef(defaultGitTree);
-    const itemInterfaceReset: IItemInterface = copyObjectWithoutRef(defaultItemData)
+    const itemInterfaceReset: IItemInterface =
+      copyObjectWithoutRef(defaultItemData);
     const gitUpdated: IGitTree = {
       ...gitReset,
       workingDirectory: { ...gitReset.workingDirectory },

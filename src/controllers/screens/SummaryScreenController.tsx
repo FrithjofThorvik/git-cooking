@@ -18,7 +18,7 @@ const SummaryScreenController: React.FC<ISummaryScreenControllerProps> = ({
   const gameData = useGameData();
 
   useEffect(() => {
-    const { revenue, cost } = calculateRevenueAndCost(gameData.git);
+    const { revenue, cost } = calculateRevenueAndCost(gameData);
     setRevenue(revenue);
     setCost(cost);
   }, []);
