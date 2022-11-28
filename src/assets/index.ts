@@ -12,6 +12,8 @@ import discount from "assets/discount.png";
 import bunBottom from "assets/bun_bottom.png";
 import brickWall from "assets/brick_wall.png";
 import cheeseFries from "assets/cheese_fries.png";
+import costReduction from "assets/cost_reduction.png";
+import revenueMultiplier from "assets/revenue_multiplier.png";
 
 export const imgLogo = logo;
 export const imgChef = chef;
@@ -27,3 +29,5 @@ export const imgDiscount = discount;
 export const imgBunBottom = bunBottom;
 export const imgBrickWall = brickWall;
 export const imgCheeseFries = cheeseFries;
+export const imgCostReduction = costReduction;
+export const imgRevenueMultiplier = revenueMultiplier;

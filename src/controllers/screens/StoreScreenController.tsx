@@ -1,6 +1,6 @@
 import React from "react";
 
-import { IPurchasable } from "types/gameDataInterfaces";
+import { StoreItem } from "types/gameDataInterfaces";
 import { setGameData, useGameData } from "hooks/useGameData";
 import StoreScreen from "components/screens/StoreScreen";
 
@@ -15,7 +15,7 @@ const StoreScreenController: React.FC<IStoreScreenControllerProps> = ({
 }): JSX.Element => {
   const gameData = useGameData();
 
-  const purchase = (purchasable: IPurchasable) => {
+  const purchase = (purchasable: StoreItem) => {
     const updatedStore = gameData.store.purchase(purchasable);
     setGameData({ ...gameData, store: updatedStore });
   };

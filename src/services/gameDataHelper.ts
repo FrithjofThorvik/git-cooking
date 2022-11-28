@@ -1,6 +1,10 @@
-import { IGitTree } from "types/gitInterfaces";
 import { IngredientType } from "types/enums";
-import { IIngredient, IOrder, IOrderItem } from "types/gameDataInterfaces";
+import {
+  IGitCooking,
+  IIngredient,
+  IOrder,
+  IOrderItem,
+} from "types/gameDataInterfaces";
 
 export const createNewOrderItem = (order: IOrder, name: string): IOrderItem => {
   return {
@@ -138,10 +142,18 @@ export const compareOrders = (
   );
 };
 
-export const calculateRevenueAndCost = (git: IGitTree) => {
-  const orderRevenueMultiplier = 1.2;
+export const calculateRevenueAndCost = (gameData: IGitCooking) => {
+  const git = gameData.git;
+  const orderRevenueMultiplier = gameData.stats.revenueMultiplier.get(
+    gameData.store.upgrades
+  );
+  const useCostReduction = gameData.stats.costReductionMultiplier.get(
+    gameData.store.upgrades
+  );
+
   let revenue = 0;
   let cost = 0;
+
   const parentCommit = git.getHeadCommit();
   const prevDirectory = parentCommit?.directory;
 
@@ -157,7 +169,7 @@ export const calculateRevenueAndCost = (git: IGitTree) => {
       (orderCost * orderRevenueMultiplier * percentageCompleted) / 100;
 
     revenue += orderRevenue;
-    cost += orderCost;
+    cost += orderCost * useCostReduction;
   });
 
   return { revenue, cost };

@@ -1,0 +1,71 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.store-food-selector {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+
+  &-name {
+    @include blurBackground;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: $white;
+    border: 1px solid rgba($white, 0.2);
+    text-shadow: 0 0 7px rgba($white, 1);
+
+    font-size: 13px;
+    padding: 3px 15px;
+    border-radius: 50px;
+    margin-top: 10px;
+  }
+
+  &-content {
+    @include blurBackground;
+
+    display: flex;
+    align-content: center;
+    justify-content: center;
+
+    border: 1px solid rgba($white, 0.2);
+    box-shadow: 0 2px 5px 3px rgba(0, 0, 0, 0.5);
+
+    padding: 10px 25px;
+    border-radius: 50px;
+
+    &-item {
+      @include blurBackground;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $white;
+      border: 1px solid rgba($white, 0.2);
+      box-shadow: 0 2px 5px 2px rgba($black, 0.4);
+      width: 35px;
+      height: 35px;
+      margin: 0 15px;
+      border-radius: 100%;
+
+      &.selected {
+        color: $white;
+        border-color: $white;
+
+        svg {
+          filter: drop-shadow(0 0 5px rgba($white, 1));
+        }
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      svg {
+        font-size: 20px !important;
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { IOrder } from "types/gameDataInterfaces";
 import { doesOrderItemExist } from "services/gameDataHelper";

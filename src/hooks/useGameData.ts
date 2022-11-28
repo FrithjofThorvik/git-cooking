@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { IGitCooking } from "types/gameDataInterfaces";
+import { IDirectory, IGitCooking } from "types/gameDataInterfaces";
 import { singletonHook } from "react-singleton-hook";
 import { defaultGameData, emptyGameData } from "data/defaultData";
 import { copyObjectWithoutRef } from "services/helpers";
@@ -29,7 +29,7 @@ const useGameDataIml = () => {
           gameDataWithFunctions
         );
         updatedGameDataWithFunctions.git.commits.forEach((c, i) => {
-          const directoryWithFunctions = _.defaultsDeep(
+          let directoryWithFunctions: IDirectory = _.defaultsDeep(
             copyObjectWithoutRef(c.directory),
             copyObjectWithoutRef(defaultDirectory)
           );

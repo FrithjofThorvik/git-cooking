@@ -1,11 +1,13 @@
-@import "../styles/imports/colors";
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
 
 .menu-button {
+  @include blurBackground;
   display: flex;
   align-items: center;
   justify-content: center;
   color: $white;
-  border: 3px solid;
+  border: 1px solid rgba($white, 1);
   width: 150px;
   height: 45px;
   font-size: 20px;
@@ -19,13 +21,10 @@
   }
 }
 .default {
-  border-color: $white;
-  background-color: $dark;
+  background-color: rgba($dark, 0.8);
   padding-right: 20px;
 }
 
 .green {
-  background-color: $green;
-  border-color: $line-green;
   padding-left: 20px;
 }

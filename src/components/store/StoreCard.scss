@@ -6,9 +6,11 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+  scroll-snap-align: start;
   border: 1px solid $gray;
   height: 400px;
-  min-width: 270px;
+  width: 300px;
+  min-width: 300px;
   min-height: 400px;
   border-radius: 15px;
 
@@ -19,81 +21,113 @@
     align-items: center;
     box-sizing: border-box;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     width: 100%;
     height: 100%;
     padding: 20px;
 
-    &-img {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 35%;
-
-      img {
-        width: 130px;
-      }
-    }
-
-    &-title {
-      font-weight: bolder;
-      height: 15%;
-    }
-
-    &-desc {
-      height: 35%;
-    }
-
-    &-buy {
+    &-top {
       display: flex;
       align-items: center;
       flex-direction: column;
-      justify-content: center;
-      height: 15%;
-      margin-top: auto;
+      box-sizing: border-box;
+      justify-content: flex-start;
+      gap: 5px;
+      padding: 0 5px;
+      padding-top: 60px;
+      height: 80%;
 
-      &-button {
+      &-lvl {
+        position: absolute;
+        background-color: $dark;
+        border: 1px solid $gray;
+        box-shadow: inset 0 0 4px 4px rgba($black, 1);
+        top: 20px;
+        padding: 2px 13px;
+        border-radius: 20px;
+
+        &.max {
+          background-color: $green;
+          border: 1px solid $line-green;
+          box-shadow: inset 0 0 4px 0 rgba($black, 0.8);
+        }
+      }
+
+      &-img {
         display: flex;
         align-items: center;
-        box-sizing: border-box;
         justify-content: center;
-        background-color: $black;
-        border: 1px solid $gray;
-        color: $white;
-        margin: 0;
-        padding: 5px 20px;
-        border-radius: 50px;
-        box-shadow: 0 3px 5px 2px rgba($black, 1);
+        height: 35%;
 
-        &:hover {
-          cursor: pointer;
+        img {
+          width: 130px;
         }
+      }
 
-        p {
-          display: flex;
-          align-items: center;
-          margin: 0;
-          gap: 10px;
-          font-size: 18px;
-          font-weight: 100;
-        }
+      &-title {
+        font-weight: bolder;
+      }
+
+      &-desc {
       }
     }
 
-    &-locked-icon {
+    &-bottom {
       display: flex;
-      position: absolute;
       align-items: center;
-      justify-content: center;
-      background-color: rgba($black, 0.75);
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      flex-direction: column;
+      justify-content: flex-start;
+      flex: 20%;
 
-      svg {
-        color: $white;
-        font-size: 125px !important;
+      &-buy {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+        &-button {
+          display: flex;
+          align-items: center;
+          box-sizing: border-box;
+          justify-content: center;
+          background-color: $black;
+          border: 1px solid $gray;
+          color: $white;
+          margin: 0;
+          padding: 5px 20px;
+          border-radius: 50px;
+          box-shadow: 0 3px 5px 2px rgba($black, 1);
+
+          &:hover {
+            cursor: pointer;
+          }
+
+          p {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 100;
+          }
+        }
+      }
+
+      &-locked-icon {
+        display: flex;
+        position: absolute;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba($black, 0.75);
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        svg {
+          color: $white;
+          font-size: 125px !important;
+        }
       }
     }
   }
@@ -106,34 +140,22 @@
   }
 
   &.purchased {
-    .glass-container {
-      border-color: $line-green !important;
-    }
+    pointer-events: none;
+    border-color: $line-green;
+    background-color: rgba($line-green, 0.1);
 
-    .card-content-buy-button {
-      pointer-events: none;
-      background-color: $green;
-      border: 1px solid $line-green;
-      opacity: 0.7;
-      box-shadow: inset 0 2px 5px 2px rgba($black, 0.4);
+    svg {
+      color: $white;
+      font-size: 50px;
     }
   }
 
   &.locked {
+    overflow: hidden;
+
     .card-content {
-      &-img {
-        filter: brightness(0);
-      }
-      &-title {
-        filter: brightness(0);
-      }
-      &-desc {
-        filter: brightness(0);
-      }
-      &-buy-button {
+      &-bottom-buy-button {
         pointer-events: none;
-        opacity: 0.7;
-        box-shadow: inset 0 4px 2px 3px rgba(#000, 1) !important;
       }
     }
   }

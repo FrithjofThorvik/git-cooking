@@ -8,10 +8,15 @@ export const defaultGitCommands: IGitCommand[] = [
   {
     id: v4(),
     image: imgCommand,
-    name: "git restore",
-    description:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo",
-    cost: 1250,
+    name: function () {
+      return "git restore";
+    },
+    description: function () {
+      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+    },
+    cost: function () {
+      return 1250;
+    },
     unlocked: true,
     purchased: false,
     gitCommandType: GitCommandType.RESTORE,
@@ -19,10 +24,15 @@ export const defaultGitCommands: IGitCommand[] = [
   {
     id: v4(),
     image: imgCommand,
-    name: "git branch",
-    description:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo",
-    cost: 2250,
+    name: function () {
+      return "git branch";
+    },
+    description: function () {
+      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+    },
+    cost: function () {
+      return 2250;
+    },
     unlocked: true,
     purchased: false,
     gitCommandType: GitCommandType.BRANCH,
@@ -30,10 +40,15 @@ export const defaultGitCommands: IGitCommand[] = [
   {
     id: v4(),
     image: imgCommand,
-    name: "git checkout",
-    description:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo",
-    cost: 3250,
+    name: function () {
+      return "git checkout";
+    },
+    description: function () {
+      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+    },
+    cost: function () {
+      return 3250;
+    },
     unlocked: false,
     purchased: false,
     gitCommandType: GitCommandType.CHECKOUT,
