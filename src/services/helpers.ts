@@ -35,6 +35,7 @@ export const formatClock = (
   const startTimeInMinutes = toMinutesFromHoursAndMinutes(13, 0);
   let endTimeInMinutes =
     toMinutesFromHoursAndMinutes(21, 0) + 60 * (dayLengthModifier - 1);
+  if (endTimeInMinutes >= 1440) endTimeInMinutes = 1439;
 
   // Converts from timelapsed in ms to minutes on the clock
   const relativeMinutes =

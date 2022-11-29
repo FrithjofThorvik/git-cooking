@@ -1,87 +1,104 @@
 @import "styles/imports/colors";
+@import "styles/imports/mixins";
 
 .order-card {
+  @include blurBackground;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
   width: 80%;
   height: 75px;
-  min-height: 55px;
+  min-height: 75px;
   margin-top: 25px;
+  border: 2px solid $gray;
+  border-radius: 25px;
 
-  &-content {
+  &.completed {
+    border-color: $line-green;
+    background-color: rgba($line-green, 0.1);
+    border-radius: 25px;
+    text-shadow: 0 0 7px rgba($line-green, 1);
+    box-shadow: 0 3px 5px rgba($line-green, 0.4),
+      inset 0 2px 5px rgba($line-green, 0.4);
+    font-weight: 600;
+
+    .order-card-person img {
+      box-shadow: 0 2px 5px rgba($line-green, 0.4),
+        inset 0 2px 5px rgba($line-green, 0.4),
+        inset 0 0 13px 10px rgba(black, 0.5);
+    }
+  }
+
+  &-items {
     display: flex;
-    position: relative;
+    justify-content: flex-start;
     align-items: center;
-    justify-content: center;
     width: 100%;
     height: 100%;
+    margin: 0 20px 0 30px;
+    gap: 10%;
+  }
 
-    &.completed {
-      background-color: rgba($line-green, 0.1);
-    }
+  &-person {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    top: -25px;
+    left: -25px;
 
-    &-items {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-      margin: 0 20px 0 30px;
-      gap: 10%;
-    }
-
-    &-person {
-      display: flex;
+    &-info {
       position: absolute;
+      white-space: nowrap;
+      display: flex;
       align-items: center;
-      flex-direction: column;
-      justify-content: flex-start;
-      top: -25px;
-      left: -25px;
-
-      &-info {
-        position: absolute;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        left: 60px;
-        width: auto;
-      }
-
-      img {
-        border: 3px solid $gray;
-        background-color: $dark;
-        box-shadow: inset 0 0 13px 10px rgba(black, 0.5),
-          0 4px 6px 1px rgba(black, 0.5);
-        width: 50px;
-        height: 50px;
-        border-radius: 100%;
-      }
-
-      &-progressBar {
-        font-size: 12px;
-      }
+      gap: 10px;
+      left: 60px;
+      width: auto;
     }
 
-    &-coworker {
-      display: flex;
-      position: absolute;
-      align-items: center;
-      justify-content: center;
-      box-shadow: inset 0 0 13px 10px rgba(black, 0.5),
-        0 4px 6px 1px rgba(black, 0.5);
-      color: $gray;
+    img {
+      box-sizing: border-box;
       background-color: $dark;
       border: 2px solid $gray;
-      top: -17px;
-      right: -17px;
-      width: 35px;
-      height: 35px;
-      font-size: 14px;
+      box-shadow: inset 0 0 13px 10px rgba(black, 0.5),
+        0 4px 6px 1px rgba(black, 0.5);
+      width: 50px;
+      height: 50px;
+      padding: 2px;
       border-radius: 100%;
 
-      &:hover {
-        cursor: pointer;
+      &.completed {
+        box-shadow: 0 5px 5px rgba($line-green, 1);
       }
+    }
+
+    &-progressBar {
+      font-size: 12px;
+    }
+  }
+
+  &-coworker {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 13px 10px rgba(black, 0.5),
+      0 4px 6px 1px rgba(black, 0.5);
+    color: $gray;
+    background-color: $dark;
+    border: 2px solid $gray;
+    top: -17px;
+    right: -17px;
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+    border-radius: 100%;
+
+    &:hover {
+      cursor: pointer;
     }
   }
 }

@@ -12,12 +12,14 @@ import "./Store.scss";
 interface IStoreProps {
   availbaleCash: number;
   activeStoreItems: StoreItem[];
-  purchase: (storeItem: StoreItem) => void;
+  discountMultiplier: number;
+  purchase: (storeItem: StoreItem, discountMultiplier: number) => void;
 }
 
 const Store: React.FC<IStoreProps> = ({
-  activeStoreItems,
   availbaleCash,
+  activeStoreItems,
+  discountMultiplier,
   purchase,
 }): JSX.Element => {
   const itemsRef = useRef<HTMLDivElement>(null);
@@ -57,6 +59,7 @@ const Store: React.FC<IStoreProps> = ({
             key={storeItem.id}
             cash={availbaleCash}
             purchasable={storeItem}
+            discountMultiplier={discountMultiplier}
             purchase={purchase}
           />
         ))}

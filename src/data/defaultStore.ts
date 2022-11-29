@@ -16,17 +16,17 @@ export const defaultStore: IStore = {
   upgrades: copyObjectWithoutRef(defaultUpgrades),
   gitCommands: copyObjectWithoutRef(defaultGitCommands),
   cash: 30000,
-  purchase: function (purchasable: StoreItem) {
+  purchase: function (purchasable: StoreItem, discountMultiplier: number) {
     let copy: IStore = copyObjectWithoutRef(this);
 
     // Purchase upgrade
     if (isUpgrade(purchasable)) {
       let upgrade: IUpgrade = purchasable;
       copy.upgrades.forEach((u) => {
-        if (u.id === upgrade.id && copy.cash >= u.cost()) {
+        if (u.id === upgrade.id && copy.cash >= u.cost(discountMultiplier)) {
           u.level += 1;
           if (u.level === u.maxLevel) u.purchased = true;
-          copy.cash -= u.cost();
+          copy.cash -= u.cost(discountMultiplier);
         }
       });
       return copy;
@@ -36,9 +36,9 @@ export const defaultStore: IStore = {
     else if (isGitCommand(purchasable)) {
       let gitCommand: IGitCommand = purchasable;
       copy.gitCommands.forEach((g) => {
-        if (g.id === gitCommand.id && copy.cash >= g.cost()) {
+        if (g.id === gitCommand.id && copy.cash >= g.cost(discountMultiplier)) {
           g.purchased = true;
-          copy.cash -= g.cost();
+          copy.cash -= g.cost(discountMultiplier);
         }
       });
     }

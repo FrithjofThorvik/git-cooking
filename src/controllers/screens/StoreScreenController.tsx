@@ -15,14 +15,18 @@ const StoreScreenController: React.FC<IStoreScreenControllerProps> = ({
 }): JSX.Element => {
   const gameData = useGameData();
 
-  const purchase = (purchasable: StoreItem) => {
-    const updatedStore = gameData.store.purchase(purchasable);
+  const purchase = (purchasable: StoreItem, discountMultiplier: number) => {
+    const updatedStore = gameData.store.purchase(
+      purchasable,
+      discountMultiplier
+    );
     setGameData({ ...gameData, store: updatedStore });
   };
 
   return (
     <StoreScreen
       store={gameData.store}
+      stats={gameData.stats}
       goNext={goNext}
       goBack={goBack}
       purchase={purchase}

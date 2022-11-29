@@ -10,7 +10,7 @@ interface IItemSelectorProps {
   orders: IOrder[];
   items: IOrderItem[];
   activeItem: IOrderItem | null;
-  openOrderItem: (orderItem: IOrderItem) => void
+  openOrderItem: (orderItem: IOrderItem) => void;
 
   closeOrderItem: (orderItem: IOrderItem) => void;
 }
@@ -40,6 +40,11 @@ const ItemSelector: React.FC<IItemSelectorProps> = ({
     });
 
     setOrderGroups(updatedOrderGroups);
+  };
+
+  const close = (e: React.MouseEvent, i: IOrderItem) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    closeOrderItem(i);
   };
 
   useEffect(() => {
@@ -79,15 +84,16 @@ const ItemSelector: React.FC<IItemSelectorProps> = ({
               og.items.map((i) => (
                 <div
                   key={i.path}
-                  className={`item-selector-group-items-item ${activeItem?.path === i.path &&
+                  className={`item-selector-group-items-item ${
+                    activeItem?.path === i.path &&
                     "item-selector-group-items-item-selected"
-                    }`}
+                  }`}
                   onClick={() => openOrderItem(i)}
                 >
                   {i.name}
                   <CloseIcon
                     className="item-selector-group-items-item-icon"
-                    onClick={() => closeOrderItem(i)}
+                    onClick={(e) => close(e, i)}
                   />
                 </div>
               ))}

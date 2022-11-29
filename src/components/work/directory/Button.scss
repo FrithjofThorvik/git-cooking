@@ -3,13 +3,20 @@
 .order-generator {
   display: flex;
   align-items: center;
-  justify-content: center;
+  box-sizing: border-box;
+  justify-content: flex-start;
   border: 1px solid $white;
   width: 100px;
   font-size: 14px;
-  padding: 2px 3px;
+  padding: 2px 5px;
   margin: 10px 0;
   border-radius: 25px;
+
+  p {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 
   &-icon {
     font-size: inherit !important;

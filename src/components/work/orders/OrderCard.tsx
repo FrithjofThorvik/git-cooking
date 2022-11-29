@@ -3,7 +3,6 @@ import React from "react";
 import { imgChef } from "assets";
 import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import DisplayItem from "../item/DisplayItem";
-import GlassContainer from "components/GlassContainer";
 
 import "./OrderCard.scss";
 
@@ -24,33 +23,20 @@ const OrderCard: React.FC<IOrderCardProps> = ({
   const textColor = percentageCompleted >= 100 ? "#14c299" : "#eeeeee";
 
   return (
-    <div className="order-card">
-      <GlassContainer border shadow borderColor={borderColor}>
-        <div
-          className={`order-card-content ${
-            percentageCompleted >= 100 ? "completed" : ""
-          }`}
-        >
-          <div className="order-card-content-person">
-            <div
-              className="order-card-content-person-info"
-              style={{ color: textColor }}
-            >
-              {`${order.name} - ${Math.trunc(percentageCompleted)}%`}
-            </div>
-            <img
-              src={imgChef}
-              alt="chef"
-              style={{ borderColor: borderColor }}
-            />
-          </div>
-          <div className="order-card-content-items">
-            {items.map((item, index) => (
-              <DisplayItem item={item} key={index} />
-            ))}
-          </div>
+    <div
+      className={`order-card ${percentageCompleted >= 100 ? "completed" : ""}`}
+    >
+      <div className="order-card-person">
+        <div className="order-card-person-info" style={{ color: textColor }}>
+          {`${order.name} - ${Math.trunc(percentageCompleted)}%`}
         </div>
-      </GlassContainer>
+        <img src={imgChef} alt="chef" style={{ borderColor: borderColor }} />
+      </div>
+      <div className="order-card-items">
+        {items.map((item, index) => (
+          <DisplayItem item={item} key={index} />
+        ))}
+      </div>
     </div>
   );
 };

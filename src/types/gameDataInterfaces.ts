@@ -48,7 +48,7 @@ export interface IStore {
   upgrades: IUpgrade[];
   gitCommands: IGitCommand[];
   cash: number;
-  purchase: (purchasable: StoreItem) => IStore;
+  purchase: (purchasable: StoreItem, discountMultiplier: number) => IStore;
 }
 
 export type StoreItem = IIngredient | IUpgrade | IGitCommand;
@@ -74,7 +74,7 @@ export interface IUpgrade extends IPurchasable {
   level: number;
   maxLevel: number;
   name: () => string;
-  cost: () => number;
+  cost: (discountMultiplier: number) => number;
   apply: (value: number) => number;
   effect: () => { current: number; next: number };
   description: () => string;
@@ -84,7 +84,7 @@ export interface IGitCommand extends IPurchasable {
   unlocked: boolean;
   gitCommandType: GitCommandType;
   name: () => string;
-  cost: () => number;
+  cost: (discountMultiplier: number) => number;
   description: () => string;
 }
 

@@ -47,7 +47,14 @@ export const defaultStats: IStats = {
   revenueMultiplier: {
     base: 1,
     get: function (upgrades: IUpgrade[]) {
-      return 0;
+      let totalRevenueMultiplier = this.base;
+
+      upgrades.forEach((u) => {
+        if (u.type === UpgradeType.REVENUE_MULTIPLIER)
+          totalRevenueMultiplier = u.apply(totalRevenueMultiplier);
+      });
+
+      return totalRevenueMultiplier;
     },
   },
 };
