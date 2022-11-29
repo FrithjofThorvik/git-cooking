@@ -1,22 +1,29 @@
 import React, { useEffect, useState } from "react";
 
+import {
+  IIngredient,
+  IStats,
+  IStore,
+  StoreItem,
+} from "types/gameDataInterfaces";
 import { PurchaseType } from "types/enums";
-import { IIngredient, IStore, StoreItem } from "types/gameDataInterfaces";
-import MenuButton from "components/MenuButton";
+import Store from "components/store/Store";
 import StoreNav from "components/store/StoreNav";
+import MenuButton from "components/MenuButton";
 
 import "./StoreScreen.scss";
-import Store from "components/store/Store";
 
 export interface IStoreScreenProps {
   store: IStore;
+  stats: IStats;
   goNext: () => void;
   goBack: () => void;
-  purchase: (storeItem: StoreItem) => void;
+  purchase: (storeItem: StoreItem, discountMulitplier: number) => void;
 }
 
 const StoreScreen: React.FC<IStoreScreenProps> = ({
   store,
+  stats,
   goNext,
   goBack,
   purchase,
@@ -54,6 +61,7 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
         <Store
           availbaleCash={store.cash}
           activeStoreItems={activeStoreItems}
+          discountMultiplier={stats.discountMultiplier.get(store.upgrades)}
           purchase={purchase}
         />
       </div>

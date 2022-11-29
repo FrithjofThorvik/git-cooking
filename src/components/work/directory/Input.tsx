@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { IOrder } from "types/gameDataInterfaces";
 import { doesOrderItemExist } from "services/gameDataHelper";
@@ -46,6 +47,7 @@ const Input: React.FC<IInputProps> = ({
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => handleInputEvent(e)}
       />
+      <CloseIcon onClick={() => hideInput()} />
     </div>
   );
 };

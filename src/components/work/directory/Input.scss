@@ -8,12 +8,18 @@
   background-color: $dark;
   width: 100%;
   font-size: 14px;
-  padding: 2px 5px;
+  padding: 2px 10px;
   margin-top: 10px;
   border-radius: 15px;
 
-  &-icon {
+  svg {
+    color: $gray;
     font-size: inherit !important;
+
+    &:hover {
+      cursor: pointer;
+      color: $white;
+    }
   }
 
   input {

@@ -2,13 +2,12 @@
 
 .orders {
   display: flex;
+  overflow-y: scroll;
   align-items: center;
   flex-direction: column;
   justify-content: flex-start;
-  height: 100%;
   gap: 30px;
-
-  overflow-y: auto;
+  height: 100%;
 
   &::-webkit-scrollbar-track {
     background-color: $black;

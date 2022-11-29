@@ -23,13 +23,13 @@ const SummaryModal: React.FC<ISummaryModalProps> = ({
             <div className="summary-modal-content-top-text-line">
               <p>Revenue: </p>
               <p className="color-default">
-                {revenue} <PaidOutlinedIcon />
+                {Math.round(revenue)} <PaidOutlinedIcon />
               </p>
             </div>
             <div className="summary-modal-content-top-text-line">
               <p>Cost: </p>
               <p className="color-negative">
-                {cost} <PaidOutlinedIcon />
+                {Math.round(cost)} <PaidOutlinedIcon />
               </p>
             </div>
           </div>
@@ -41,7 +41,7 @@ const SummaryModal: React.FC<ISummaryModalProps> = ({
               revenue - cost > 0 ? "color-default" : "color-negative"
             }`}
           >
-            {revenue - cost} <PaidOutlinedIcon />
+            {Math.round(revenue - cost)} <PaidOutlinedIcon />
           </p>
         </div>
       </div>

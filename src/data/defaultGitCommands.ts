@@ -14,8 +14,8 @@ export const defaultGitCommands: IGitCommand[] = [
     description: function () {
       return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
     },
-    cost: function () {
-      return 1250;
+    cost: function (discountMultiplier: number) {
+      return Math.round(1250 * discountMultiplier);
     },
     unlocked: true,
     purchased: false,
@@ -30,8 +30,8 @@ export const defaultGitCommands: IGitCommand[] = [
     description: function () {
       return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
     },
-    cost: function () {
-      return 2250;
+    cost: function (discountMultiplier: number) {
+      return Math.round(2250 * discountMultiplier);
     },
     unlocked: true,
     purchased: false,
@@ -46,8 +46,8 @@ export const defaultGitCommands: IGitCommand[] = [
     description: function () {
       return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
     },
-    cost: function () {
-      return 3250;
+    cost: function (discountMultiplier: number) {
+      return Math.round(3250 * discountMultiplier);
     },
     unlocked: false,
     purchased: false,

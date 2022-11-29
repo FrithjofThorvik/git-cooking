@@ -12,7 +12,7 @@ const Button: React.FC<IButtonProps> = ({ text, onClick }): JSX.Element => {
   return (
     <div className="order-generator" onClick={onClick}>
       <AddCircleOutlineIcon className="order-generator-icon" />
-      <div>{text}</div>
+      <p>{text}</p>
     </div>
   );
 };

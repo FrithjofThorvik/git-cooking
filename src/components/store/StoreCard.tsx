@@ -11,17 +11,19 @@ import "./StoreCard.scss";
 export interface IStoreCardProps {
   cash: number;
   purchasable: StoreItem;
-  purchase: (purchasable: StoreItem) => void;
+  discountMultiplier: number;
+  purchase: (purchasable: StoreItem, discountMultiplier: number) => void;
 }
 
 const StoreCard: React.FC<IStoreCardProps> = ({
   cash,
   purchasable,
+  discountMultiplier,
   purchase,
 }): JSX.Element => {
   const cost = isIngredient(purchasable)
     ? purchasable.cost
-    : purchasable.cost();
+    : purchasable.cost(discountMultiplier);
   const description = isIngredient(purchasable)
     ? ""
     : purchasable.description();
@@ -79,11 +81,11 @@ const StoreCard: React.FC<IStoreCardProps> = ({
                 ) : (
                   <button
                     className="card-content-bottom-buy-button"
-                    onClick={() => purchase(purchasable)}
+                    onClick={() => purchase(purchasable, discountMultiplier)}
                   >
                     <p className="card-content-bottom-buy-button-price">
                       <PaidOutlinedIcon />
-                      {cost}
+                      {Math.round(cost)}
                     </p>
                   </button>
                 )}
