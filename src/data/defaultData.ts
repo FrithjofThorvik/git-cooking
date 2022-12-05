@@ -1,13 +1,13 @@
+import { IGitTree } from "types/gitInterfaces";
 import { GameState } from "types/enums";
 import { defaultHelp } from "./defaultHelp";
-import { IGitCooking, IItemInterface, IStore } from "types/gameDataInterfaces";
 import { defaultStore } from "./defaultStore";
 import { defaultStats } from "./defaultStats";
 import { defaultGitTree } from "./defaultGitTree";
 import { defaultItemData } from "./defaultItemData";
 import { copyObjectWithoutRef } from "services/helpers";
 import { calculateRevenueAndCost } from "services/gameDataHelper";
-import { IGitTree } from "types/gitInterfaces";
+import { IGitCooking, IItemInterface, IStore } from "types/gameDataInterfaces";
 
 export const defaultGameData: IGitCooking = {
   day: 1,
@@ -19,10 +19,12 @@ export const defaultGameData: IGitCooking = {
   help: copyObjectWithoutRef(defaultHelp),
   commandHistory: [],
   endDay: function () {
-    let copyGameData = copyObjectWithoutRef(this)
-    const { revenue, cost } = calculateRevenueAndCost(copyGameData);
-    let updatedStore: IStore = copyGameData.store.unlockStoreItemsByDay(copyGameData.day);
-    updatedStore.cash += (revenue - cost)
+    let copyGameData = copyObjectWithoutRef(this);
+    const { profit } = calculateRevenueAndCost(copyGameData);
+    let updatedStore: IStore = copyGameData.store.unlockStoreItemsByDay(
+      copyGameData.day
+    );
+    updatedStore.cash += profit;
 
     copyGameData.gameState = GameState.SUMMARY;
     copyGameData.store = updatedStore;
@@ -43,7 +45,7 @@ export const defaultGameData: IGitCooking = {
     copyGameData.day += 1;
     copyGameData.git = gitUpdated;
     copyGameData.itemInterface = itemInterfaceReset;
-    copyGameData.gameState = GameState.WORKING
+    copyGameData.gameState = GameState.WORKING;
 
     return copyGameData;
   },
@@ -59,10 +61,12 @@ export const emptyGameData: IGitCooking = {
   help: copyObjectWithoutRef(defaultHelp),
   commandHistory: [],
   endDay: function () {
-    let copyGameData = copyObjectWithoutRef(this)
-    const { revenue, cost } = calculateRevenueAndCost(copyGameData);
-    let updatedStore: IStore = copyGameData.store.unlockStoreItemsByDay(copyGameData.day);
-    updatedStore.cash += (revenue - cost)
+    let copyGameData = copyObjectWithoutRef(this);
+    const { profit } = calculateRevenueAndCost(copyGameData);
+    let updatedStore: IStore = copyGameData.store.unlockStoreItemsByDay(
+      copyGameData.day
+    );
+    updatedStore.cash += profit;
 
     copyGameData.gameState = GameState.SUMMARY;
     copyGameData.store = updatedStore;
@@ -83,7 +87,7 @@ export const emptyGameData: IGitCooking = {
     copyGameData.day += 1;
     copyGameData.git = gitUpdated;
     copyGameData.itemInterface = itemInterfaceReset;
-    copyGameData.gameState = GameState.WORKING
+    copyGameData.gameState = GameState.WORKING;
 
     return copyGameData;
   },

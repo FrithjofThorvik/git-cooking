@@ -67,3 +67,16 @@ export const copyObjectWithoutRef = (obj: any): any => {
 
 export const objectsEqual = (o1: Object, o2: Object): boolean =>
   _.isEqual(o1, o2);
+
+export const formatNumber = (
+  x: number,
+  rounded: boolean,
+  decimals?: number
+) => {
+  if (rounded) x = Math.round(x);
+  if (decimals) x = Number(x.toFixed(decimals));
+
+  var parts = x.toString().split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return parts.join(".");
+};

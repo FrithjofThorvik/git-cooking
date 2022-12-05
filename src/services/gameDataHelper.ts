@@ -4,6 +4,7 @@ import {
   IOrder,
   IOrderItem,
 } from "types/gameDataInterfaces";
+import { ISummaryStats } from "types/interfaces";
 import { IngredientType } from "types/enums";
 
 export const createNewOrderItem = (order: IOrder, name: string): IOrderItem => {
@@ -142,17 +143,24 @@ export const compareOrders = (
   );
 };
 
-export const calculateRevenueAndCost = (gameData: IGitCooking) => {
+export const calculateRevenueAndCost = (
+  gameData: IGitCooking
+): ISummaryStats => {
   const git = gameData.git;
-  const orderRevenueMultiplier = gameData.stats.revenueMultiplier.get(
+  const profitMarginMultiplier = 1.25;
+  const revenueMultiplier = gameData.stats.revenueMultiplier.get(
     gameData.store.upgrades
   );
   const useCostReduction = gameData.stats.costReductionMultiplier.get(
     gameData.store.upgrades
   );
 
-  let revenue = 0;
-  let cost = 0;
+  let baseRevenue = 0;
+  let baseCost = 0;
+  let avgPercentage = 0;
+  let bonusFromPercentage = 0;
+  let bonusFromMultiplier = 0;
+  let bonusFromCostReduction = 0;
 
   const parentCommit = git.getHeadCommit();
   const prevDirectory = parentCommit?.directory;
@@ -161,21 +169,38 @@ export const calculateRevenueAndCost = (gameData: IGitCooking) => {
     const percentageCompleted = commitedOrder.percentageCompleted;
     let orderCost = 0;
     commitedOrder.createdItems.forEach((item) => {
-      item.ingredients.forEach((ingredient) => {
-        orderCost += ingredient.useCost;
-      });
+      item.ingredients.forEach(
+        (ingredient) => (orderCost += ingredient.useCost)
+      );
     });
-    const orderRevenue =
-      (orderCost * orderRevenueMultiplier * percentageCompleted) / 100;
+    const orderRevenue = orderCost * profitMarginMultiplier;
 
-    revenue += orderRevenue;
-    cost += orderCost * useCostReduction;
+    baseCost += orderCost;
+    baseRevenue += orderRevenue;
+    avgPercentage += percentageCompleted / prevDirectory.orders.length;
+    bonusFromPercentage +=
+      orderRevenue - orderRevenue * (percentageCompleted / 100);
+    bonusFromMultiplier += orderRevenue * revenueMultiplier - orderRevenue;
+    bonusFromCostReduction += orderCost - orderCost * useCostReduction;
   });
 
-  revenue = Math.round(revenue);
-  cost = Math.round(cost);
+  const totalRevenue = baseRevenue + bonusFromMultiplier + bonusFromPercentage;
+  const totalCost = baseCost - bonusFromCostReduction;
+  const profit = totalRevenue - totalCost;
 
-  return { revenue, cost };
+  return {
+    profit,
+    totalCost,
+    totalRevenue,
+    baseRevenue,
+    baseCost,
+    revenueMultiplier,
+    useCostReduction,
+    avgPercentage,
+    bonusFromCostReduction,
+    bonusFromMultiplier,
+    bonusFromPercentage,
+  };
 };
 
 export const calculateOrderTimerPercentage = (

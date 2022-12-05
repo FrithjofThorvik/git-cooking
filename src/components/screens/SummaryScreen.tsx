@@ -1,16 +1,16 @@
 import React from "react";
 
+import { ISummaryStats } from "types/interfaces";
 import MenuButton from "components/MenuButton";
 import HelpButton from "components/HelpButton";
+import Background from "components/Background";
 import SummaryModal from "components/summary/SummaryModal";
 
 import "./SummaryScreen.scss";
-import Background from "components/Background";
 
 export interface ISummaryScreenProps {
   day: number;
-  cost: number;
-  revenue: number;
+  summaryStats: ISummaryStats;
   goNext: () => void;
   goBack: () => void;
   openHelpScreen: () => void;
@@ -18,8 +18,7 @@ export interface ISummaryScreenProps {
 
 const SummaryScreen: React.FC<ISummaryScreenProps> = ({
   day,
-  cost,
-  revenue,
+  summaryStats,
   goNext,
   goBack,
   openHelpScreen,
@@ -27,7 +26,7 @@ const SummaryScreen: React.FC<ISummaryScreenProps> = ({
   return (
     <Background>
       <div className="summary-screen">
-        <SummaryModal day={day} cost={cost} revenue={revenue} />
+        <SummaryModal day={day} summaryStats={summaryStats} />
         <div className="summary-screen-buttons">
           <div className="summary-screen-buttons-back-button">
             <MenuButton onClick={goBack} text="Back" type="default" />
