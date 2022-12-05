@@ -6,7 +6,7 @@ class FoodBuilder {
   public buildBurger = (burger: IBurger): IIngredient[] => {
     let availableIngredients = Object.values(burger).filter(
       (i) =>
-        i.id !== burger.bunBottom.id && i.id !== burger.bunTop.id && i.purchased
+        i.id !== burger.bunBottom.id && i.id !== burger.bunTop.id && i.unlocked
     );
     const nrItems = randomIntFromInterval(1, availableIngredients.length);
 
@@ -25,7 +25,21 @@ class FoodBuilder {
   };
 
   public buildFries = (fries: IFries): IIngredient[] => {
-    return [fries.cheese];
+    let availableItems = Object.values(fries).filter(
+      (i) =>
+        i.unlocked
+    );
+
+    const choosenItemIndex = randomIntFromInterval(
+      0,
+      availableItems.length - 1
+    );
+
+    const choosenItem = availableItems.at(choosenItemIndex);
+    if (choosenItem)
+      return [choosenItem]
+
+    return [fries.normal];
   };
 }
 

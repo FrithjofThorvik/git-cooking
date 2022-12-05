@@ -137,6 +137,8 @@
       &-locked-icon {
         display: flex;
         position: absolute;
+        flex-direction: column;
+        gap: 10px;
         align-items: center;
         justify-content: center;
         background-color: rgba($black, 0.75);
@@ -144,6 +146,10 @@
         left: 0;
         right: 0;
         bottom: 0;
+
+        span {
+          color: $line-orange;
+        }
 
         svg {
           color: $white;

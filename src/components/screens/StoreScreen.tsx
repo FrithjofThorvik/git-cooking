@@ -61,7 +61,7 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
       case PurchaseType.INGREDIENTS:
         let ingredients: IIngredient[] = [];
         store.foods.forEach((f) => {
-          Object.values(f.ingredients).forEach((i) => ingredients.push(i));
+          Object.values(f.ingredients).forEach((i) => { if (!i.default) ingredients.push(i) });
         });
         setActiveStoreItems(ingredients);
         setActiveTutorials(
@@ -78,7 +78,7 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
       <div className="store-screen">
         <div className="store-screen-top">
           <Store
-            availbaleCash={store.cash}
+            availableCash={store.cash}
             activeStoreItems={activeStoreItems}
             discountMultiplier={stats.discountMultiplier.get(store.upgrades)}
             purchase={purchase}

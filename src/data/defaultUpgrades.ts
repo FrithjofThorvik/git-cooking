@@ -13,7 +13,8 @@ export const defaultUpgrades: IUpgrade[] = [
   {
     id: v4(),
     image: imgClock,
-    unlocked: true,
+    unlocked: false,
+    unlockDay: 1,
     purchased: false,
     type: UpgradeType.DAY_LENGTH,
     level: 1,
@@ -47,7 +48,8 @@ export const defaultUpgrades: IUpgrade[] = [
     description: function () {
       return `Reduces upgrade cost by x${this.effect().next.toFixed(2)}`;
     },
-    unlocked: true,
+    unlocked: false,
+    unlockDay: 3,
     purchased: false,
     type: UpgradeType.DISCOUNT,
     level: 1,
@@ -69,7 +71,8 @@ export const defaultUpgrades: IUpgrade[] = [
   {
     id: v4(),
     image: imgCostReduction,
-    unlocked: true,
+    unlocked: false,
+    unlockDay: 5,
     purchased: false,
     type: UpgradeType.COST_REDUCTION,
     level: 1,
@@ -97,7 +100,8 @@ export const defaultUpgrades: IUpgrade[] = [
   {
     id: v4(),
     image: imgRevenueMultiplier,
-    unlocked: true,
+    unlocked: false,
+    unlockDay: 6,
     purchased: false,
     type: UpgradeType.REVENUE_MULTIPLIER,
     level: 1,

@@ -1,12 +1,7 @@
 import React from "react";
 
-import { IGitTree } from "types/gitInterfaces";
 import { GameState } from "types/enums";
-import { IItemInterface, ITutorial } from "types/gameDataInterfaces";
-import { defaultGitTree } from "data/defaultGitTree";
-import { defaultItemData } from "data/defaultItemData";
-import { copyObjectWithoutRef } from "services/helpers";
-import { calculateRevenueAndCost } from "services/gameDataHelper";
+import { ITutorial } from "types/gameDataInterfaces";
 import { setGameData, useGameData } from "hooks/useGameData";
 import WorkScreenController from "controllers/screens/WorkScreenController";
 import HelpScreenController from "./screens/HelpScreenController";
@@ -17,32 +12,18 @@ const GameController: React.FC = (): JSX.Element => {
   const gameData = useGameData();
 
   const endDay = () => {
-    const { revenue, cost } = calculateRevenueAndCost(gameData);
+    let updatedGameData = gameData.endDay();
+
     setGameData({
-      ...gameData,
-      gameState: GameState.SUMMARY,
-      store: {
-        ...gameData.store,
-        cash: gameData.store.cash + (revenue - cost),
-      },
+      ...updatedGameData
     });
   };
 
   const startDay = () => {
-    const gitReset: IGitTree = copyObjectWithoutRef(defaultGitTree);
-    const itemInterfaceReset: IItemInterface =
-      copyObjectWithoutRef(defaultItemData);
-    const gitUpdated: IGitTree = {
-      ...gitReset,
-      workingDirectory: { ...gitReset.workingDirectory },
-    };
+    let updatedGameData = gameData.startDay();
 
     setGameData({
-      ...gameData,
-      day: gameData.day + 1,
-      git: gitUpdated,
-      itemInterface: itemInterfaceReset,
-      gameState: GameState.WORKING,
+      ...updatedGameData
     });
   };
 
