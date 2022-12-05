@@ -4,6 +4,7 @@ import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 import { StoreItem } from "types/gameDataInterfaces";
+import { formatNumber } from "services/helpers";
 import { isIngredient, isUpgrade } from "services/typeGuards";
 
 import "./StoreCard.scss";
@@ -83,7 +84,7 @@ const StoreCard: React.FC<IStoreCardProps> = ({
                   >
                     <p className="card-content-bottom-buy-button-price">
                       <PaidOutlinedIcon />
-                      {Math.round(cost)}
+                      {formatNumber(cost, true)}
                     </p>
                   </button>
                 )}

@@ -23,3 +23,17 @@ export interface IArcProgressClock {
   progress: number;
   startAngle: number;
 }
+
+export interface ISummaryStats {
+  profit: number;
+  totalCost: number;
+  totalRevenue: number;
+  baseRevenue: number;
+  baseCost: number;
+  revenueMultiplier: number;
+  useCostReduction: number;
+  avgPercentage: number;
+  bonusFromCostReduction: number;
+  bonusFromMultiplier: number;
+  bonusFromPercentage: number;
+}

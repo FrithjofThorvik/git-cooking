@@ -15,7 +15,7 @@ const GameController: React.FC = (): JSX.Element => {
     let updatedGameData = gameData.endDay();
 
     setGameData({
-      ...updatedGameData
+      ...updatedGameData,
     });
   };
 
@@ -23,7 +23,7 @@ const GameController: React.FC = (): JSX.Element => {
     let updatedGameData = gameData.startDay();
 
     setGameData({
-      ...updatedGameData
+      ...updatedGameData,
     });
   };
 

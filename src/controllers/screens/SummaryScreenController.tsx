@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { useGameData } from "hooks/useGameData";
+import { ISummaryStats } from "types/interfaces";
 import { calculateRevenueAndCost } from "services/gameDataHelper";
 import SummaryScreen from "components/screens/SummaryScreen";
 
@@ -15,21 +16,19 @@ const SummaryScreenController: React.FC<ISummaryScreenControllerProps> = ({
   goBack,
   openHelpScreen,
 }): JSX.Element => {
-  const [revenue, setRevenue] = useState<number>(0);
-  const [cost, setCost] = useState<number>(0);
   const gameData = useGameData();
+  const [summaryStats, setSummaryStats] = useState<ISummaryStats | null>(null);
 
   useEffect(() => {
-    const { revenue, cost } = calculateRevenueAndCost(gameData);
-    setRevenue(revenue);
-    setCost(cost);
+    const summaryStats = calculateRevenueAndCost(gameData);
+    setSummaryStats(summaryStats);
   }, []);
 
+  if (!summaryStats) return <></>;
   return (
     <SummaryScreen
-      cost={cost}
-      revenue={revenue}
       day={gameData.day}
+      summaryStats={summaryStats}
       goNext={goNext}
       goBack={goBack}
       openHelpScreen={openHelpScreen}

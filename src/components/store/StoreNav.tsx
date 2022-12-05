@@ -6,6 +6,7 @@ import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import FastfoodOutlinedIcon from "@mui/icons-material/FastfoodOutlined";
 
 import { PurchaseType } from "types/enums";
+import { formatNumber } from "services/helpers";
 
 import "./StoreNav.scss";
 
@@ -38,7 +39,7 @@ const StoreNav: React.FC<IStoreNavProps> = ({
       <div className="store-nav-cash">
         <p>
           <PaidOutlinedIcon />
-          {Math.round(cash)}
+          {formatNumber(cash, true)}
         </p>
       </div>
       <div className="store-nav-menu">
