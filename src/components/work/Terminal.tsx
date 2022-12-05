@@ -1,3 +1,4 @@
+import { TerminalOutlined } from "@mui/icons-material";
 import React, { useEffect, useRef, useState } from "react";
 import { IGitCooking } from "types/gameDataInterfaces";
 
@@ -25,7 +26,9 @@ const Terminal: React.FC<ITerminalProps> = ({
     if (newIndex <= -1) newIndex = -1;
     else if (newIndex > gameData.commandHistory.length - 1)
       newIndex = gameData.commandHistory.length - 1;
-    newIndex === -1 ? setValue("") : setValue(gameData.commandHistory[newIndex]);
+    newIndex === -1
+      ? setValue("")
+      : setValue(gameData.commandHistory[newIndex]);
 
     setCommandHistoryIndex(newIndex);
   };
@@ -81,6 +84,12 @@ const Terminal: React.FC<ITerminalProps> = ({
           />
         </div>
       </div>
+      {!terminalDisplay && (
+        <div className="terminal-empty">
+          <TerminalOutlined />
+          <p>Terminal</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import FastfoodOutlinedIcon from "@mui/icons-material/FastfoodOutlined";
 
-import { getOrderItemsFromPaths } from "services/gameDataHelper";
 import { IFood } from "types/foodInterfaces";
 import { IngredientType } from "types/enums";
+import { getOrderItemsFromPaths } from "services/gameDataHelper";
 import { IIngredient, IOrder, IOrderItem } from "types/gameDataInterfaces";
 import ItemSelector from "./item/ItemSelector";
 import ItemInterface from "./item/ItemInterface";
@@ -59,18 +60,27 @@ const Item: React.FC<IItemProps> = ({
 
   return (
     <div className="item">
-      <ItemSelector
-        orders={orders}
-        items={selectedItems}
-        activeItem={activeItem}
-        openOrderItem={openOrderItem}
-        closeOrderItem={closeOrderItem}
-      />
-      <ItemInterface
-        activeItem={activeItem}
-        modifyOrderItem={modifyOrderItem}
-        foods={foods}
-      />
+      {selectedItemIds.length === 0 ? (
+        <div className="item-empty">
+          <FastfoodOutlinedIcon />
+          <p>No selected items...</p>
+        </div>
+      ) : (
+        <>
+          <ItemSelector
+            orders={orders}
+            items={selectedItems}
+            activeItem={activeItem}
+            openOrderItem={openOrderItem}
+            closeOrderItem={closeOrderItem}
+          />
+          <ItemInterface
+            activeItem={activeItem}
+            modifyOrderItem={modifyOrderItem}
+            foods={foods}
+          />
+        </>
+      )}
     </div>
   );
 };

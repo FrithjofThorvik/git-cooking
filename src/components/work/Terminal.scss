@@ -2,6 +2,7 @@
 
 .terminal {
   display: flex;
+  position: relative;
   flex-direction: column;
   backdrop-filter: blur(10px);
   border: 3px $line-dark solid;
@@ -58,6 +59,28 @@
           border: 0px;
         }
       }
+    }
+  }
+
+  &-empty {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    gap: 0px;
+    top: 50%;
+    left: 50%;
+
+    svg {
+      color: rgba($white, 0.1);
+      font-size: 75px;
+    }
+    p {
+      color: rgba($white, 0.15);
+      font-size: 22px;
+      text-align: center;
     }
   }
 }
