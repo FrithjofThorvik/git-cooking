@@ -139,6 +139,7 @@ export interface IGitCooking {
   store: IStore;
   stats: IStats;
   gameState: GameState;
+  commandHistory: string[];
   itemInterface: IItemInterface;
   endDay: () => IGitCooking;
   startDay: () => IGitCooking;

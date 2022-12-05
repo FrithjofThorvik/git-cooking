@@ -75,8 +75,10 @@ class Git {
         } else return gitRes("Invalid git command", false);
       }
 
-      if (currentCmdArg?.cmd)
+      if (currentCmdArg?.cmd) {
+        setGameData(gameData)
         return currentCmdArg.cmd(gameData, setGameData, dynamicInput);
+      }
       else return gitRes("Git command did not exist", false);
     } else return gitRes("Git command cannot be empty", false);
   };
