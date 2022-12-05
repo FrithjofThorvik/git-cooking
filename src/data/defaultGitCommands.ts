@@ -17,7 +17,8 @@ export const defaultGitCommands: IGitCommand[] = [
     cost: function (discountMultiplier: number) {
       return Math.round(1250 * discountMultiplier);
     },
-    unlocked: true,
+    unlocked: false,
+    unlockDay: 2,
     purchased: false,
     gitCommandType: GitCommandType.RESTORE,
   },
@@ -33,7 +34,8 @@ export const defaultGitCommands: IGitCommand[] = [
     cost: function (discountMultiplier: number) {
       return Math.round(2250 * discountMultiplier);
     },
-    unlocked: true,
+    unlocked: false,
+    unlockDay: 5,
     purchased: false,
     gitCommandType: GitCommandType.BRANCH,
   },
@@ -50,6 +52,7 @@ export const defaultGitCommands: IGitCommand[] = [
       return Math.round(3250 * discountMultiplier);
     },
     unlocked: false,
+    unlockDay: 10,
     purchased: false,
     gitCommandType: GitCommandType.CHECKOUT,
   },

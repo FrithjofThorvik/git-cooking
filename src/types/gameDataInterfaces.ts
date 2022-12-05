@@ -50,6 +50,7 @@ export interface IStore {
   gitCommands: IGitCommand[];
   cash: number;
   purchase: (purchasable: StoreItem, discountMultiplier: number) => IStore;
+  unlockStoreItemsByDay: (day: number) => IStore;
 }
 
 export type StoreItem = IIngredient | IUpgrade | IGitCommand;
@@ -58,13 +59,15 @@ export interface IPurchasable {
   id: string;
   image: string;
   purchased: boolean;
-  unlocked?: boolean;
+  unlocked: boolean;
+  unlockDay: number;
   gitCommandType?: GitCommandType;
 }
 
 export interface IIngredient extends IPurchasable {
   type: IngredientType;
   useCost: number;
+  default?: boolean;
   name: string;
   cost: number;
 }
@@ -137,4 +140,6 @@ export interface IGitCooking {
   stats: IStats;
   gameState: GameState;
   itemInterface: IItemInterface;
+  endDay: () => IGitCooking;
+  startDay: () => IGitCooking;
 }

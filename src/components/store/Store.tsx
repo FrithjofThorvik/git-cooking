@@ -10,14 +10,14 @@ import StoreFoodSelector from "./StoreFoodSelector";
 import "./Store.scss";
 
 interface IStoreProps {
-  availbaleCash: number;
+  availableCash: number;
   activeStoreItems: StoreItem[];
   discountMultiplier: number;
   purchase: (storeItem: StoreItem, discountMultiplier: number) => void;
 }
 
 const Store: React.FC<IStoreProps> = ({
-  availbaleCash,
+  availableCash,
   activeStoreItems,
   discountMultiplier,
   purchase,
@@ -57,7 +57,7 @@ const Store: React.FC<IStoreProps> = ({
         {activeStoreItems.filter(filterFoodType).map((storeItem) => (
           <StoreCard
             key={storeItem.id}
-            cash={availbaleCash}
+            cash={availableCash}
             purchasable={storeItem}
             discountMultiplier={discountMultiplier}
             purchase={purchase}

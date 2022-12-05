@@ -33,29 +33,26 @@ const StoreCard: React.FC<IStoreCardProps> = ({
 
   return (
     <div
-      className={`card ${
-        purchasable.purchased
-          ? "purchased"
-          : purchasable.unlocked === undefined || purchasable.unlocked
+      className={`card ${purchasable.purchased
+        ? "purchased"
+        : purchasable.unlocked === undefined || purchasable.unlocked
           ? cash >= cost
             ? ""
             : "notafford"
           : "locked"
-      }`}
+        }`}
     >
       <div className="card-content">
         <div className="card-content-top">
           {isUpgrade(purchasable) && (
             <div
-              className={`card-content-top-lvl ${
-                purchasable.purchased ? "max" : ""
-              }`}
+              className={`card-content-top-lvl ${purchasable.purchased ? "max" : ""
+                }`}
             >
-              {`${
-                purchasable.purchased
-                  ? `Max level`
-                  : `Level: ${purchasable.level}`
-              }`}
+              {`${purchasable.purchased
+                ? `Max level`
+                : `Level: ${purchasable.level}`
+                }`}
             </div>
           )}
           <div className="card-content-top-img">
@@ -77,6 +74,7 @@ const StoreCard: React.FC<IStoreCardProps> = ({
                 {purchasable.unlocked !== undefined && !purchasable.unlocked ? (
                   <div className="card-content-bottom-locked-icon">
                     <LockOutlinedIcon />
+                    <p>Play to day <span>{purchasable.unlockDay}</span> to unlock!</p>
                   </div>
                 ) : (
                   <button

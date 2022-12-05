@@ -1,7 +1,6 @@
 import { ICommandArg } from "types/interfaces";
 import { IOrderItem } from "types/gameDataInterfaces";
 import { gitCommandDoesNotExist, gitRes } from "services/git";
-import { GameState } from "types/enums";
 
 export const gitCommands: ICommandArg[] = [
   {
@@ -42,7 +41,11 @@ export const gitCommands: ICommandArg[] = [
         key: "end-day",
         args: [],
         cmd: (gameData, setGameData) => {
-          setGameData({ ...gameData, gameState: GameState.SUMMARY });
+          let updatedGameData = gameData.endDay();
+
+          setGameData({
+            ...updatedGameData
+          });
           return gitRes("Ended day", true);
         },
       },
