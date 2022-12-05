@@ -17,6 +17,7 @@ export const defaultGameData: IGitCooking = {
   store: copyObjectWithoutRef(defaultStore),
   git: copyObjectWithoutRef(defaultGitTree),
   help: copyObjectWithoutRef(defaultHelp),
+  commandHistory: [],
   endDay: function () {
     let copyGameData = copyObjectWithoutRef(this)
     const { revenue, cost } = calculateRevenueAndCost(copyGameData);
@@ -56,6 +57,7 @@ export const emptyGameData: IGitCooking = {
   store: copyObjectWithoutRef(defaultStore),
   git: copyObjectWithoutRef(defaultGitTree),
   help: copyObjectWithoutRef(defaultHelp),
+  commandHistory: [],
   endDay: function () {
     let copyGameData = copyObjectWithoutRef(this)
     const { revenue, cost } = calculateRevenueAndCost(copyGameData);

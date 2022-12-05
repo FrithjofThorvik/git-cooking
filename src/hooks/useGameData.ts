@@ -43,7 +43,7 @@ const useGameDataIml = () => {
 
   const setGameData = (gameData: IGitCooking) => {
     localStorage.setItem("git-cooking", JSON.stringify(gameData));
-    setData(gameData);
+    setData(prev => ({ ...prev, ...gameData }));
   };
   globalSetMode = setGameData;
 
