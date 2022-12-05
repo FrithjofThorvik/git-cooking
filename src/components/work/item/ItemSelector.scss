@@ -8,10 +8,10 @@
   overflow-x: scroll;
 
   width: 100%;
-  background-color: $dark;
+  background-color: rgba($dark, 0.5);
   height: 40px;
   padding-bottom: 7px;
-  border-top-left-radius: 15px;
+  border-top-left-radius: 12px;
 
   &-group {
     display: flex;
@@ -28,7 +28,7 @@
         align-items: center;
         box-sizing: border-box;
         justify-content: space-between;
-        background-color: $dark;
+        background-color: rgba($dark, 0.5);
         height: 100%;
         padding: 2px 10px;
         font-size: 14px;

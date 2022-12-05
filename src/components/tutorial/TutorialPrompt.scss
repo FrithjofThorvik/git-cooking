@@ -1,0 +1,81 @@
+@import "styles/imports/colors";
+
+.tutorial-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 250px;
+
+  &-box {
+    display: flex;
+    position: relative;
+    box-sizing: border-box;
+    align-items: flex-start;
+    justify-content: flex-start;
+    color: $white;
+    background-color: $black-dark;
+    border: 7px solid $line-dark;
+    width: 60%;
+    padding: 15px;
+    height: 120px;
+    max-width: 650px;
+    border-radius: 25px;
+
+    &-text {
+      font-weight: 100;
+    }
+
+    &-back,
+    &-next {
+      position: absolute;
+      color: rgba($gray, 0.4);
+      bottom: 6px;
+      font-size: 12px;
+    }
+
+    &-back {
+      left: 12px;
+    }
+
+    &-next {
+      right: 12px;
+    }
+
+    img {
+      position: absolute;
+      transform: translate(50%, -50%);
+      width: 200px !important;
+      right: -15%;
+      top: 60%;
+    }
+
+    &::after {
+      content: " ";
+      position: absolute;
+      box-sizing: border-box;
+      transform: translate(50%, -50%);
+      bottom: -20%;
+      right: -8%;
+      height: 15px;
+      width: 15px;
+      border-radius: 100%;
+      background-color: $black-dark;
+      border: 3px solid $line-dark;
+    }
+
+    &::before {
+      content: " ";
+      position: absolute;
+      box-sizing: border-box;
+      transform: translate(50%, 50%);
+      bottom: 0%;
+      right: -4%;
+      height: 25px;
+      width: 25px;
+      border-radius: 100%;
+      background-color: $black-dark;
+      border: 4px solid $line-dark;
+    }
+  }
+}

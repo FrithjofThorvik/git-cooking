@@ -5,12 +5,13 @@
   @include blurBackground;
   margin: auto;
   overflow: hidden;
-  border: 5px solid $gray;
-  box-shadow: 0 10px 5px 2px rgba($black, 0.6);
+  border: 5px solid $line-dark;
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.6),
+    inset 0 0 5px 1px rgba(0, 0, 0, 0.6);
+  color: $white;
   width: 400px;
   height: 500px;
   border-radius: 75px;
-  color: $white;
 
   &-content {
     display: flex;
@@ -35,6 +36,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 1);
         font-size: 64px;
         font-weight: 900;
         margin-top: 50px;
@@ -60,7 +62,8 @@
       font-weight: bold;
       align-items: center;
       justify-content: center;
-      border-top: 1px dashed $gray;
+      border-top: 1px dashed $line-dark;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.4);
       background-color: rgba($black, 0.4);
       gap: 10px;
       width: 100%;

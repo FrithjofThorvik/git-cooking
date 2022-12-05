@@ -8,9 +8,10 @@ export const useTimeLapsed = (
   ms: number,
   handleEnd: () => void
 ): void => {
-  const [referenceTime, setReferenceTime] = useState(Date.now());
   const gameData = useGameData();
-  const timeLapsed = useGameTime();
+  const [referenceTime, setReferenceTime] = useState(Date.now());
+  const [pausedTime, setPausedTime] = useState<number>(0);
+  const { timeLapsed, isPaused } = useGameTime();
 
   useEffect(() => {
     const timeId = setTimeout(() => {
@@ -23,14 +24,14 @@ export const useTimeLapsed = (
       let newTimeLapsed = prevTime + dt;
       const dayLength = gameData.stats.dayLength.get(gameData.store.upgrades);
 
-      if (newTimeLapsed > dayLength) {
+      if (isPaused) {
+        setPausedTime(pausedTime + 1);
+      } else if (newTimeLapsed > dayLength) {
         handleEnd();
         setGameTime(0);
       } else setGameTime(newTimeLapsed);
     }, ms);
 
-    return () => {
-      clearTimeout(timeId);
-    };
-  }, [timeLapsed]);
+    return () => clearTimeout(timeId);
+  }, [timeLapsed, isPaused, pausedTime]);
 };

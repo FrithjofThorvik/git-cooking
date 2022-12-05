@@ -38,7 +38,7 @@ const StoreNav: React.FC<IStoreNavProps> = ({
       <div className="store-nav-cash">
         <p>
           <PaidOutlinedIcon />
-          {cash}
+          {Math.round(cash)}
         </p>
       </div>
       <div className="store-nav-menu">

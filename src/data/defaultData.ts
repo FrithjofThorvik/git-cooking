@@ -1,4 +1,5 @@
 import { GameState } from "types/enums";
+import { defaultHelp } from "./defaultHelp";
 import { IGitCooking } from "types/gameDataInterfaces";
 import { defaultStore } from "./defaultStore";
 import { defaultStats } from "./defaultStats";
@@ -13,6 +14,7 @@ export const defaultGameData: IGitCooking = {
   itemInterface: copyObjectWithoutRef(defaultItemData),
   store: copyObjectWithoutRef(defaultStore),
   git: copyObjectWithoutRef(defaultGitTree),
+  help: copyObjectWithoutRef(defaultHelp),
 };
 
 export const emptyGameData: IGitCooking = {
@@ -22,4 +24,5 @@ export const emptyGameData: IGitCooking = {
   itemInterface: copyObjectWithoutRef(defaultItemData),
   store: copyObjectWithoutRef(defaultStore),
   git: copyObjectWithoutRef(defaultGitTree),
+  help: copyObjectWithoutRef(defaultHelp),
 };

@@ -49,3 +49,9 @@ export enum UpgradeType {
   COST_REDUCTION,
   REVENUE_MULTIPLIER,
 }
+
+export enum TutorialType {
+  STORE_UPGRADES = "Upgrades",
+  STORE_INGREDIENTS = "Ingredients",
+  STORE_GIT_COMMANDS = "Purchase Git Commands",
+}

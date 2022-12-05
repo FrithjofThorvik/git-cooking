@@ -10,7 +10,7 @@ const InfoBoxController: React.FC<
   IInfoBoxControllerProps
 > = (): JSX.Element => {
   const gameData = useGameData();
-  const timeLapsed = useGameTime();
+  const { timeLapsed } = useGameTime();
   return (
     <InfoBox
       infoText="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo"
