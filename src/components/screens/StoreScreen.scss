@@ -3,10 +3,6 @@
 .store-screen {
   display: flex;
   flex-direction: column;
-  background-image: url("../../assets/background.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
   width: 100vw;
   height: 100vh;
 
@@ -21,11 +17,12 @@
   &-bottom {
     display: flex;
     margin-top: auto;
-    align-items: flex-end;
+    align-items: center;
     box-sizing: border-box;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 25px;
+    justify-content: center;
+    margin: 50px auto 25px auto;
+    gap: 25px;
+    width: 90%;
     padding: 0 25px;
   }
 }

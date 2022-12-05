@@ -19,8 +19,9 @@
     justify-content: flex-start;
     scroll-snap-type: x mandatory;
     gap: 50px;
-    width: 100%;
+    width: 80%;
     padding: 10px 0;
+    margin: 0 auto;
     margin-top: 25px;
 
     &.hovered {

@@ -1,11 +1,14 @@
 @import "styles/imports/colors";
 
-.orders {
+.tutorial-screen {
   display: flex;
-  overflow-y: scroll;
   align-items: center;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 30px;
+  justify-content: flex-end;
   height: 100%;
+  width: 100%;
+
+  img {
+    width: 250px;
+  }
 }

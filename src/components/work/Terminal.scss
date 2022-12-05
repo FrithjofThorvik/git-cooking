@@ -3,11 +3,12 @@
 .terminal {
   display: flex;
   flex-direction: column;
+  backdrop-filter: blur(10px);
   border: 3px $line-dark solid;
-  background-color: $black-dark;
-  border-radius: 0px 0px 15px 15px;
+  background-color: rgba($black-dark, 0.5);
   width: 100%;
   height: 100%;
+  border-radius: 0px 0px 15px 15px;
 
   &-content {
     width: 100%;
@@ -45,7 +46,7 @@
       width: 90%;
 
       input {
-        background-color: $black-dark;
+        background-color: transparent;
         color: $white;
         border: 0;
         font-family: "Nunito Sans", sans-serif;

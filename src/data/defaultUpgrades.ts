@@ -35,7 +35,7 @@ export const defaultUpgrades: IUpgrade[] = [
     },
     cost: function (discountMultiplier: number) {
       const base = 50;
-      return this.level * base * discountMultiplier;
+      return Math.round(this.level * base * discountMultiplier);
     },
   },
   {

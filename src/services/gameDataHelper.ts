@@ -1,10 +1,10 @@
-import { IngredientType } from "types/enums";
 import {
   IGitCooking,
   IIngredient,
   IOrder,
   IOrderItem,
 } from "types/gameDataInterfaces";
+import { IngredientType } from "types/enums";
 
 export const createNewOrderItem = (order: IOrder, name: string): IOrderItem => {
   return {
@@ -171,6 +171,9 @@ export const calculateRevenueAndCost = (gameData: IGitCooking) => {
     revenue += orderRevenue;
     cost += orderCost * useCostReduction;
   });
+
+  revenue = Math.round(revenue);
+  cost = Math.round(cost);
 
   return { revenue, cost };
 };

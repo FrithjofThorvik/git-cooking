@@ -12,14 +12,14 @@ interface IOrdersControllerProps {}
 
 const OrdersController: React.FC<IOrdersControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
-  const gameTime = useGameTime();
+  const { timeLapsed } = useGameTime();
   const [formattedOrders, setFormattedOrders] = useState<
     IOrdersProps["orders"]
   >([]);
 
   useEffect(() => {
-    orderGenerator.simulateOrders(gameTime, gameData, setGameData);
-  }, [gameTime, gameData]);
+    orderGenerator.simulateOrders(timeLapsed, gameData, setGameData);
+  }, [timeLapsed, gameData]);
 
   useEffect(() => {
     const headCommit = gameData.git.getHeadCommit();
@@ -33,7 +33,7 @@ const OrdersController: React.FC<IOrdersControllerProps> = (): JSX.Element => {
         );
         return {
           timerPercent: calculateOrderTimerPercentage(
-            gameTime,
+            timeLapsed,
             order.timeStart,
             order.timeEnd
           ),
@@ -54,14 +54,14 @@ const OrdersController: React.FC<IOrdersControllerProps> = (): JSX.Element => {
           return {
             ...formattedOrder,
             percent: calculateOrderTimerPercentage(
-              gameTime,
+              timeLapsed,
               formattedOrder.order.timeStart,
               formattedOrder.order.timeEnd
             ),
           };
         })
       );
-  }, [gameTime]);
+  }, [timeLapsed]);
 
   return <Orders orders={formattedOrders} />;
 };

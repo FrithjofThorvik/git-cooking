@@ -2,7 +2,7 @@
 
 .info-box {
   display: flex;
-  background-color: $black;
+  background-color: rgba($black, 0.5);
   border: 3px $line-dark solid;
   border-radius: 15px;
   height: 150px;

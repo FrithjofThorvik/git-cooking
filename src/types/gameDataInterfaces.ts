@@ -4,6 +4,7 @@ import {
   GameState,
   GitCommandType,
   IngredientType,
+  TutorialType,
   UpgradeType,
 } from "./enums";
 
@@ -107,8 +108,30 @@ export interface IStats {
   revenueMultiplier: IStat;
 }
 
+export interface ITutorialScreen {
+  img: string;
+  title: string;
+  prompts: string[];
+}
+
+export interface ITutorial {
+  type: TutorialType;
+  completed: boolean;
+  description: string;
+  screens: ITutorialScreen[];
+}
+
+export interface IHelp {
+  tutorials: ITutorial[];
+  isHelpScreenOpen: boolean;
+  completeTutorial: (tutorial: ITutorial) => IHelp;
+  setIsHelpScreenOpen: (isOpen: boolean) => IHelp;
+  getTutorialsByTypes: (types: TutorialType[]) => ITutorial[];
+}
+
 export interface IGitCooking {
   day: number;
+  help: IHelp;
   git: IGitTree;
   store: IStore;
   stats: IStats;

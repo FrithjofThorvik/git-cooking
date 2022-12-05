@@ -7,11 +7,13 @@ import SummaryScreen from "components/screens/SummaryScreen";
 interface ISummaryScreenControllerProps {
   goNext: () => void;
   goBack: () => void;
+  openHelpScreen: () => void;
 }
 
 const SummaryScreenController: React.FC<ISummaryScreenControllerProps> = ({
   goNext,
   goBack,
+  openHelpScreen,
 }): JSX.Element => {
   const [revenue, setRevenue] = useState<number>(0);
   const [cost, setCost] = useState<number>(0);
@@ -30,6 +32,7 @@ const SummaryScreenController: React.FC<ISummaryScreenControllerProps> = ({
       day={gameData.day}
       goNext={goNext}
       goBack={goBack}
+      openHelpScreen={openHelpScreen}
     />
   );
 };
