@@ -9,7 +9,8 @@ import {
 } from "./enums";
 
 export interface IDirectory {
-  orders: IOrder[];
+  createdItems: IOrderItem[];
+  addOrderItem: (orderItem: IOrderItem) => IDirectory;
   deleteOrderItem: (orderItem: IOrderItem) => IDirectory;
   modifyOrderItem: (
     orderItem: IOrderItem,
@@ -20,9 +21,6 @@ export interface IDirectory {
     },
     modify: (orderItem: IOrderItem) => void
   ) => IDirectory;
-  createOrderFolder: (order: IOrder) => IDirectory;
-  addOrderItemToOrder: (order: IOrder, orderItem: IOrderItem) => IDirectory;
-  updatePercentageCompleted: () => IDirectory;
 }
 
 export interface IOrderItem {
@@ -36,12 +34,13 @@ export interface IOrderItem {
 export interface IOrder {
   id: string;
   name: string;
+  image: string;
   isCreated: boolean;
+  isAvailable: boolean;
   timeStart: number;
   timeEnd: number;
   percentageCompleted: number;
   orderItems: IOrderItem[];
-  createdItems: IOrderItem[];
 }
 
 export interface IStore {
@@ -132,15 +131,24 @@ export interface IHelp {
   getTutorialsByTypes: (types: TutorialType[]) => ITutorial[];
 }
 
+export interface IOrderService {
+  orders: IOrder[];
+  createOrderFolder: (order: IOrder) => IOrderService;
+  updatePercentageCompleted: (createdItems: IOrderItem[]) => IOrderService;
+  setNewOrders: (orders: IOrder[]) => IOrderService;
+}
+
 export interface IGitCooking {
   day: number;
   help: IHelp;
   git: IGitTree;
   store: IStore;
   stats: IStats;
+  orderService: IOrderService;
   gameState: GameState;
   commandHistory: string[];
   itemInterface: IItemInterface;
   endDay: () => IGitCooking;
   startDay: () => IGitCooking;
+  startPull: () => IGitCooking;
 }

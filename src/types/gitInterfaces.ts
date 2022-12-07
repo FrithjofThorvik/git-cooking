@@ -1,4 +1,9 @@
-import { IDirectory, IOrderItem } from "./gameDataInterfaces";
+import {
+  IDirectory,
+  IIngredient,
+  IOrder,
+  IOrderItem,
+} from "./gameDataInterfaces";
 
 export interface IHead {
   targetId: string;
@@ -23,8 +28,26 @@ export interface IModifiedItem {
   deleted?: boolean;
 }
 
+export interface IRemoteBranch {
+  name: string;
+  orders: IOrder[];
+}
+
+export interface IRemoteBranchStats {
+  missingIngredients: IIngredient[];
+  maxProfit: number;
+  orders: IOrder[];
+  itemCount: number;
+}
+
+export interface IRemote {
+  branches: IRemoteBranch[];
+  getBranchStats: (branch: IRemoteBranch) => IRemoteBranchStats;
+}
+
 export interface IGitTree {
   HEAD: IHead;
+  remote: IRemote;
   commits: ICommit[];
   branches: IBranch[];
   stagedItems: IModifiedItem[];
@@ -59,5 +82,6 @@ export interface IGitTree {
   restoreAllFiles: () => IGitTree;
   restoreFile: (modifiedItem: IModifiedItem) => IGitTree;
   restoreAllStagedFiles: () => IGitTree;
-  restoreStagedFile: (mstagedItem: IModifiedItem) => IGitTree;
+  restoreStagedFile: (stagedItem: IModifiedItem) => IGitTree;
+  getRemoteBranch: (remoteBranchName: string) => IRemoteBranch | null;
 }

@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 
 import { IDirectory, IGitCooking } from "types/gameDataInterfaces";
 import { singletonHook } from "react-singleton-hook";
-import { defaultGameData, emptyGameData } from "data/defaultData";
+import { defaultGameData } from "data/defaultData";
 import { copyObjectWithoutRef } from "services/helpers";
 import { defaultDirectory } from "data/defaultGitTree";
+import { GameState } from "types/enums";
 
 var _ = require("lodash");
 
-const init = emptyGameData;
+const init = defaultGameData;
 let globalSetMode: any = () => {
   throw new Error("GameState error");
 };
@@ -18,9 +19,12 @@ const useGameDataIml = () => {
 
   useEffect(() => {
     if (!localStorage.getItem("git-cooking")) {
-      setGameData(defaultGameData);
+      let copyGit = copyObjectWithoutRef(defaultGameData);
+      copyGit.gameState = GameState.UPGRADE;
+      setGameData(copyGit);
     } else {
       const data = localStorage.getItem("git-cooking");
+
       if (data) {
         const updatedGameData: IGitCooking = JSON.parse(data);
         const gameDataWithFunctions = copyObjectWithoutRef(defaultGameData);
@@ -43,7 +47,7 @@ const useGameDataIml = () => {
 
   const setGameData = (gameData: IGitCooking) => {
     localStorage.setItem("git-cooking", JSON.stringify(gameData));
-    setData(prev => ({ ...prev, ...gameData }));
+    setData((prev) => ({ ...prev, ...gameData }));
   };
   globalSetMode = setGameData;
 

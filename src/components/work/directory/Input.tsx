@@ -1,19 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
-import { IOrder } from "types/gameDataInterfaces";
-import { doesOrderItemExist } from "services/gameDataHelper";
+import { IOrder, IOrderItem } from "types/gameDataInterfaces";
+import { doesOrderItemExistOnOrder } from "services/gameDataHelper";
 
 import "./Input.scss";
 
 interface IInputProps {
   order: IOrder;
+  createdItems: IOrderItem[];
   hideInput: () => void;
   createOrderItem: (order: IOrder, name: string) => void;
 }
 
 const Input: React.FC<IInputProps> = ({
   order,
+  createdItems,
   hideInput,
   createOrderItem,
 }): JSX.Element => {
@@ -26,7 +28,7 @@ const Input: React.FC<IInputProps> = ({
 
   const handleInputEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      if (!doesOrderItemExist(order, value)) {
+      if (!doesOrderItemExistOnOrder(createdItems, value, order)) {
         createOrderItem(order, value);
         setValue("");
         hideInput();
@@ -38,7 +40,11 @@ const Input: React.FC<IInputProps> = ({
     <div className="item-input">
       <input
         style={{
-          color: `${!doesOrderItemExist(order, value) ? "white" : "red"}`,
+          color: `${
+            !doesOrderItemExistOnOrder(createdItems, value, order)
+              ? "white"
+              : "red"
+          }`,
         }}
         ref={inputRef}
         type="text"

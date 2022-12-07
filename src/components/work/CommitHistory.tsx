@@ -3,6 +3,8 @@ import Tooltip from "@mui/material/Tooltip";
 
 import "./CommitHistory.scss";
 import { ICommit } from "types/gitInterfaces";
+import { ThemeProvider } from "@emotion/react";
+import { theme } from "styles/muiThemes";
 
 interface ICommitHistoryProps {
   commits: ICommit[];
@@ -39,13 +41,15 @@ const Commit: React.FC<ICommitProps> = ({
   handleClick,
 }): JSX.Element => {
   return (
-    <Tooltip title={commit.message} placement="top" arrow>
-      <div>
-        <div className="commit" onClick={() => handleClick(commit)}>
-          <p className="commit-text">{`C${index + 1}`}</p>
+    <ThemeProvider theme={theme}>
+      <Tooltip title={commit.message} placement="top" arrow>
+        <div>
+          <div className="commit" onClick={() => handleClick(commit)}>
+            <p className="commit-text">{`C${index + 1}`}</p>
+          </div>
         </div>
-      </div>
-    </Tooltip>
+      </Tooltip>
+    </ThemeProvider>
   );
 };
 

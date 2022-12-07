@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-import { IDirectory, IOrder, IOrderItem } from "types/gameDataInterfaces";
+import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import Button from "./directory/Button";
 import OrdersFolder from "./directory/OrderFolder";
 
 import "./Directory.scss";
 
 interface IDirectoryProps {
-  directory: IDirectory;
+  orders: IOrder[];
+  createdItems: IOrderItem[];
   stagedItems: IOrderItem[];
   modifiedItems: IOrderItem[];
   activeItemId: string;
@@ -19,7 +20,8 @@ interface IDirectoryProps {
 }
 
 const Directory: React.FC<IDirectoryProps> = ({
-  directory,
+  orders,
+  createdItems,
   stagedItems,
   modifiedItems,
   activeItemId,
@@ -47,11 +49,12 @@ const Directory: React.FC<IDirectoryProps> = ({
           </div>
           {isOrdersOpen && (
             <div className="directory-content-folder-content">
-              {directory.orders
+              {orders
                 .filter((o) => o.isCreated)
                 .map((order: IOrder) => (
                   <OrdersFolder
                     order={order}
+                    createdItems={createdItems}
                     stagedItems={stagedItems}
                     modifiedItems={modifiedItems}
                     key={order.id}
@@ -61,7 +64,7 @@ const Directory: React.FC<IDirectoryProps> = ({
                     deleteOrderItem={deleteOrderItem}
                   />
                 ))}
-              {directory.orders
+              {orders
                 .filter((o) => !o.isCreated)
                 .map((order: IOrder) => (
                   <Button

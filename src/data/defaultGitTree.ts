@@ -6,40 +6,65 @@ import {
   IOrder,
   IOrderItem,
 } from "types/gameDataInterfaces";
+import {
+  IBranch,
+  ICommit,
+  IGitTree,
+  IModifiedItem,
+  IRemote,
+  IRemoteBranch,
+} from "types/gitInterfaces";
 import { IngredientType } from "types/enums";
 import { copyObjectWithoutRef, objectsEqual } from "services/helpers";
-import { IBranch, ICommit, IGitTree, IModifiedItem } from "types/gitInterfaces";
-import { compareOrders } from "services/gameDataHelper";
+
+const defaultRemote: IRemote = {
+  branches: [],
+  getBranchStats: function (branch: IRemoteBranch) {
+    let missingIngredients: IIngredient[] = [];
+    let orders: IOrder[] = [];
+    let maxProfit = 0;
+    let itemCount = 0;
+
+    this.branches.forEach((b) => {
+      if (b.name !== branch.name) return;
+      b.orders.forEach((o) => {
+        orders.push(o);
+        o.orderItems.forEach((oi) => {
+          itemCount += 1;
+          oi.ingredients.forEach((i) => {
+            maxProfit += i.useCost;
+            const alreadyAdded = missingIngredients.some(
+              (ing) => ing.id === i.id
+            );
+            const unlockedNotPurchased = i.unlocked && !i.purchased;
+            if (!alreadyAdded && unlockedNotPurchased)
+              missingIngredients.push(i);
+          });
+        });
+      });
+    });
+
+    return {
+      itemCount: itemCount,
+      missingIngredients: missingIngredients,
+      orders: orders,
+      maxProfit: maxProfit,
+    };
+  },
+};
 
 export const defaultDirectory: IDirectory = {
-  orders: [],
-  createOrderFolder: function (order: IOrder) {
-    let copy: IDirectory = copyObjectWithoutRef(this);
-    copy.orders.forEach((o) => {
-      if (o.id === order.id) {
-        o.isCreated = true;
-      }
-    });
-    return copy;
-  },
-  addOrderItemToOrder: function (order: IOrder, orderItem: IOrderItem) {
+  createdItems: [],
+  addOrderItem: function (orderItem: IOrderItem) {
     let copy = this;
-    copy.orders.forEach((o) => {
-      if (o.id === order.id) {
-        o.createdItems.push(orderItem);
-      }
-    });
+    copy.createdItems.push(orderItem);
     return copy;
   },
   deleteOrderItem: function (orderItem: IOrderItem) {
     let copy: IDirectory = copyObjectWithoutRef(this);
-    copy.orders.forEach((o) => {
-      if (o.id === orderItem.orderId) {
-        o.createdItems = o.createdItems.filter(
-          (i) => i.path !== orderItem.path
-        );
-      }
-    });
+    copy.createdItems = copy.createdItems.filter(
+      (i) => i.path !== orderItem.path
+    );
     return copy;
   },
   modifyOrderItem: function (
@@ -52,32 +77,18 @@ export const defaultDirectory: IDirectory = {
     modify: (orderItem: IOrderItem) => void
   ) {
     let copy: IDirectory = copyObjectWithoutRef(this);
-    copy.orders.forEach((o) => {
-      if (o.id === orderItem.orderId) {
-        o.createdItems.forEach((i) => {
-          if (orderItem.path === i.path) {
-            if (data.type) {
-              i.type = data.type;
-              i.ingredients = [];
-            } else if (data.addIngredient) {
-              i.ingredients.push(data.addIngredient);
-            } else if (data.removeIngredientAtIndex !== undefined) {
-              i.ingredients.splice(data.removeIngredientAtIndex, 1);
-            }
-            modify(i);
-          }
-        });
+    copy.createdItems.forEach((i) => {
+      if (orderItem.path === i.path) {
+        if (data.type) {
+          i.type = data.type;
+          i.ingredients = [];
+        } else if (data.addIngredient) {
+          i.ingredients.push(data.addIngredient);
+        } else if (data.removeIngredientAtIndex !== undefined) {
+          i.ingredients.splice(data.removeIngredientAtIndex, 1);
+        }
+        modify(i);
       }
-    });
-    return copy;
-  },
-  updatePercentageCompleted: function () {
-    let copy: IDirectory = copyObjectWithoutRef(this);
-    copy.orders.forEach((o, i) => {
-      copy.orders[i].percentageCompleted = compareOrders(
-        o.createdItems,
-        o.orderItems
-      );
     });
     return copy;
   },
@@ -98,6 +109,7 @@ export const defaultGitTree: IGitTree = {
       targetCommitId: defaultCommit.id,
     },
   ],
+  remote: defaultRemote,
   commits: [copyObjectWithoutRef(defaultCommit)],
   HEAD: {
     targetId: "master",
@@ -188,14 +200,10 @@ export const defaultGitTree: IGitTree = {
 
       // compare with past commit
       const parentCommit = this.getHeadCommit();
-      parentCommit?.directory?.orders.forEach((o) => {
-        if (o.id === orderItem.orderId) {
-          o.createdItems.forEach((i) => {
-            if (i.path === orderItem.path) {
-              isAdded = false; // the item existed before
-              isModified = !objectsEqual(i, orderItem);
-            }
-          });
+      parentCommit?.directory?.createdItems.forEach((i) => {
+        if (i.path === orderItem.path) {
+          isAdded = false; // the item existed before
+          isModified = !objectsEqual(i, orderItem);
         }
       });
     }
@@ -255,37 +263,18 @@ export const defaultGitTree: IGitTree = {
 
     this.stagedItems.forEach((stagedItem) => {
       const item = copyObjectWithoutRef(stagedItem.item);
-
-      let existsInOrders = false;
-      newCommitDirectory.orders.forEach((o, orderIndex) => {
-        if (o.id === item.orderId) {
-          existsInOrders = true;
-          let existsInItems = false;
-
-          o.createdItems.forEach((i, itemIndex) => {
-            if (i.path === item.path) {
-              existsInItems = true;
-              // update the item
-              newCommitDirectory.orders[orderIndex].createdItems[itemIndex] =
-                item;
-            }
-          });
-
-          if (!existsInItems) {
-            // add the item to new directory
-            newCommitDirectory.orders[orderIndex].createdItems.push(item);
-          }
+      let existsInItems = false;
+      newCommitDirectory.createdItems.forEach((i, itemIndex) => {
+        if (i.path === item.path) {
+          existsInItems = true;
+          // update the item
+          newCommitDirectory.createdItems[itemIndex] = item;
         }
       });
 
-      // if order did not exist -> add it to new directory from working directory
-      if (!existsInOrders) {
-        safeCopyWorkingDirectory.orders.forEach((o) => {
-          if (o.id === item.orderId) {
-            o.createdItems = [item];
-            newCommitDirectory.orders.push(o);
-          }
-        });
+      if (!existsInItems) {
+        // add the item to new directory
+        newCommitDirectory.createdItems.push(item);
       }
     });
 
@@ -309,10 +298,7 @@ export const defaultGitTree: IGitTree = {
 
         if (prevDirectory) {
           // Update directory with staged files
-          newCommit.directory =
-            this.addStagedOnPrevDirectory(
-              prevDirectory
-            ).updatePercentageCompleted();
+          newCommit.directory = this.addStagedOnPrevDirectory(prevDirectory);
         }
       }
 
@@ -372,10 +358,10 @@ export const defaultGitTree: IGitTree = {
       const activeCommit = this.getHeadCommit();
 
       const restoredOrderItem: IOrderItem = copyObjectWithoutRef(
-        activeCommit?.directory.orders
-      )
-        .find((o: IOrder) => o.id === itemToRestore.orderId)
-        ?.createdItems.find((i: IOrderItem) => i.path === itemToRestore.path);
+        activeCommit?.directory.createdItems.find(
+          (i: IOrderItem) => i.path === itemToRestore.path
+        )
+      );
       if (restoredOrderItem === undefined) return undefined;
       return { item: restoredOrderItem };
     }
@@ -462,30 +448,20 @@ export const defaultGitTree: IGitTree = {
 
     // if restored item doesn't exist or is deleted -> remove it
     if (restoredItem === undefined || restored?.deleted) {
-      copyGit.workingDirectory.orders.forEach((o) => {
-        if (o.id === itemToRestore.orderId) {
-          o.createdItems = o.createdItems.filter(
-            (i) => i.path !== itemToRestore.path
-          );
-        }
-      });
+      copyGit.workingDirectory.createdItems =
+        copyGit.workingDirectory.createdItems.filter(
+          (i) => i.path !== itemToRestore.path
+        );
     } else {
       if (modifiedItem.deleted) {
         // if itemToRestore deleted -> restore item
-        copyGit.workingDirectory.orders.forEach((o) => {
-          if (o.id === itemToRestore.orderId) {
-            o.createdItems.push(restoredItem);
-          }
-        });
+        copyGit.workingDirectory.createdItems.push(restoredItem);
       } else {
         // update the item with the restored item
-        copyGit.workingDirectory.orders.forEach((o) => {
-          if (o.id === itemToRestore.orderId) {
-            o.createdItems.forEach((i, index) => {
-              if (i.path === itemToRestore.path)
-                o.createdItems[index] = copyObjectWithoutRef(restoredItem);
-            });
-          }
+        copyGit.workingDirectory.createdItems.forEach((i, index) => {
+          if (i.path === itemToRestore.path)
+            copyGit.workingDirectory.createdItems[index] =
+              copyObjectWithoutRef(restoredItem);
         });
       }
     }
@@ -514,13 +490,11 @@ export const defaultGitTree: IGitTree = {
 
     // update modified
     let newModifiedItems = copyGit.modifiedItems;
-    copyGit.workingDirectory.orders.forEach((o) =>
-      o.createdItems.forEach((i) => {
-        if (i.path === stagedItem.item.path) {
-          newModifiedItems = copyGit.handleModifyItem(i);
-        }
-      })
-    );
+    copyGit.workingDirectory.createdItems.forEach((i) => {
+      if (i.path === stagedItem.item.path) {
+        newModifiedItems = copyGit.handleModifyItem(i);
+      }
+    });
     copyGit.modifiedItems = newModifiedItems;
 
     return copyGit;
@@ -531,5 +505,12 @@ export const defaultGitTree: IGitTree = {
       copyGit = copyGit.restoreStagedFile(stagedItem);
     });
     return copyGit;
+  },
+  getRemoteBranch: function (remoteBranchName: string) {
+    let remoteBranch: IRemoteBranch | null = null;
+    this.remote.branches.forEach((branch) => {
+      if (remoteBranchName === branch.name) remoteBranch = branch;
+    });
+    return remoteBranch;
   },
 };

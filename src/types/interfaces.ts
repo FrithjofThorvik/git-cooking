@@ -36,4 +36,5 @@ export interface ISummaryStats {
   bonusFromCostReduction: number;
   bonusFromMultiplier: number;
   bonusFromPercentage: number;
+  maxBonusFromPercentage: number;
 }

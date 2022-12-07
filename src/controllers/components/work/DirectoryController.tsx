@@ -2,13 +2,13 @@ import React from "react";
 
 import {
   createNewOrderItem,
-  doesOrderItemExist,
+  doesOrderItemExistOnOrder,
 } from "services/gameDataHelper";
 import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { setGameData, useGameData } from "hooks/useGameData";
 import Directory from "components/work/Directory";
 
-interface IDirectoryControllerProps { }
+interface IDirectoryControllerProps {}
 
 const DirectoryController: React.FC<
   IDirectoryControllerProps
@@ -16,27 +16,24 @@ const DirectoryController: React.FC<
   const gameData = useGameData();
 
   const createOrderFolder = (order: IOrder) => {
-    const updatedDirectory =
-      gameData.git.workingDirectory.createOrderFolder(order);
-
-    setGameData({
-      ...gameData,
-      git: {
-        ...gameData.git,
-        workingDirectory: updatedDirectory,
-      },
-    });
+    const updatedOrderService = gameData.orderService.createOrderFolder(order);
+    setGameData({ ...gameData, orderService: updatedOrderService });
   };
 
   const createOrderItem = (order: IOrder, name: string) => {
-    if (doesOrderItemExist(order, name)) return;
+    if (
+      doesOrderItemExistOnOrder(
+        gameData.git.workingDirectory.createdItems,
+        name,
+        order
+      )
+    )
+      return;
 
     const newOrderItem: IOrderItem = createNewOrderItem(order, name);
     const updatedModifiedItems = gameData.git.handleModifyItem(newOrderItem);
-    const updatedDirectory = gameData.git.workingDirectory.addOrderItemToOrder(
-      order,
-      newOrderItem
-    );
+    const updatedDirectory =
+      gameData.git.workingDirectory.addOrderItem(newOrderItem);
     const updatedItemInterface = gameData.itemInterface.openItem(newOrderItem);
 
     setGameData({
@@ -52,7 +49,8 @@ const DirectoryController: React.FC<
 
   const deleteOrderItem = (orderItem: IOrderItem) => {
     const updatedModifiedItems = gameData.git.handleModifyItem(orderItem, true);
-    const updatedDirectory = gameData.git.workingDirectory.deleteOrderItem(orderItem);
+    const updatedDirectory =
+      gameData.git.workingDirectory.deleteOrderItem(orderItem);
     const updatedItemInterface = gameData.itemInterface.closeItem(orderItem);
 
     setGameData({
@@ -77,7 +75,8 @@ const DirectoryController: React.FC<
 
   return (
     <Directory
-      directory={gameData.git.workingDirectory}
+      orders={gameData.orderService.orders}
+      createdItems={gameData.git.workingDirectory.createdItems}
       stagedItems={gameData.git.stagedItems.map((i) => i.item)}
       modifiedItems={gameData.git.modifiedItems.map((i) => i.item)}
       activeItemId={gameData.itemInterface.activeItemId}

@@ -1,0 +1,174 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.remote-branch {
+  @include blurBackground;
+  overflow: hidden;
+  border: 5px solid $line-dark;
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.6),
+    inset 0 0 5px 1px rgba(0, 0, 0, 0.6);
+  color: $white;
+  width: 250px;
+  height: 400px;
+  border-radius: 25px;
+
+  &-content {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+
+    &-top {
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      flex-direction: column;
+      justify-content: flex-start;
+      width: 100%;
+      height: 100%;
+
+      &-title {
+        background-color: rgba($black, 0.4);
+        border-bottom: 1px dashed $line-dark;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+        width: 100%;
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 10px;
+      }
+
+      &-content {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: space-around;
+        gap: 10px;
+        width: 100%;
+        height: 100%;
+        padding: 0 25px;
+        box-sizing: border-box;
+
+        &-seperator {
+          width: 20%;
+          height: 1px;
+          margin: 0 auto;
+          border-bottom: 1px solid rgba($white, 0.05);
+          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        &-item {
+          display: flex;
+          align-items: center;
+          box-sizing: border-box;
+          justify-content: flex-start;
+          margin-top: 10px;
+          flex-direction: column;
+          width: 100%;
+          height: 100%;
+
+          &-title {
+            color: $gray;
+            font-weight: bold;
+            background-color: $dark;
+            border: 1px solid $line-dark;
+            box-shadow: inset 0 0 4px 2px rgba(0, 0, 0, 0.4);
+            font-size: 10px;
+            border-radius: 25px;
+            padding: 7px;
+          }
+
+          &-images {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+            height: 100%;
+
+            &-image {
+              @include blurBackground;
+              display: flex;
+              position: relative;
+              align-items: center;
+              box-sizing: border-box;
+              justify-content: center;
+              border: 2px solid rgba($white, 0.1);
+              box-shadow: inset 0 0 5px 3px rgba(0, 0, 0, 0.5);
+              width: 40px;
+              height: 40px;
+              padding: 2px;
+              border-radius: 100%;
+
+              img {
+                width: 27px;
+              }
+
+              svg {
+                position: absolute;
+                top: -10px;
+                right: -10px;
+                color: $line-red;
+                filter: drop-shadow(0 0 5px rgba($line-red, 0.4));
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &-bottom {
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px 25px;
+      box-sizing: border-box;
+
+      &-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        color: $gray;
+        width: 100%;
+
+        &-stat {
+          display: flex;
+          align-items: center;
+          box-sizing: border-box;
+          justify-content: space-between;
+          width: 100%;
+          p {
+            text-overflow: nowrap;
+          }
+
+          &-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: $line-green;
+
+            svg {
+              font-size: 16px;
+              color: $line-green;
+            }
+          }
+        }
+
+        hr {
+          width: 100%;
+          border: none;
+          border-top: 1px dashed rgba($white, 0.1);
+          margin: 10px 0;
+        }
+      }
+    }
+  }
+}
