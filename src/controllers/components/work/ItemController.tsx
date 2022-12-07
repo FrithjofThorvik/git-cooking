@@ -6,7 +6,7 @@ import { IIngredient, IOrderItem } from "types/gameDataInterfaces";
 import { setGameData, useGameData } from "hooks/useGameData";
 import Item from "components/work/Item";
 
-interface IItemControllerProps { }
+interface IItemControllerProps {}
 
 const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
@@ -19,7 +19,7 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
   const openOrderItem = (orderItem: IOrderItem) => {
     const updatedItemInterface = gameData.itemInterface.openItem(orderItem);
     setGameData({ ...gameData, itemInterface: updatedItemInterface });
-  }
+  };
 
   const modifyOrderItem = (
     orderItem: IOrderItem,
@@ -47,13 +47,14 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
 
   return (
     <Item
-      selectedItemIds={gameData.itemInterface.selectedItemIds}
+      foods={gameData.store.foods}
+      orders={gameData.orderService.orders}
       activeItemId={gameData.itemInterface.activeItemId}
+      selectedItemIds={gameData.itemInterface.selectedItemIds}
+      createdItems={gameData.git.workingDirectory.createdItems}
       openOrderItem={openOrderItem}
       closeOrderItem={closeOrderItem}
       modifyOrderItem={modifyOrderItem}
-      foods={gameData.store.foods}
-      orders={gameData.git.workingDirectory.orders}
     />
   );
 };

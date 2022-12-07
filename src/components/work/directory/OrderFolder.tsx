@@ -10,6 +10,7 @@ import "./OrderFolder.scss";
 
 interface IOrderFolderProps {
   order: IOrder;
+  createdItems: IOrderItem[];
   stagedItems: IOrderItem[];
   modifiedItems: IOrderItem[];
   activeItemId: string;
@@ -20,6 +21,7 @@ interface IOrderFolderProps {
 
 const OrderFolder: React.FC<IOrderFolderProps> = ({
   order,
+  createdItems,
   stagedItems,
   modifiedItems,
   activeItemId,
@@ -40,7 +42,8 @@ const OrderFolder: React.FC<IOrderFolderProps> = ({
       </div>
       {isOpen && (
         <div className="order-folder-container">
-          {order.createdItems
+          {createdItems
+            .filter((item) => item.orderId === order.id)
             .map((item, i) => {
               return (
                 <OrderItem
@@ -57,6 +60,7 @@ const OrderFolder: React.FC<IOrderFolderProps> = ({
           {isCreatingItem ? (
             <Input
               order={order}
+              createdItems={createdItems}
               createOrderItem={createOrderItem}
               hideInput={() => setIsCreatingItem(false)}
             />

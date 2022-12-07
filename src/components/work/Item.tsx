@@ -13,6 +13,7 @@ import "./Item.scss";
 interface IItemProps {
   foods: IFood[];
   orders: IOrder[];
+  createdItems: IOrderItem[];
   activeItemId: string;
   selectedItemIds: string[];
   openOrderItem: (orderItem: IOrderItem) => void;
@@ -30,6 +31,7 @@ interface IItemProps {
 const Item: React.FC<IItemProps> = ({
   foods,
   orders,
+  createdItems,
   activeItemId,
   openOrderItem,
   closeOrderItem,
@@ -37,7 +39,7 @@ const Item: React.FC<IItemProps> = ({
   selectedItemIds,
 }): JSX.Element => {
   const [selectedItems, setSelectedItems] = useState<IOrderItem[]>(
-    getOrderItemsFromPaths(orders, selectedItemIds)
+    getOrderItemsFromPaths(createdItems, selectedItemIds)
   );
   const [activeItem, setActiveItem] = useState<IOrderItem | null>(
     selectedItems[0] ?? null
@@ -55,8 +57,8 @@ const Item: React.FC<IItemProps> = ({
   }, [selectedItems, activeItemId]);
 
   useEffect(() => {
-    setSelectedItems(getOrderItemsFromPaths(orders, selectedItemIds));
-  }, [selectedItemIds, JSON.stringify(orders)]);
+    setSelectedItems(getOrderItemsFromPaths(createdItems, selectedItemIds));
+  }, [selectedItemIds, JSON.stringify(createdItems)]);
 
   return (
     <div className="item">

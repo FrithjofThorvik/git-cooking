@@ -2,11 +2,13 @@ import { v4 } from "uuid";
 
 import { names } from "data/names";
 import { IFood } from "types/foodInterfaces";
-import { randomIntFromInterval } from "./helpers";
+import { imgChef } from "assets";
 import { IGitCooking, IOrder, IOrderItem } from "types/gameDataInterfaces";
+import { copyObjectWithoutRef, randomIntFromInterval } from "./helpers";
 
 class OrderGenerator {
-  private maxItems = 3;
+  private maxItems = 4;
+  private maxOrders = 4;
   private orderDuration = 10000; //in ms
 
   private getOrderName = (existingOrderNames: string[]) => {
@@ -32,7 +34,6 @@ class OrderGenerator {
 
   private generateRandomOrder = (
     items: IFood[],
-    gameTime: number,
     existingOrderNames: string[]
   ): IOrder => {
     const orderId = v4();
@@ -57,20 +58,17 @@ class OrderGenerator {
     return {
       id: orderId,
       name: orderName,
-      timeStart: gameTime,
-      timeEnd: gameTime + this.orderDuration,
+      image: imgChef,
+      isAvailable: false,
+      timeStart: 0,
+      timeEnd: this.orderDuration,
       isCreated: false,
       orderItems: orderItems,
       percentageCompleted: 0,
-      createdItems: [],
     };
   };
 
-  private generateNewOrder = (
-    gameTime: number,
-    gameData: IGitCooking,
-    setGameData: (gameData: IGitCooking) => void
-  ): void => {
+  public generateNewOrder = (gameData: IGitCooking): IOrder => {
     // Filter out locked items
     const unlockedItems = gameData.store.foods.filter((food) => {
       return food.unlocked;
@@ -79,43 +77,39 @@ class OrderGenerator {
     // Generate random order
     const newOrder = this.generateRandomOrder(
       unlockedItems,
-      gameTime,
-      gameData.git.workingDirectory.orders.map((o) => o.name)
+      gameData.orderService.orders.map((o) => o.name)
     );
 
-    // add new order to gamedata
-    setGameData({
-      ...gameData,
-      git: {
-        ...gameData.git,
-        workingDirectory: {
-          ...gameData.git.workingDirectory,
-          orders: [...gameData.git.workingDirectory.orders, newOrder],
-        },
-      },
-    });
+    return newOrder;
   };
 
-  public simulateOrders = (
-    gameTime: number,
+  public generateNewOrders = (gameData: IGitCooking): IOrder[] => {
+    let orders = [];
+    const nrOrders = randomIntFromInterval(1, this.maxOrders);
+    for (let i = 0; i < nrOrders; i++) {
+      // Choose a random item
+      const newOrder = this.generateNewOrder(copyObjectWithoutRef(gameData));
+      orders.push(newOrder);
+    }
+    return orders;
+  };
+
+  public generateSetOfNewORders = (
     gameData: IGitCooking,
-    setGameData: (gameData: IGitCooking) => void
-  ): void => {
-    if (gameData.git.workingDirectory.orders.length === 0) {
-      this.generateNewOrder(gameTime, gameData, setGameData);
+    nrSets: number
+  ): IOrder[][] => {
+    let orderSets = [];
+    for (let i = 0; i < nrSets; i++) {
+      const newSet = this.generateNewOrders(copyObjectWithoutRef(gameData));
+      orderSets.push(newSet);
     }
-    if (
-      gameTime > gameData.stats.dayLength.get(gameData.store.upgrades) / 3 &&
-      gameData.git.workingDirectory.orders.length === 1
-    ) {
-      this.generateNewOrder(gameTime, gameData, setGameData);
-    }
-    if (
-      gameTime > gameData.stats.dayLength.get(gameData.store.upgrades) / 2 &&
-      gameData.git.workingDirectory.orders.length === 2
-    ) {
-      this.generateNewOrder(gameTime, gameData, setGameData);
-    }
+    return orderSets;
+  };
+
+  public simulateOrders = (gameTime: number, gameData: IGitCooking): void => {
+    gameData.orderService.orders.forEach((o) => {
+      if (gameTime >= o.timeStart) o.isAvailable = true;
+    });
   };
 }
 

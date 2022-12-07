@@ -1,5 +1,5 @@
 export enum GameState {
-  STARTING,
+  PULL,
   SUMMARY,
   WORKING,
   UPGRADE,

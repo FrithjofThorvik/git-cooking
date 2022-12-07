@@ -17,53 +17,28 @@ export const createNewOrderItem = (order: IOrder, name: string): IOrderItem => {
   };
 };
 
-export const doesOrderItemExist = (order: IOrder, name: string): boolean => {
-  return order.createdItems.map((i) => i.name).includes(name);
+export const doesOrderItemExistOnOrder = (
+  createdItems: IOrderItem[],
+  name: string,
+  order: IOrder
+): boolean => {
+  return createdItems
+    .filter((i) => i.orderId === order.id)
+    .map((i) => i.name)
+    .includes(name);
 };
 
-export const getOrderFromOrderItem = (
-  orders: IOrder[],
-  orderItem: IOrderItem
-): IOrder | null => {
-  for (let i = 0; i < orders.length; i++) {
-    if (orders[i].id === orderItem.orderId) return orders[i];
-  }
-  return null;
-};
-
-export const getIndexOfOrder = (orders: IOrder[], order: IOrder): number => {
-  return orders.findIndex((o) => o.id === order.id);
-};
-
-export const getIndexOfOrderItem = (
-  order: IOrder,
-  orderItem: IOrderItem
-): number => {
-  return order.createdItems.findIndex((i) => i.path === orderItem.path);
-};
-
-export const getOrderItemsFromPaths = (orders: IOrder[], paths: string[]) => {
+export const getOrderItemsFromPaths = (
+  createdItems: IOrderItem[],
+  paths: string[]
+) => {
   let selectedOrderItems: IOrderItem[] = [];
 
-  orders.forEach((o) => {
-    o.createdItems.forEach((i) => {
-      if (paths.includes(i.path)) selectedOrderItems.push(i);
-    });
+  createdItems.forEach((i) => {
+    if (paths.includes(i.path)) selectedOrderItems.push(i);
   });
 
   return selectedOrderItems;
-};
-
-export const getOrderItemFromPath = (orders: IOrder[], path: string) => {
-  let order: IOrderItem | null = null;
-  orders.forEach((o) => {
-    o.createdItems.forEach((i) => {
-      if (i.path === path) {
-        order = i;
-      }
-    });
-  });
-  return order;
 };
 
 export const getOrderNameFromId = (orders: IOrder[], id: string) => {
@@ -133,13 +108,17 @@ const calculateOrderScores = (cItems: IOrderItem[], oItems: IOrderItem[]) => {
   });
 };
 
-export const compareOrders = (
-  createdItems: IOrderItem[],
-  orderItems: IOrderItem[]
-) => {
-  const orderScores = calculateOrderScores(createdItems, orderItems);
+export const compareOrders = (createdItems: IOrderItem[], order: IOrder) => {
+  const relatedCreatedItems = createdItems.filter(
+    (i) => i.orderId === order.id
+  );
+  const orderScores = calculateOrderScores(
+    relatedCreatedItems,
+    order.orderItems
+  );
   return (
-    maximumSum(orderScores) / Math.max(createdItems.length, orderItems.length)
+    maximumSum(orderScores) /
+    Math.max(relatedCreatedItems.length, order.orderItems.length)
   );
 };
 
@@ -148,6 +127,7 @@ export const calculateRevenueAndCost = (
 ): ISummaryStats => {
   const git = gameData.git;
   const profitMarginMultiplier = 1.25;
+  const accuracyMultiplier = 0.25;
   const revenueMultiplier = gameData.stats.revenueMultiplier.get(
     gameData.store.upgrades
   );
@@ -159,30 +139,35 @@ export const calculateRevenueAndCost = (
   let baseCost = 0;
   let avgPercentage = 0;
   let bonusFromPercentage = 0;
+  let maxBonusFromPercentage = 0;
   let bonusFromMultiplier = 0;
   let bonusFromCostReduction = 0;
 
   const parentCommit = git.getHeadCommit();
   const prevDirectory = parentCommit?.directory;
 
-  prevDirectory?.orders.forEach((commitedOrder) => {
-    const percentageCompleted = commitedOrder.percentageCompleted;
-    let orderCost = 0;
-    commitedOrder.createdItems.forEach((item) => {
-      item.ingredients.forEach(
-        (ingredient) => (orderCost += ingredient.useCost)
-      );
-    });
-    const orderRevenue = orderCost * profitMarginMultiplier;
+  if (prevDirectory) {
+    gameData.orderService.orders.forEach((order) => {
+      const percentageCompleted = order.percentageCompleted;
+      let orderCost = 0;
+      prevDirectory.createdItems.forEach((item) => {
+        item.ingredients.forEach(
+          (ingredient) => (orderCost += ingredient.useCost)
+        );
+      });
+      const orderRevenue = orderCost * profitMarginMultiplier;
 
-    baseCost += orderCost;
-    baseRevenue += orderRevenue;
-    avgPercentage += percentageCompleted / prevDirectory.orders.length;
-    bonusFromPercentage +=
-      orderRevenue - orderRevenue * (percentageCompleted / 100);
-    bonusFromMultiplier += orderRevenue * revenueMultiplier - orderRevenue;
-    bonusFromCostReduction += orderCost - orderCost * useCostReduction;
-  });
+      baseCost += orderCost;
+      baseRevenue += orderRevenue;
+      avgPercentage +=
+        percentageCompleted / gameData.orderService.orders.length;
+      bonusFromPercentage +=
+        orderRevenue * (percentageCompleted / 100) * accuracyMultiplier;
+      maxBonusFromPercentage += orderRevenue * (100 / 100) * accuracyMultiplier;
+      bonusFromMultiplier += orderRevenue * revenueMultiplier - orderRevenue;
+      bonusFromCostReduction += orderCost - orderCost * useCostReduction;
+    });
+  }
 
   const totalRevenue = baseRevenue + bonusFromMultiplier + bonusFromPercentage;
   const totalCost = baseCost - bonusFromCostReduction;
@@ -200,6 +185,7 @@ export const calculateRevenueAndCost = (
     bonusFromCostReduction,
     bonusFromMultiplier,
     bonusFromPercentage,
+    maxBonusFromPercentage,
   };
 };
 

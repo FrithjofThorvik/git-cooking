@@ -1,30 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { GameState } from "types/enums";
 import { ITutorial } from "types/gameDataInterfaces";
 import { setGameData, useGameData } from "hooks/useGameData";
-import WorkScreenController from "controllers/screens/WorkScreenController";
+import PullScreenController from "./screens/PullScreenController";
 import HelpScreenController from "./screens/HelpScreenController";
+import WorkScreenController from "controllers/screens/WorkScreenController";
 import StoreScreenController from "controllers/screens/StoreScreenController";
 import SummaryScreenController from "controllers/screens/SummaryScreenController";
+import MergeScreenController from "./screens/MergeScreenController";
 
 const GameController: React.FC = (): JSX.Element => {
   const gameData = useGameData();
 
-  const endDay = () => {
-    let updatedGameData = gameData.endDay();
+  useEffect(() => {}, []);
 
-    setGameData({
-      ...updatedGameData,
-    });
+  const startPull = () => {
+    let updatedGameData = gameData.startPull();
+    setGameData({ ...updatedGameData });
   };
 
-  const startDay = () => {
-    let updatedGameData = gameData.startDay();
-
-    setGameData({
-      ...updatedGameData,
-    });
+  const endDay = () => {
+    let updatedGameData = gameData.endDay();
+    setGameData({ ...updatedGameData });
   };
 
   const completeTutorial = (tutorial: ITutorial) => {
@@ -47,16 +45,15 @@ const GameController: React.FC = (): JSX.Element => {
             completeTutorial={completeTutorial}
           />
         );
+      case GameState.PULL:
+        return <PullScreenController />;
       case GameState.MERGE:
         return (
-          <button
-            onClick={() =>
+          <MergeScreenController
+            goNext={() =>
               setGameData({ ...gameData, gameState: GameState.SUMMARY })
             }
-            style={{ width: "250px", height: "50px" }}
-          >
-            Go to summary
-          </button>
+          />
         );
       case GameState.SUMMARY:
         return (
@@ -75,7 +72,7 @@ const GameController: React.FC = (): JSX.Element => {
           <StoreScreenController
             openHelpScreen={openHelpScreen}
             completeTutorial={completeTutorial}
-            goNext={() => startDay()}
+            goNext={() => startPull()}
             goBack={() =>
               setGameData({ ...gameData, gameState: GameState.SUMMARY })
             }

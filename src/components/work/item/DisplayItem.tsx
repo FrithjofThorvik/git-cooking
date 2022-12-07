@@ -1,29 +1,14 @@
 import React from "react";
 
 import { IOrderItem } from "types/gameDataInterfaces";
-import { ThemeProvider, Tooltip, createTheme } from "@mui/material";
+import { ThemeProvider, Tooltip } from "@mui/material";
 
 import "./DisplayItem.scss";
+import {theme} from "styles/muiThemes";
 
 interface DisplayItemProps {
   item: IOrderItem;
 }
-
-const theme = createTheme({
-  components: {
-    MuiTooltip: {
-      styleOverrides: {
-        tooltip: {
-          backgroundColor: "#2b2b2b",
-          color: "#e2e8f0",
-        },
-        arrow: {
-          color: "#2b2b2b",
-        },
-      },
-    },
-  },
-});
 
 const DisplayItem: React.FC<DisplayItemProps> = ({ item }) => {
   return (
