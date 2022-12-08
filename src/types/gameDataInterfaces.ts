@@ -37,8 +37,8 @@ export interface IOrder {
   image: string;
   isCreated: boolean;
   isAvailable: boolean;
-  timeStart: number;
-  timeEnd: number;
+  startTime?: number;
+  spawning?: boolean;
   percentageCompleted: number;
   orderItems: IOrderItem[];
 }
@@ -108,6 +108,7 @@ export interface IStats {
   dayLength: IStat;
   costReductionMultiplier: IStat;
   revenueMultiplier: IStat;
+  spawnTime: IStat;
 }
 
 export interface ITutorialScreen {
@@ -132,7 +133,9 @@ export interface IHelp {
 }
 
 export interface IOrderService {
-  orders: IOrder[];
+  _orders: IOrder[];
+  getAvailableOrders: () => IOrder[];
+  getAllOrders: () => IOrder[];
   createOrderFolder: (order: IOrder) => IOrderService;
   updatePercentageCompleted: (createdItems: IOrderItem[]) => IOrderService;
   setNewOrders: (orders: IOrder[]) => IOrderService;

@@ -345,7 +345,6 @@ export const gitCommands: ICommandArg[] = [
     args: [
       {
         key: "origin",
-        isDynamic: true,
         args: [
           {
             key: "<PATH>",
@@ -385,6 +384,7 @@ export const gitCommands: ICommandArg[] = [
         cmd: (gameData, setGameData, path) => {
           if (gameData.gameState != GameState.PULL)
             return gitRes(`Already up to date`, true);
+
           return gitRes("Error: no branch specified", false);
         },
       },

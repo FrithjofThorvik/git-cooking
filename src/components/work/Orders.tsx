@@ -1,18 +1,23 @@
 import React from "react";
 
-import OrderCard, { IOrderCardProps } from "./orders/OrderCard";
+import OrderCard from "./orders/OrderCard";
 
 import "./Orders.scss";
+import { IOrder } from "types/gameDataInterfaces";
 
 export interface IOrdersProps {
-  orders: IOrderCardProps[];
+  orders: IOrder[];
+  spawning: boolean;
 }
 
-const Orders: React.FC<IOrdersProps> = ({ orders }): JSX.Element => {
+const Orders: React.FC<IOrdersProps> = ({ orders, spawning }): JSX.Element => {
   return (
     <div className="orders">
       {orders &&
-        orders.map((order, index) => <OrderCard {...order} key={index} />)}
+        orders.map((order, index) => <OrderCard order={order} key={index} />)}
+      {spawning && <p className="orders-new" >
+        New order arriving...
+      </p>}
     </div>
   );
 };

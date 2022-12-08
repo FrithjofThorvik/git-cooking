@@ -6,7 +6,7 @@ import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { copyObjectWithoutRef } from "services/helpers";
 import Stage, { IStageProps } from "components/work/Stage";
 
-interface IStageControllerProps {}
+interface IStageControllerProps { }
 
 const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
@@ -14,31 +14,29 @@ const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
 
   useEffect(() => {
     let stagedItemsWithOrder: { items: IOrderItem[]; order: IOrder }[] = [];
+
+    // get last commit directory and simulated adding the staged changes
+    const headCommit = gameData.git.getHeadCommit();
+    const prevDirectory = copyObjectWithoutRef(headCommit?.directory);
+    const stagedOnPrevDirectory =
+      gameData.git.addStagedOnPrevDirectory(prevDirectory);
+    const updatedOrders = gameData.orderService
+      .updatePercentageCompleted(stagedOnPrevDirectory.createdItems)
+      .getAvailableOrders();
+
     gameData.git.stagedItems.forEach((stagedItem: IModifiedItem) => {
       const item = stagedItem.item;
-      let relatedOrder = gameData.orderService.orders.find(
-        (o: IOrder) => o.id === item.orderId
-      );
 
-      const headCommit = gameData.git.getHeadCommit();
-      if (headCommit) {
-        const prevDirectory = copyObjectWithoutRef(headCommit.directory);
-        const stagedOnPrevDirectory =
-          gameData.git.addStagedOnPrevDirectory(prevDirectory);
-
-        relatedOrder = gameData.orderService
-          .updatePercentageCompleted(stagedOnPrevDirectory.createdItems)
-          .orders.find((o: IOrder) => o.id === item.orderId);
-      }
+      const relatedUpdatedOrder = updatedOrders.find((o: IOrder) => o.id === item.orderId);
 
       const elementIndex = stagedItemsWithOrder.findIndex(
-        (element) => element.order.id === relatedOrder?.id
+        (element) => element.order.id === relatedUpdatedOrder?.id
       );
 
-      if (relatedOrder && elementIndex === -1) {
+      if (relatedUpdatedOrder && elementIndex === -1) {
         stagedItemsWithOrder.push({
           items: [item],
-          order: relatedOrder,
+          order: relatedUpdatedOrder,
         });
       } else {
         stagedItemsWithOrder[elementIndex].items.push(item);

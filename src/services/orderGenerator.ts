@@ -9,7 +9,6 @@ import { copyObjectWithoutRef, randomIntFromInterval } from "./helpers";
 class OrderGenerator {
   private maxItems = 4;
   private maxOrders = 4;
-  private orderDuration = 10000; //in ms
 
   private getOrderName = (existingOrderNames: string[]) => {
     const unusedNames = names.filter((n) => !existingOrderNames.includes(n));
@@ -60,8 +59,6 @@ class OrderGenerator {
       name: orderName,
       image: imgChef,
       isAvailable: false,
-      timeStart: 0,
-      timeEnd: this.orderDuration,
       isCreated: false,
       orderItems: orderItems,
       percentageCompleted: 0,
@@ -74,10 +71,14 @@ class OrderGenerator {
       return food.unlocked;
     });
 
+    const existingOrderNames = gameData.orderService
+      .getAllOrders()
+      .map((o) => o.name);
+
     // Generate random order
     const newOrder = this.generateRandomOrder(
       unlockedItems,
-      gameData.orderService.orders.map((o) => o.name)
+      existingOrderNames
     );
 
     return newOrder;
@@ -106,10 +107,61 @@ class OrderGenerator {
     return orderSets;
   };
 
-  public simulateOrders = (gameTime: number, gameData: IGitCooking): void => {
-    gameData.orderService.orders.forEach((o) => {
-      if (gameTime >= o.timeStart) o.isAvailable = true;
-    });
+  private spaceOrdersEvenly = (endTime: number, orders: IOrder[]): IOrder[] => {
+    const numberOfOrders = orders.length;
+    const size = Math.floor(endTime / numberOfOrders);
+
+    // create evenly spaced timestamps
+    let timeStamps: number[] = []
+    for (let i = 0; i <= endTime; i += size) {
+      const a = i
+      if (a < endTime) {
+        timeStamps.push(a);
+      };
+    };
+
+    // assign time stamps to orders
+    let copyOrders: IOrder[] = copyObjectWithoutRef(orders);
+    copyOrders = copyOrders.map((o, i) => {
+      o.startTime = timeStamps[i]
+      return o;
+    })
+
+    return copyOrders;
+  };
+
+  public simulateOrders = (gameTime: number, gameData: IGitCooking): IOrder[] => {
+    const dayLength = gameData.stats.dayLength.get(gameData.store.upgrades);
+    const spawnTime = gameData.stats.spawnTime.get(gameData.store.upgrades);
+    let orders: IOrder[] = copyObjectWithoutRef(gameData.orderService.getAllOrders());
+
+    // space orders evenly cross day length
+    if (orders.some(o => o.startTime === undefined))
+      orders = this.spaceOrdersEvenly(dayLength, orders)
+
+    // make orders available given time stamp
+    orders = orders.map((o, index) => {
+
+      // do nothing if already available
+      if (o.isAvailable || o.startTime === undefined) return o;
+
+      // set spawning
+      if (gameTime + spawnTime >= o.startTime)
+        o.spawning = true;
+
+      // spawn the order if prev is completed
+      const prevIndex = index - 1;
+      const prevOrder = orders.at(prevIndex)
+      if (!o.spawning && prevOrder && prevOrder.percentageCompleted > 90) {
+        o.spawning = true;
+        o.startTime = gameTime + gameData.stats.spawnTime.get(gameData.store.upgrades);
+      }
+
+      o.isAvailable = gameTime >= o.startTime;
+      return o;
+    })
+
+    return orders;
   };
 }
 

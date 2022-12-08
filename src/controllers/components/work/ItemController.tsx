@@ -48,7 +48,7 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
   return (
     <Item
       foods={gameData.store.foods}
-      orders={gameData.orderService.orders}
+      orders={gameData.orderService.getAvailableOrders()}
       activeItemId={gameData.itemInterface.activeItemId}
       selectedItemIds={gameData.itemInterface.selectedItemIds}
       createdItems={gameData.git.workingDirectory.createdItems}
