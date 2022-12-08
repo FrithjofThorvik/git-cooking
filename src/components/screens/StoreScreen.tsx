@@ -79,7 +79,7 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
         <div className="store-screen-top">
           <Store
             availableCash={store.cash}
-            activeStoreItems={activeStoreItems}
+            activeStoreItems={activeStoreItems.sort((a, b) => a.unlockDay - b.unlockDay)}
             discountMultiplier={stats.discountMultiplier.get(store.upgrades)}
             purchase={purchase}
           />

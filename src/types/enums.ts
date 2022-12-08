@@ -48,6 +48,7 @@ export enum UpgradeType {
   DAY_LENGTH,
   COST_REDUCTION,
   REVENUE_MULTIPLIER,
+  SPAWN_TIME,
 }
 
 export enum TutorialType {

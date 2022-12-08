@@ -126,4 +126,33 @@ export const defaultUpgrades: IUpgrade[] = [
       return this.level * base * discountMultiplier;
     },
   },
+  {
+    id: v4(),
+    image: imgRevenueMultiplier,
+    unlocked: false,
+    unlockDay: 1,
+    purchased: false,
+    type: UpgradeType.SPAWN_TIME,
+    level: 1,
+    maxLevel: 5,
+    name: function () {
+      return `Reduce customer spawn time`;
+    },
+    description: function () {
+      return `Reduce spawn time to ${(this.effect().next / 1000).toFixed(2)}s`;
+    },
+    effect: function () {
+      const base = 10000;
+      const current = base / this.level
+      const next = base / (this.level + 1)
+      return { current: current, next: next };
+    },
+    apply: function (currentCost: number) {
+      return this.effect().current;
+    },
+    cost: function (discountMultiplier: number) {
+      const base = 500;
+      return this.level * base * discountMultiplier;
+    },
+  },
 ];

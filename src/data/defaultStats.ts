@@ -57,4 +57,18 @@ export const defaultStats: IStats = {
       return totalRevenueMultiplier;
     },
   },
+  spawnTime: {
+    base: 10000,
+    get: function (upgrades: IUpgrade[]) {
+      let totalDiscountMultiplier = this.base;
+
+      upgrades.forEach((u) => {
+        if (u.type === UpgradeType.SPAWN_TIME) {
+          totalDiscountMultiplier = u.apply(totalDiscountMultiplier);
+        }
+      });
+
+      return totalDiscountMultiplier;
+    },
+  },
 };

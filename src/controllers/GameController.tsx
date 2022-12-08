@@ -13,8 +13,6 @@ import MergeScreenController from "./screens/MergeScreenController";
 const GameController: React.FC = (): JSX.Element => {
   const gameData = useGameData();
 
-  useEffect(() => {}, []);
-
   const startPull = () => {
     let updatedGameData = gameData.startPull();
     setGameData({ ...updatedGameData });

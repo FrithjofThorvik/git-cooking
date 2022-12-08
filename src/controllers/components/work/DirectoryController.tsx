@@ -75,7 +75,7 @@ const DirectoryController: React.FC<
 
   return (
     <Directory
-      orders={gameData.orderService.orders}
+      orders={gameData.orderService.getAvailableOrders()}
       createdItems={gameData.git.workingDirectory.createdItems}
       stagedItems={gameData.git.stagedItems.map((i) => i.item)}
       modifiedItems={gameData.git.modifiedItems.map((i) => i.item)}

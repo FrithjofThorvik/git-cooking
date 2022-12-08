@@ -14,7 +14,7 @@ import { copyObjectWithoutRef } from "services/helpers";
 
 const createNewFile = (gameData: IGitCooking, name: string) => {
   // create new file
-  const order = gameData.orderService.orders[0];
+  const order = gameData.orderService.getAvailableOrders()[0];
   const newOrderItem: IOrderItem = createNewOrderItem(order, name);
   git.modifiedItems = git.handleModifyItem(newOrderItem);
   git.workingDirectory = git.workingDirectory.addOrderItem(newOrderItem);
@@ -51,10 +51,8 @@ beforeEach(() => {
   let newOrder: IOrder = {
     id: "id",
     name: "test folder",
-    timeStart: 0,
-    timeEnd: 1,
     isCreated: false,
-    isAvailable: false,
+    isAvailable: true,
     percentageCompleted: 0,
     orderItems: [],
     image: imgChef,
@@ -63,7 +61,9 @@ beforeEach(() => {
   burger = defaultGameData.store.foods[0];
   newOrderItem.ingredients = burger.builder();
   newOrder.orderItems = [newOrderItem];
-  defaultGameData.orderService.orders = [newOrder];
+  defaultGameData.orderService = defaultGameData.orderService.setNewOrders([
+    newOrder,
+  ]);
   defaultGameData.orderService =
     defaultGameData.orderService.createOrderFolder(newOrder);
 });

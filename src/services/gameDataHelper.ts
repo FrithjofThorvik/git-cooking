@@ -147,7 +147,7 @@ export const calculateRevenueAndCost = (
   const prevDirectory = parentCommit?.directory;
 
   if (prevDirectory) {
-    gameData.orderService.orders.forEach((order) => {
+    gameData.orderService.getAllOrders().forEach((order) => {
       const percentageCompleted = order.percentageCompleted;
       let orderCost = 0;
       prevDirectory.createdItems.forEach((item) => {
@@ -160,7 +160,7 @@ export const calculateRevenueAndCost = (
       baseCost += orderCost;
       baseRevenue += orderRevenue;
       avgPercentage +=
-        percentageCompleted / gameData.orderService.orders.length;
+        percentageCompleted / gameData.orderService.getAllOrders().length;
       bonusFromPercentage +=
         orderRevenue * (percentageCompleted / 100) * accuracyMultiplier;
       maxBonusFromPercentage += orderRevenue * (100 / 100) * accuracyMultiplier;

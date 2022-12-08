@@ -2,10 +2,31 @@
 
 .orders {
   display: flex;
-  overflow-y: scroll;
+  overflow-y: auto;
   align-items: center;
   flex-direction: column;
   justify-content: flex-start;
   gap: 30px;
   height: 100%;
+
+  &-new {
+    color: $white;
+
+    animation: glow 2s;
+    animation-iteration-count: infinite;
+  }
+}
+
+@keyframes glow {
+  from {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
