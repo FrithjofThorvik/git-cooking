@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { useHover } from "hooks/useHover";
-import { StoreItem } from "types/gameDataInterfaces";
+import { IStats, StoreItem } from "types/gameDataInterfaces";
 import { isIngredient } from "services/typeGuards";
 import { IngredientType } from "types/enums";
 import StoreCard from "./StoreCard";
@@ -12,14 +12,14 @@ import "./Store.scss";
 interface IStoreProps {
   availableCash: number;
   activeStoreItems: StoreItem[];
-  discountMultiplier: number;
-  purchase: (storeItem: StoreItem, discountMultiplier: number) => void;
+  stats: IStats;
+  purchase: (purchasable: StoreItem, _stats: IStats) => void;
 }
 
 const Store: React.FC<IStoreProps> = ({
   availableCash,
   activeStoreItems,
-  discountMultiplier,
+  stats,
   purchase,
 }): JSX.Element => {
   const itemsRef = useRef<HTMLDivElement>(null);
@@ -59,7 +59,7 @@ const Store: React.FC<IStoreProps> = ({
             key={storeItem.id}
             cash={availableCash}
             purchasable={storeItem}
-            discountMultiplier={discountMultiplier}
+            stats={stats}
             purchase={purchase}
           />
         ))}

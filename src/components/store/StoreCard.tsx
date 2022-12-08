@@ -3,7 +3,7 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
-import { StoreItem } from "types/gameDataInterfaces";
+import { IStats, StoreItem } from "types/gameDataInterfaces";
 import { formatNumber } from "services/helpers";
 import { isIngredient, isUpgrade } from "services/typeGuards";
 
@@ -12,19 +12,19 @@ import "./StoreCard.scss";
 export interface IStoreCardProps {
   cash: number;
   purchasable: StoreItem;
-  discountMultiplier: number;
-  purchase: (purchasable: StoreItem, discountMultiplier: number) => void;
+  stats: IStats;
+  purchase: (purchasable: StoreItem, _stats: IStats) => void;
 }
 
 const StoreCard: React.FC<IStoreCardProps> = ({
   cash,
   purchasable,
-  discountMultiplier,
+  stats,
   purchase,
 }): JSX.Element => {
   const cost = isIngredient(purchasable)
     ? purchasable.cost
-    : purchasable.cost(discountMultiplier);
+    : purchasable.cost(stats.discountMultiplier.value);
   const description = isIngredient(purchasable)
     ? ""
     : purchasable.description();
@@ -34,26 +34,29 @@ const StoreCard: React.FC<IStoreCardProps> = ({
 
   return (
     <div
-      className={`card ${purchasable.purchased
-        ? "purchased"
-        : purchasable.unlocked === undefined || purchasable.unlocked
+      className={`card ${
+        purchasable.purchased
+          ? "purchased"
+          : purchasable.unlocked === undefined || purchasable.unlocked
           ? cash >= cost
             ? ""
             : "notafford"
           : "locked"
-        }`}
+      }`}
     >
       <div className="card-content">
         <div className="card-content-top">
           {isUpgrade(purchasable) && (
             <div
-              className={`card-content-top-lvl ${purchasable.purchased ? "max" : ""
-                }`}
+              className={`card-content-top-lvl ${
+                purchasable.purchased ? "max" : ""
+              }`}
             >
-              {`${purchasable.purchased
-                ? `Max level`
-                : `Level: ${purchasable.level}`
-                }`}
+              {`${
+                purchasable.purchased
+                  ? `Max level`
+                  : `Level: ${purchasable.level}`
+              }`}
             </div>
           )}
           <div className="card-content-top-img">
@@ -75,12 +78,15 @@ const StoreCard: React.FC<IStoreCardProps> = ({
                 {purchasable.unlocked !== undefined && !purchasable.unlocked ? (
                   <div className="card-content-bottom-locked-icon">
                     <LockOutlinedIcon />
-                    <p>Play to day <span>{purchasable.unlockDay}</span> to unlock!</p>
+                    <p>
+                      Play to day <span>{purchasable.unlockDay}</span> to
+                      unlock!
+                    </p>
                   </div>
                 ) : (
                   <button
                     className="card-content-bottom-buy-button"
-                    onClick={() => purchase(purchasable, discountMultiplier)}
+                    onClick={() => purchase(purchasable, stats)}
                   >
                     <p className="card-content-bottom-buy-button-price">
                       <PaidOutlinedIcon />

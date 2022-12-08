@@ -48,7 +48,10 @@ export interface IStore {
   upgrades: IUpgrade[];
   gitCommands: IGitCommand[];
   cash: number;
-  purchase: (purchasable: StoreItem, discountMultiplier: number) => IStore;
+  purchase: (
+    purchasable: StoreItem,
+    stats: IStats
+  ) => { store: IStore; stats: IStats };
   unlockStoreItemsByDay: (day: number) => IStore;
 }
 
@@ -78,7 +81,7 @@ export interface IUpgrade extends IPurchasable {
   maxLevel: number;
   name: () => string;
   cost: (discountMultiplier: number) => number;
-  apply: (value: number) => number;
+  apply: (stats: IStats) => IStats;
   effect: () => { current: number; next: number };
   description: () => string;
 }
@@ -100,7 +103,7 @@ export interface IItemInterface {
 
 export interface IStat {
   base: number;
-  get: (upgrades: IUpgrade[]) => number;
+  value: number;
 }
 
 export interface IStats {

@@ -18,8 +18,7 @@ const InfoBoxController: React.FC<
       timeLapsed={timeLapsed}
       baseDayLength={gameData.stats.dayLength.base}
       dayLengthModifier={
-        gameData.stats.dayLength.get(gameData.store.upgrades) /
-        gameData.stats.dayLength.base
+        gameData.stats.dayLength.value / gameData.stats.dayLength.base
       }
       day={gameData.states.day}
       dayIsCompleted={gameData.states.isDayComplete}
