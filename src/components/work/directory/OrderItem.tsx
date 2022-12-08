@@ -9,6 +9,7 @@ import "./OrderItem.scss";
 interface IOrderItemProps {
   active: boolean;
   item: IOrderItem;
+  disabled: boolean;
   stagedItems: IOrderItem[];
   modifiedItems: IOrderItem[];
   selectOrderItem: (order: IOrderItem) => void;
@@ -17,9 +18,10 @@ interface IOrderItemProps {
 
 const OrderItem: React.FC<IOrderItemProps> = ({
   item,
+  active,
+  disabled,
   stagedItems,
   modifiedItems,
-  active,
   selectOrderItem,
   deleteOrderItem,
 }): JSX.Element => {
@@ -42,14 +44,17 @@ const OrderItem: React.FC<IOrderItemProps> = ({
   }, [stagedItems, modifiedItems]);
 
   const handleDelete = (e: React.MouseEvent) => {
-    if (e && e.stopPropagation) e.stopPropagation()
-    deleteOrderItem(item)
-  }
+    if (e && e.stopPropagation) e.stopPropagation();
+    deleteOrderItem(item);
+  };
 
   return (
     <div
-      className={`order-item ${active ? "active" : ""}  ${isModified ? "modified" : isStaged ? "staged" : ""}`}
+      className={`order-item ${active ? "active" : ""}  ${
+        isModified ? "modified" : isStaged ? "staged" : ""
+      }`}
       onClick={() => selectOrderItem(item)}
+      style={{ pointerEvents: `${disabled ? "none" : "auto"}` }}
     >
       <DescriptionOutlinedIcon className="order-item-icon" />
       <div>{item.name}</div>

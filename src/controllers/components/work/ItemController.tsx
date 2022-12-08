@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { IModifiedItem } from "types/gitInterfaces";
 import { IngredientType } from "types/enums";
@@ -12,11 +12,13 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
 
   const closeOrderItem = (orderItem: IOrderItem) => {
+    if (gameData.states.isDayComplete) return;
     const updatedItemInterface = gameData.itemInterface.closeItem(orderItem);
     setGameData({ ...gameData, itemInterface: updatedItemInterface });
   };
 
   const openOrderItem = (orderItem: IOrderItem) => {
+    if (gameData.states.isDayComplete) return;
     const updatedItemInterface = gameData.itemInterface.openItem(orderItem);
     setGameData({ ...gameData, itemInterface: updatedItemInterface });
   };
@@ -29,6 +31,7 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
       removeIngredientAtIndex?: number;
     }
   ) => {
+    if (gameData.states.isDayComplete) return;
     let updatedModifiedItems: IModifiedItem[] = gameData.git.modifiedItems;
     const updatedOrders = gameData.git.workingDirectory.modifyOrderItem(
       orderItem,
@@ -45,11 +48,28 @@ const ItemController: React.FC<IItemControllerProps> = (): JSX.Element => {
     });
   };
 
+  // Close all opened files if day is completed
+  useEffect(() => {
+    if (gameData.states.isDayComplete) {
+      if (gameData.itemInterface.selectedItemIds.length > 0) {
+        setGameData({
+          ...gameData,
+          itemInterface: {
+            ...gameData.itemInterface,
+            selectedItemIds: [],
+            activeItemId: "",
+          },
+        });
+      }
+    }
+  }, [gameData.states.isDayComplete]);
+
   return (
     <Item
       foods={gameData.store.foods}
-      orders={gameData.orderService.getAvailableOrders()}
+      disabled={gameData.states.isDayComplete}
       activeItemId={gameData.itemInterface.activeItemId}
+      orders={gameData.orderService.getAvailableOrders()}
       selectedItemIds={gameData.itemInterface.selectedItemIds}
       createdItems={gameData.git.workingDirectory.createdItems}
       openOrderItem={openOrderItem}

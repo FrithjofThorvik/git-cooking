@@ -9,6 +9,7 @@ import "./Directory.scss";
 
 interface IDirectoryProps {
   orders: IOrder[];
+  disabled: boolean;
   createdItems: IOrderItem[];
   stagedItems: IOrderItem[];
   modifiedItems: IOrderItem[];
@@ -21,6 +22,7 @@ interface IDirectoryProps {
 
 const Directory: React.FC<IDirectoryProps> = ({
   orders,
+  disabled,
   createdItems,
   stagedItems,
   modifiedItems,
@@ -58,6 +60,7 @@ const Directory: React.FC<IDirectoryProps> = ({
                     stagedItems={stagedItems}
                     modifiedItems={modifiedItems}
                     key={order.id}
+                    disabled={disabled}
                     activeItemId={activeItemId}
                     selectOrderItem={selectOrderItem}
                     createOrderItem={createOrderItem}

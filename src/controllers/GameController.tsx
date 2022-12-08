@@ -1,25 +1,23 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import { GameState } from "types/enums";
 import { ITutorial } from "types/gameDataInterfaces";
+import { setGameTime, useGameTime } from "hooks/useGameTime";
 import { setGameData, useGameData } from "hooks/useGameData";
 import PullScreenController from "./screens/PullScreenController";
 import HelpScreenController from "./screens/HelpScreenController";
 import WorkScreenController from "controllers/screens/WorkScreenController";
 import StoreScreenController from "controllers/screens/StoreScreenController";
-import SummaryScreenController from "controllers/screens/SummaryScreenController";
 import MergeScreenController from "./screens/MergeScreenController";
+import SummaryScreenController from "controllers/screens/SummaryScreenController";
 
 const GameController: React.FC = (): JSX.Element => {
   const gameData = useGameData();
+  const { timeLapsed } = useGameTime();
 
   const startPull = () => {
     let updatedGameData = gameData.startPull();
-    setGameData({ ...updatedGameData });
-  };
-
-  const endDay = () => {
-    let updatedGameData = gameData.endDay();
+    if (timeLapsed !== 0) setGameTime(0);
     setGameData({ ...updatedGameData });
   };
 
@@ -33,12 +31,16 @@ const GameController: React.FC = (): JSX.Element => {
     setGameData({ ...gameData, help: updatedHelp });
   };
 
+  const setGameState = (state: GameState) => {
+    const updatedStates = gameData.states.setGameState(state);
+    setGameData({ ...gameData, states: updatedStates });
+  };
+
   const gameStateMachine = () => {
-    switch (gameData.gameState) {
+    switch (gameData.states.gameState) {
       case GameState.WORKING:
         return (
           <WorkScreenController
-            endDay={endDay}
             openHelpScreen={openHelpScreen}
             completeTutorial={completeTutorial}
           />
@@ -48,21 +50,15 @@ const GameController: React.FC = (): JSX.Element => {
       case GameState.MERGE:
         return (
           <MergeScreenController
-            goNext={() =>
-              setGameData({ ...gameData, gameState: GameState.SUMMARY })
-            }
+            goNext={() => setGameState(GameState.SUMMARY)}
           />
         );
       case GameState.SUMMARY:
         return (
           <SummaryScreenController
             openHelpScreen={openHelpScreen}
-            goNext={() =>
-              setGameData({ ...gameData, gameState: GameState.UPGRADE })
-            }
-            goBack={() =>
-              setGameData({ ...gameData, gameState: GameState.MERGE })
-            }
+            goNext={() => setGameState(GameState.UPGRADE)}
+            goBack={() => setGameState(GameState.MERGE)}
           />
         );
       case GameState.UPGRADE:
@@ -71,9 +67,7 @@ const GameController: React.FC = (): JSX.Element => {
             openHelpScreen={openHelpScreen}
             completeTutorial={completeTutorial}
             goNext={() => startPull()}
-            goBack={() =>
-              setGameData({ ...gameData, gameState: GameState.SUMMARY })
-            }
+            goBack={() => setGameState(GameState.SUMMARY)}
           />
         );
       case GameState.LOADING:

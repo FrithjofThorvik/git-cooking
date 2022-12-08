@@ -1,8 +1,8 @@
+import { GameState } from "types/enums";
 import { ICommandArg } from "types/interfaces";
 import { IOrderItem } from "types/gameDataInterfaces";
-import { gitCommandDoesNotExist, gitRes } from "services/git";
-import { GameState } from "types/enums";
 import { copyObjectWithoutRef } from "./helpers";
+import { gitCommandDoesNotExist, gitRes } from "services/git";
 
 export const gitCommands: ICommandArg[] = [
   {
@@ -351,7 +351,7 @@ export const gitCommands: ICommandArg[] = [
             isDynamic: true,
             args: [],
             cmd: (gameData, setGameData, branchName) => {
-              if (gameData.gameState != GameState.PULL)
+              if (gameData.states.gameState != GameState.PULL)
                 return gitRes(`Already up to date`, true);
 
               if (typeof branchName !== "string")
@@ -362,7 +362,7 @@ export const gitCommands: ICommandArg[] = [
                 return gitRes(`Error: '${branchName} does not exist'`, false);
 
               let newGameState: GameState = copyObjectWithoutRef(
-                gameData.gameState
+                gameData.states.gameState
               );
               if (newGameState === GameState.PULL)
                 newGameState = GameState.WORKING;
@@ -371,9 +371,11 @@ export const gitCommands: ICommandArg[] = [
                 pulledBranch.orders
               );
 
+              const updatedStates = gameData.states.setGameState(newGameState);
+
               setGameData({
                 ...gameData,
-                gameState: newGameState,
+                states: updatedStates,
                 orderService: updatedOrderService,
               });
 
@@ -381,8 +383,8 @@ export const gitCommands: ICommandArg[] = [
             },
           },
         ],
-        cmd: (gameData, setGameData, path) => {
-          if (gameData.gameState != GameState.PULL)
+        cmd: (gameData) => {
+          if (gameData.states.gameState != GameState.PULL)
             return gitRes(`Already up to date`, true);
 
           return gitRes("Error: no branch specified", false);
@@ -390,9 +392,60 @@ export const gitCommands: ICommandArg[] = [
       },
     ],
     cmd: (gameData) => {
-      if (gameData.gameState != GameState.PULL)
+      if (gameData.states.gameState != GameState.PULL)
         return gitRes(`Already up to date`, true);
       return gitRes("Error: no remote specified", false);
+    },
+  },
+  {
+    key: "push",
+    args: [
+      {
+        key: "origin",
+        args: [
+          {
+            key: "<PATH>",
+            isDynamic: true,
+            args: [],
+            cmd: (gameData, setGameData, branchName, timeLapsed) => {
+              if (gameData.states.gameState !== GameState.WORKING)
+                return gitRes(
+                  `Error: This command is currently disabled`,
+                  false
+                );
+
+              if (typeof branchName !== "string")
+                return gitRes(`Error: '${branchName} is invalid'`, false);
+
+              const branch = gameData.git.getRemoteBranch(branchName);
+              if (!branch)
+                return gitRes(`Error: '${branchName} does not exist'`, false);
+              // TODO: Check if branch is active
+
+              const updatedGameData = gameData.endDay(timeLapsed);
+
+              setGameData(updatedGameData);
+
+              return gitRes("Pushing added changes to remote", true);
+            },
+          },
+        ],
+        cmd: () => {
+          return gitRes("Error: ", false);
+        },
+      },
+    ],
+    cmd: (gameData) => {
+      return gitRes("Error: no remote specified", false);
+    },
+  },
+  {
+    key: "branch",
+    args: [],
+    cmd: (gameData) => {
+      let branches = "";
+
+      return gitRes("Hei", true);
     },
   },
 ];
