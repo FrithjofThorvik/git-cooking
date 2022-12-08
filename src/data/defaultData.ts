@@ -24,7 +24,7 @@ export const defaultGameData: IGitCooking = {
   endDay: function (timeLapsed) {
     let copy: IGitCooking = copyObjectWithoutRef(this);
 
-    const dayLength = copy.stats.dayLength.get(copy.store.upgrades);
+    const dayLength = copy.stats.dayLength.value;
     copy.states.endedDayTime =
       timeLapsed && !copy.states.isDayComplete ? timeLapsed : dayLength;
 

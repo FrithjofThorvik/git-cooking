@@ -1,74 +1,30 @@
-import { UpgradeType } from "types/enums";
-import { IStats, IUpgrade } from "types/gameDataInterfaces";
+import { IStats } from "types/gameDataInterfaces";
+
+const baseDiscountMultiplier = 1;
+const baseDayLength = 60000;
+const baseCostReductionMultiplier = 1;
+const baseRevenueMultiplier = 1;
+const baseSpawnTime = 10000;
 
 export const defaultStats: IStats = {
   discountMultiplier: {
-    base: 1,
-    get: function (upgrades: IUpgrade[]) {
-      let totalDiscountMultiplier = this.base;
-
-      upgrades.forEach((u) => {
-        if (u.type === UpgradeType.DISCOUNT) {
-          totalDiscountMultiplier = u.apply(totalDiscountMultiplier);
-        }
-      });
-
-      return totalDiscountMultiplier;
-    },
+    base: baseDiscountMultiplier,
+    value: baseDiscountMultiplier,
   },
   dayLength: {
-    base: 60000,
-    get: function (upgrades: IUpgrade[]) {
-      let totalDayLength = this.base;
-
-      upgrades.forEach((u) => {
-        if (u.type === UpgradeType.DAY_LENGTH) {
-          totalDayLength = u.apply(totalDayLength);
-        }
-      });
-
-      return totalDayLength;
-    },
+    base: baseDayLength,
+    value: baseDayLength,
   },
   costReductionMultiplier: {
-    base: 1,
-    get: function (upgrades: IUpgrade[]) {
-      let totalCostReductionMultiplier = this.base;
-
-      upgrades.forEach((u) => {
-        if (u.type === UpgradeType.COST_REDUCTION) {
-          totalCostReductionMultiplier = u.apply(totalCostReductionMultiplier);
-        }
-      });
-
-      return totalCostReductionMultiplier;
-    },
+    base: baseCostReductionMultiplier,
+    value: baseCostReductionMultiplier,
   },
   revenueMultiplier: {
-    base: 1,
-    get: function (upgrades: IUpgrade[]) {
-      let totalRevenueMultiplier = this.base;
-
-      upgrades.forEach((u) => {
-        if (u.type === UpgradeType.REVENUE_MULTIPLIER)
-          totalRevenueMultiplier = u.apply(totalRevenueMultiplier);
-      });
-
-      return totalRevenueMultiplier;
-    },
+    base: baseRevenueMultiplier,
+    value: baseRevenueMultiplier,
   },
   spawnTime: {
-    base: 10000,
-    get: function (upgrades: IUpgrade[]) {
-      let totalDiscountMultiplier = this.base;
-
-      upgrades.forEach((u) => {
-        if (u.type === UpgradeType.SPAWN_TIME) {
-          totalDiscountMultiplier = u.apply(totalDiscountMultiplier);
-        }
-      });
-
-      return totalDiscountMultiplier;
-    },
+    base: baseSpawnTime,
+    value: baseSpawnTime,
   },
 };

@@ -1,6 +1,7 @@
 import {
   IGitCommand,
   IIngredient,
+  IStats,
   IStore,
   IUpgrade,
   StoreItem,
@@ -17,29 +18,37 @@ export const defaultStore: IStore = {
   upgrades: copyObjectWithoutRef(defaultUpgrades),
   gitCommands: copyObjectWithoutRef(defaultGitCommands),
   cash: 30000,
-  purchase: function (purchasable: StoreItem, discountMultiplier: number) {
-    let copy: IStore = copyObjectWithoutRef(this);
+  purchase: function (purchasable: StoreItem, stats: IStats) {
+    const discountMultiplier: number = stats.discountMultiplier.value;
+    let copyStore: IStore = copyObjectWithoutRef(this);
+    let copyStats: IStats = copyObjectWithoutRef(stats);
 
     // Purchase upgrade
     if (isUpgrade(purchasable)) {
       let upgrade: IUpgrade = purchasable;
-      copy.upgrades.forEach((u) => {
-        if (u.id === upgrade.id && copy.cash >= u.cost(discountMultiplier)) {
+      copyStore.upgrades.forEach((u) => {
+        if (
+          u.id === upgrade.id &&
+          copyStore.cash >= u.cost(discountMultiplier)
+        ) {
           u.level += 1;
           if (u.level === u.maxLevel) u.purchased = true;
-          copy.cash -= u.cost(discountMultiplier);
+          copyStore.cash -= u.cost(discountMultiplier);
+          copyStats = u.apply(copyStats);
         }
       });
-      return copy;
     }
 
     // Git Command
     else if (isGitCommand(purchasable)) {
       let gitCommand: IGitCommand = purchasable;
-      copy.gitCommands.forEach((g) => {
-        if (g.id === gitCommand.id && copy.cash >= g.cost(discountMultiplier)) {
+      copyStore.gitCommands.forEach((g) => {
+        if (
+          g.id === gitCommand.id &&
+          copyStore.cash >= g.cost(discountMultiplier)
+        ) {
           g.purchased = true;
-          copy.cash -= g.cost(discountMultiplier);
+          copyStore.cash -= g.cost(discountMultiplier);
         }
       });
     }
@@ -47,19 +56,19 @@ export const defaultStore: IStore = {
     // Ingredient
     else if (isIngredient(purchasable)) {
       let ingredient: IIngredient = purchasable;
-      copy.foods.forEach((f) => {
+      copyStore.foods.forEach((f) => {
         if (f.type === ingredient.type) {
           Object.values(f.ingredients).map((i) => {
-            if (i.name === ingredient.name && copy.cash >= i.cost) {
+            if (i.name === ingredient.name && copyStore.cash >= i.cost) {
               i.purchased = true;
-              copy.cash -= i.cost;
+              copyStore.cash -= i.cost;
             }
           });
         }
       });
     }
 
-    return copy;
+    return { store: copyStore, stats: copyStats };
   },
   unlockStoreItemsByDay: function (day: number) {
     let copyStore: IStore = copyObjectWithoutRef(this);

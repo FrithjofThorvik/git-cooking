@@ -24,7 +24,7 @@ export interface IStoreScreenProps {
   stats: IStats;
   goNext: () => void;
   goBack: () => void;
-  purchase: (storeItem: StoreItem, discountMulitplier: number) => void;
+  purchase: (purchasable: StoreItem, _stats: IStats) => void;
   openHelpScreen: () => void;
   completeTutorial: (tutorial: ITutorial) => void;
 }
@@ -61,7 +61,9 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
       case PurchaseType.INGREDIENTS:
         let ingredients: IIngredient[] = [];
         store.foods.forEach((f) => {
-          Object.values(f.ingredients).forEach((i) => { if (!i.default) ingredients.push(i) });
+          Object.values(f.ingredients).forEach((i) => {
+            if (!i.default) ingredients.push(i);
+          });
         });
         setActiveStoreItems(ingredients);
         setActiveTutorials(
@@ -79,8 +81,10 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
         <div className="store-screen-top">
           <Store
             availableCash={store.cash}
-            activeStoreItems={activeStoreItems.sort((a, b) => a.unlockDay - b.unlockDay)}
-            discountMultiplier={stats.discountMultiplier.get(store.upgrades)}
+            activeStoreItems={activeStoreItems.sort(
+              (a, b) => a.unlockDay - b.unlockDay
+            )}
+            stats={stats}
             purchase={purchase}
           />
         </div>

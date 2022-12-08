@@ -6,8 +6,9 @@ import {
   imgDiscount,
   imgRevenueMultiplier,
 } from "assets";
-import { IUpgrade } from "types/gameDataInterfaces";
+import { IStats, IUpgrade } from "types/gameDataInterfaces";
 import { UpgradeType } from "types/enums";
+import { copyObjectWithoutRef } from "services/helpers";
 
 export const defaultUpgrades: IUpgrade[] = [
   {
@@ -31,8 +32,12 @@ export const defaultUpgrades: IUpgrade[] = [
       const next = Math.pow(base, this.level);
       return { current, next };
     },
-    apply: function (currentDayLength: number) {
-      return currentDayLength * this.effect().current;
+    apply: function (stats: IStats) {
+      let copyStats: IStats = copyObjectWithoutRef(stats);
+      copyStats.dayLength.value =
+        copyStats.dayLength.base * this.effect().current;
+
+      return copyStats;
     },
     cost: function (discountMultiplier: number) {
       const base = 50;
@@ -60,8 +65,12 @@ export const defaultUpgrades: IUpgrade[] = [
       const next = Math.pow(base, this.level);
       return { current: current, next: next };
     },
-    apply: function (currentDiscountMultiplier: number) {
-      return currentDiscountMultiplier * this.effect().current;
+    apply: function (stats: IStats) {
+      let copyStats: IStats = copyObjectWithoutRef(stats);
+      copyStats.discountMultiplier.value =
+        copyStats.discountMultiplier.base * this.effect().current;
+
+      return copyStats;
     },
     cost: function (discountMultiplier: number) {
       const base = 100;
@@ -89,8 +98,12 @@ export const defaultUpgrades: IUpgrade[] = [
       const next = Math.pow(base, this.level);
       return { current: current, next: next };
     },
-    apply: function (currentCost: number) {
-      return currentCost * this.effect().current;
+    apply: function (stats: IStats) {
+      let copyStats: IStats = copyObjectWithoutRef(stats);
+      copyStats.costReductionMultiplier.value =
+        copyStats.costReductionMultiplier.base * this.effect().current;
+
+      return copyStats;
     },
     cost: function (discountMultiplier: number) {
       const base = 250;
@@ -118,8 +131,12 @@ export const defaultUpgrades: IUpgrade[] = [
       const next = Math.pow(base, this.level);
       return { current: current, next: next };
     },
-    apply: function (currentCost: number) {
-      return currentCost * this.effect().current;
+    apply: function (stats: IStats) {
+      let copyStats: IStats = copyObjectWithoutRef(stats);
+      copyStats.revenueMultiplier.value =
+        copyStats.revenueMultiplier.base * this.effect().current;
+
+      return copyStats;
     },
     cost: function (discountMultiplier: number) {
       const base = 500;
@@ -139,16 +156,20 @@ export const defaultUpgrades: IUpgrade[] = [
       return `Reduce customer spawn time`;
     },
     description: function () {
-      return `Reduce spawn time to ${(this.effect().next / 1000).toFixed(2)}s`;
+      return `Reduce spawn time by x${this.effect().next.toFixed(2)}`;
     },
     effect: function () {
-      const base = 10000;
-      const current = base / this.level
-      const next = base / (this.level + 1)
+      const base = 0.85;
+      const current = Math.pow(base, this.level - 1);
+      const next = Math.pow(base, this.level);
       return { current: current, next: next };
     },
-    apply: function (currentCost: number) {
-      return this.effect().current;
+    apply: function (stats: IStats) {
+      let copyStats: IStats = copyObjectWithoutRef(stats);
+      copyStats.spawnTime.value =
+        copyStats.spawnTime.base * this.effect().current;
+
+      return copyStats;
     },
     cost: function (discountMultiplier: number) {
       const base = 500;

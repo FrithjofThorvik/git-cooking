@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ITutorial, StoreItem } from "types/gameDataInterfaces";
+import { IStats, ITutorial, StoreItem } from "types/gameDataInterfaces";
 import { setGameData, useGameData } from "hooks/useGameData";
 import StoreScreen from "components/screens/StoreScreen";
 
@@ -19,12 +19,9 @@ const StoreScreenController: React.FC<IStoreScreenControllerProps> = ({
 }): JSX.Element => {
   const gameData = useGameData();
 
-  const purchase = (purchasable: StoreItem, discountMultiplier: number) => {
-    const updatedStore = gameData.store.purchase(
-      purchasable,
-      discountMultiplier
-    );
-    setGameData({ ...gameData, store: updatedStore });
+  const purchase = (purchasable: StoreItem, _stats: IStats) => {
+    const { store, stats } = gameData.store.purchase(purchasable, _stats);
+    setGameData({ ...gameData, store: store, stats: stats });
   };
 
   return (

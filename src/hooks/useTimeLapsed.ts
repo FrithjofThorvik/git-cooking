@@ -20,7 +20,7 @@ export const useTimeLapsed = (ms: number, handleEnd: () => void): void => {
       setReferenceTime(now);
 
       let newTimeLapsed = prevTime + dt;
-      const dayLength = gameData.stats.dayLength.get(gameData.store.upgrades);
+      const dayLength = gameData.stats.dayLength.value;
 
       if (isPaused) {
         setPausedTime(pausedTime + 1);
