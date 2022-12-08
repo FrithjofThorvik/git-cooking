@@ -22,11 +22,11 @@ const HelpScreenController: React.FC<IHelpScreenControllerProps> = ({
   };
 
   useEffect(() => {
-    if (gameData.gameState === GameState.WORKING && !isPaused)
+    if (gameData.states.gameState === GameState.WORKING && !isPaused)
       setGameTime(timeLapsed, true);
 
     return () => {
-      if (gameData.gameState === GameState.WORKING && isPaused)
+      if (gameData.states.gameState === GameState.WORKING && isPaused)
         setGameTime(timeLapsed, false);
     };
   }, [isPaused]);

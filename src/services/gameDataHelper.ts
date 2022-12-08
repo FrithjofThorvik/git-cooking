@@ -128,12 +128,15 @@ export const calculateRevenueAndCost = (
   const git = gameData.git;
   const profitMarginMultiplier = 1.25;
   const accuracyMultiplier = 0.25;
+  const baseEarlyFinishEarning = 100;
   const revenueMultiplier = gameData.stats.revenueMultiplier.get(
     gameData.store.upgrades
   );
   const useCostReduction = gameData.stats.costReductionMultiplier.get(
     gameData.store.upgrades
   );
+  const dayLength = gameData.stats.dayLength.get(gameData.store.upgrades);
+  const endedDayTime = gameData.states.endedDayTime;
 
   let baseRevenue = 0;
   let baseCost = 0;
@@ -142,6 +145,10 @@ export const calculateRevenueAndCost = (
   let maxBonusFromPercentage = 0;
   let bonusFromMultiplier = 0;
   let bonusFromCostReduction = 0;
+  let bonusFromEndedDayTime =
+    dayLength - endedDayTime > 0 && endedDayTime
+      ? (1 - endedDayTime / dayLength) * baseEarlyFinishEarning
+      : 0;
 
   const parentCommit = git.getHeadCommit();
   const prevDirectory = parentCommit?.directory;
@@ -168,8 +175,13 @@ export const calculateRevenueAndCost = (
       bonusFromCostReduction += orderCost - orderCost * useCostReduction;
     });
   }
+  bonusFromEndedDayTime *= avgPercentage / 100;
 
-  const totalRevenue = baseRevenue + bonusFromMultiplier + bonusFromPercentage;
+  const totalRevenue =
+    baseRevenue +
+    bonusFromMultiplier +
+    bonusFromPercentage +
+    bonusFromEndedDayTime;
   const totalCost = baseCost - bonusFromCostReduction;
   const profit = totalRevenue - totalCost;
 
@@ -185,6 +197,7 @@ export const calculateRevenueAndCost = (
     bonusFromCostReduction,
     bonusFromMultiplier,
     bonusFromPercentage,
+    bonusFromEndedDayTime,
     maxBonusFromPercentage,
   };
 };

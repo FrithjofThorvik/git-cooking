@@ -141,17 +141,24 @@ export interface IOrderService {
   setNewOrders: (orders: IOrder[]) => IOrderService;
 }
 
-export interface IGitCooking {
+export interface IStates {
   day: number;
+  gameState: GameState;
+  isDayComplete: boolean;
+  endedDayTime: number;
+  setGameState: (state: GameState) => IStates;
+}
+
+export interface IGitCooking {
+  states: IStates;
   help: IHelp;
   git: IGitTree;
   store: IStore;
   stats: IStats;
   orderService: IOrderService;
-  gameState: GameState;
   commandHistory: string[];
   itemInterface: IItemInterface;
-  endDay: () => IGitCooking;
+  endDay: (timeLapsed?: number) => IGitCooking;
   startDay: () => IGitCooking;
   startPull: () => IGitCooking;
 }

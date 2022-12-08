@@ -16,11 +16,13 @@ const DirectoryController: React.FC<
   const gameData = useGameData();
 
   const createOrderFolder = (order: IOrder) => {
+    if (gameData.states.isDayComplete) return;
     const updatedOrderService = gameData.orderService.createOrderFolder(order);
     setGameData({ ...gameData, orderService: updatedOrderService });
   };
 
   const createOrderItem = (order: IOrder, name: string) => {
+    if (gameData.states.isDayComplete) return;
     if (
       doesOrderItemExistOnOrder(
         gameData.git.workingDirectory.createdItems,
@@ -48,6 +50,7 @@ const DirectoryController: React.FC<
   };
 
   const deleteOrderItem = (orderItem: IOrderItem) => {
+    if (gameData.states.isDayComplete) return;
     const updatedModifiedItems = gameData.git.handleModifyItem(orderItem, true);
     const updatedDirectory =
       gameData.git.workingDirectory.deleteOrderItem(orderItem);
@@ -65,6 +68,7 @@ const DirectoryController: React.FC<
   };
 
   const selectOrderItem = (orderItem: IOrderItem) => {
+    if (gameData.states.isDayComplete) return;
     const updatedItemInterface = gameData.itemInterface.openItem(orderItem);
 
     setGameData({
@@ -75,6 +79,7 @@ const DirectoryController: React.FC<
 
   return (
     <Directory
+      disabled={gameData.states.isDayComplete}
       orders={gameData.orderService.getAvailableOrders()}
       createdItems={gameData.git.workingDirectory.createdItems}
       stagedItems={gameData.git.stagedItems.map((i) => i.item)}

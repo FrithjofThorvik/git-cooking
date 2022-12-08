@@ -11,7 +11,8 @@ export interface ICommandArg {
   cmd: (
     gameData: IGitCooking,
     setGameData: (gameData: IGitCooking) => void,
-    input?: string
+    input?: string,
+    timeLapsed?: number
   ) => IGitResponse;
   isDynamic?: boolean;
 }
@@ -36,5 +37,6 @@ export interface ISummaryStats {
   bonusFromCostReduction: number;
   bonusFromMultiplier: number;
   bonusFromPercentage: number;
+  bonusFromEndedDayTime: number;
   maxBonusFromPercentage: number;
 }

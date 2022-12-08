@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import VerifiedTwoToneIcon from "@mui/icons-material/VerifiedTwoTone";
 import FastfoodOutlinedIcon from "@mui/icons-material/FastfoodOutlined";
 
 import { IFood } from "types/foodInterfaces";
@@ -13,6 +14,7 @@ import "./Item.scss";
 interface IItemProps {
   foods: IFood[];
   orders: IOrder[];
+  disabled: boolean;
   createdItems: IOrderItem[];
   activeItemId: string;
   selectedItemIds: string[];
@@ -31,6 +33,7 @@ interface IItemProps {
 const Item: React.FC<IItemProps> = ({
   foods,
   orders,
+  disabled,
   createdItems,
   activeItemId,
   openOrderItem,
@@ -62,7 +65,13 @@ const Item: React.FC<IItemProps> = ({
 
   return (
     <div className="item">
-      {selectedItemIds.length === 0 ? (
+      {disabled ? (
+        <div className="item-empty disabled">
+          <VerifiedTwoToneIcon />
+          <p>Day completed!</p>
+          <p>Finish up and push your work before you leave...</p>
+        </div>
+      ) : selectedItemIds.length === 0 ? (
         <div className="item-empty">
           <FastfoodOutlinedIcon />
           <p>No selected items...</p>

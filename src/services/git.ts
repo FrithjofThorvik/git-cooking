@@ -53,7 +53,8 @@ class Git {
   private execGit = (
     gameData: IGitCooking,
     setGameData: (gameData: IGitCooking) => void,
-    args: string[]
+    args: string[],
+    timeLapsed: number
   ): IGitResponse => {
     if (args.length > 0) {
       let currentCmdArg: ICommandArg | null = null;
@@ -76,10 +77,14 @@ class Git {
       }
 
       if (currentCmdArg?.cmd) {
-        setGameData(gameData)
-        return currentCmdArg.cmd(gameData, setGameData, dynamicInput);
-      }
-      else return gitRes("Git command did not exist", false);
+        setGameData(gameData);
+        return currentCmdArg.cmd(
+          gameData,
+          setGameData,
+          dynamicInput,
+          timeLapsed
+        );
+      } else return gitRes("Git command did not exist", false);
     } else return gitRes("Git command cannot be empty", false);
   };
 
@@ -91,13 +96,14 @@ class Git {
   public exec = (
     gameData: IGitCooking,
     setGameData: (gameData: IGitCooking) => void,
-    command: string
+    command: string,
+    timeLapsed: number
   ): IGitResponse => {
     let args = command.match(/(?:[^\s"']+|['"][^'"]*["'])+/g);
     if (!args) args = [""];
 
     if (args[0] === "git")
-      return this.execGit(gameData, setGameData, args.slice(1));
+      return this.execGit(gameData, setGameData, args.slice(1), timeLapsed);
     else return gitRes(`Command not found: ${args[0]}`, false);
   };
 }

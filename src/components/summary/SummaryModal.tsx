@@ -31,6 +31,10 @@ const SummaryModal: React.FC<ISummaryModalProps> = ({
               value={-summaryStats.baseCost}
             />
             <SummaryStat
+              text="Early finish: "
+              value={summaryStats.bonusFromEndedDayTime}
+            />
+            <SummaryStat
               text="Order accuracy: "
               value={summaryStats.bonusFromPercentage}
             />

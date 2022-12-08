@@ -10,6 +10,7 @@ import "./OrderFolder.scss";
 
 interface IOrderFolderProps {
   order: IOrder;
+  disabled: boolean;
   createdItems: IOrderItem[];
   stagedItems: IOrderItem[];
   modifiedItems: IOrderItem[];
@@ -21,6 +22,7 @@ interface IOrderFolderProps {
 
 const OrderFolder: React.FC<IOrderFolderProps> = ({
   order,
+  disabled,
   createdItems,
   stagedItems,
   modifiedItems,
@@ -49,6 +51,7 @@ const OrderFolder: React.FC<IOrderFolderProps> = ({
                 <OrderItem
                   key={i}
                   item={item}
+                  disabled={disabled}
                   stagedItems={stagedItems}
                   modifiedItems={modifiedItems}
                   selectOrderItem={selectOrderItem}
@@ -57,7 +60,7 @@ const OrderFolder: React.FC<IOrderFolderProps> = ({
                 />
               );
             })}
-          {isCreatingItem ? (
+          {isCreatingItem && !disabled ? (
             <Input
               order={order}
               createdItems={createdItems}
@@ -65,7 +68,12 @@ const OrderFolder: React.FC<IOrderFolderProps> = ({
               hideInput={() => setIsCreatingItem(false)}
             />
           ) : (
-            <Button text={"Add item"} onClick={() => setIsCreatingItem(true)} />
+            !disabled && (
+              <Button
+                text={"Add item"}
+                onClick={() => setIsCreatingItem(true)}
+              />
+            )
           )}
         </div>
       )}

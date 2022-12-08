@@ -27,7 +27,7 @@ const SummaryScreenController: React.FC<ISummaryScreenControllerProps> = ({
   if (!summaryStats) return <></>;
   return (
     <SummaryScreen
-      day={gameData.day}
+      day={gameData.states.day}
       summaryStats={summaryStats}
       goNext={goNext}
       goBack={goBack}

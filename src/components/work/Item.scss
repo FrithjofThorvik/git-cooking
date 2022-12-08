@@ -25,10 +25,28 @@
       color: rgba($white, 0.1);
       font-size: 75px;
     }
+
     p {
       text-align: center;
       color: rgba($white, 0.15);
       font-size: 22px;
+    }
+  }
+}
+
+.disabled {
+  svg {
+    color: $line-green;
+  }
+
+  p {
+    color: $line-green;
+
+    &:last-child {
+      color: $white;
+      font-size: 16px;
+      font-weight: 100;
+      width: 225px;
     }
   }
 }
