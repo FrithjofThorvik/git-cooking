@@ -7,16 +7,19 @@ import FastfoodOutlinedIcon from "@mui/icons-material/FastfoodOutlined";
 
 import { PurchaseType } from "types/enums";
 import { formatNumber } from "services/helpers";
+import { INewUnlockedItems } from "types/interfaces";
 
 import "./StoreNav.scss";
 
 export interface IStoreNavProps {
+  newUnlockedItems: INewUnlockedItems;
   activePurchaseType: PurchaseType;
   setActivePurchaseType: React.Dispatch<React.SetStateAction<PurchaseType>>;
   cash: number;
 }
 
 const StoreNav: React.FC<IStoreNavProps> = ({
+  newUnlockedItems,
   activePurchaseType,
   setActivePurchaseType,
   cash,
@@ -31,6 +34,19 @@ const StoreNav: React.FC<IStoreNavProps> = ({
         return <FastfoodOutlinedIcon />;
       default:
         return <CategoryOutlinedIcon />;
+    }
+  };
+
+  const newUnlockedItemsCount = (purchaseType: PurchaseType) => {
+    switch (purchaseType) {
+      case PurchaseType.UPGRADES:
+        return newUnlockedItems.upgrades;
+      case PurchaseType.COMMANDS:
+        return newUnlockedItems.gitCommands;
+      case PurchaseType.INGREDIENTS:
+        return newUnlockedItems.ingredients;
+      default:
+        return 0;
     }
   };
 
@@ -54,6 +70,11 @@ const StoreNav: React.FC<IStoreNavProps> = ({
             >
               <div className="store-nav-menu-item-logo">{iconSwitch(val)}</div>
               <p>{val}</p>
+              {newUnlockedItemsCount(val) > 0 && (
+                <div className="store-nav-menu-item-new">
+                  {newUnlockedItemsCount(val)}
+                </div>
+              )}
             </div>
           );
         })}

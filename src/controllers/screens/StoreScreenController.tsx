@@ -26,6 +26,7 @@ const StoreScreenController: React.FC<IStoreScreenControllerProps> = ({
 
   return (
     <StoreScreen
+      day={gameData.states.day}
       store={gameData.store}
       stats={gameData.stats}
       help={gameData.help}

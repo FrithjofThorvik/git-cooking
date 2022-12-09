@@ -157,6 +157,28 @@
         }
       }
     }
+
+    &-new {
+      display: flex;
+      position: absolute;
+      align-items: center;
+      justify-content: center;
+      bottom: 15px;
+
+      svg {
+        color: $line-green;
+        filter: drop-shadow(0 0 7px $line-green);
+        font-size: 18px;
+        margin-right: 5px;
+      }
+
+      p {
+        color: $line-green;
+        font-weight: bold;
+        font-size: 13px;
+        text-shadow: 0 0 7px $line-green;
+      }
+    }
   }
 
   &.notafford {

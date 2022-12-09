@@ -40,3 +40,9 @@ export interface ISummaryStats {
   bonusFromEndedDayTime: number;
   maxBonusFromPercentage: number;
 }
+
+export interface INewUnlockedItems {
+  upgrades: number;
+  ingredients: number;
+  gitCommands: number;
+}

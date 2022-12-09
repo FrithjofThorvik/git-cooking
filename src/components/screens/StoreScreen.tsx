@@ -14,11 +14,13 @@ import Tutorial from "components/Tutorials";
 import StoreNav from "components/store/StoreNav";
 import MenuButton from "components/MenuButton";
 import HelpButton from "components/HelpButton";
-
-import "./StoreScreen.scss";
 import Background from "components/Background";
 
+import "./StoreScreen.scss";
+import { INewUnlockedItems } from "types/interfaces";
+
 export interface IStoreScreenProps {
+  day: number;
   help: IHelp;
   store: IStore;
   stats: IStats;
@@ -30,6 +32,7 @@ export interface IStoreScreenProps {
 }
 
 const StoreScreen: React.FC<IStoreScreenProps> = ({
+  day,
   help,
   store,
   stats,
@@ -46,6 +49,11 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
     store.upgrades
   );
   const [activeTutorials, setActiveTutorials] = useState<ITutorial[]>([]);
+  const [newUnlockedItems, setNewUnlockedItems] = useState<INewUnlockedItems>({
+    upgrades: 0,
+    gitCommands: 0,
+    ingredients: 0,
+  });
 
   useEffect(() => {
     switch (activePurchaseType) {
@@ -75,11 +83,34 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
     }
   }, [activePurchaseType, store, help]);
 
+  useEffect(() => {
+    let newUnlockedIngredients = 0;
+    let newUnlockedGitCommands = 0;
+    let newUnlockedUpgrades = 0;
+    store.foods.forEach((f) =>
+      Object.values(f.ingredients).forEach((i) => {
+        if (i.unlockDay === day && !i.purchased) newUnlockedIngredients += 1;
+      })
+    );
+    store.upgrades.forEach((u) => {
+      if (u.unlockDay === day && u.level === 1) newUnlockedUpgrades += 1;
+    });
+    store.gitCommands.forEach((g) => {
+      if (g.unlockDay === day && !g.purchased) newUnlockedGitCommands += 1;
+    });
+    setNewUnlockedItems({
+      upgrades: newUnlockedUpgrades,
+      ingredients: newUnlockedIngredients,
+      gitCommands: newUnlockedGitCommands,
+    });
+  }, [day, store]);
+
   return (
     <Background>
       <div className="store-screen">
         <div className="store-screen-top">
           <Store
+            day={day}
             availableCash={store.cash}
             activeStoreItems={activeStoreItems.sort(
               (a, b) => a.unlockDay - b.unlockDay
@@ -92,6 +123,7 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
           <MenuButton onClick={goBack} text="Results" type="default" />
           <StoreNav
             cash={store.cash}
+            newUnlockedItems={newUnlockedItems}
             activePurchaseType={activePurchaseType}
             setActivePurchaseType={setActivePurchaseType}
           />

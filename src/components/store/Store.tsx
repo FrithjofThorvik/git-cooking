@@ -10,6 +10,7 @@ import StoreFoodSelector from "./StoreFoodSelector";
 import "./Store.scss";
 
 interface IStoreProps {
+  day: number;
   availableCash: number;
   activeStoreItems: StoreItem[];
   stats: IStats;
@@ -17,9 +18,10 @@ interface IStoreProps {
 }
 
 const Store: React.FC<IStoreProps> = ({
+  day,
+  stats,
   availableCash,
   activeStoreItems,
-  stats,
   purchase,
 }): JSX.Element => {
   const itemsRef = useRef<HTMLDivElement>(null);
@@ -57,6 +59,7 @@ const Store: React.FC<IStoreProps> = ({
         {activeStoreItems.filter(filterFoodType).map((storeItem) => (
           <StoreCard
             key={storeItem.id}
+            day={day}
             cash={availableCash}
             purchasable={storeItem}
             stats={stats}
