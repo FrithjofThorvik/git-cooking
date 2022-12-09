@@ -31,5 +31,5 @@ export const useTimeLapsed = (ms: number, handleEnd: () => void): void => {
     }, ms);
 
     return () => clearTimeout(timeId);
-  }, [timeLapsed, isPaused, pausedTime]);
+  }, [timeLapsed, isPaused, pausedTime, gameData.states.isDayComplete]);
 };

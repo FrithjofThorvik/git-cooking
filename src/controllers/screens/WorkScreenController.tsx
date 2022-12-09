@@ -1,8 +1,8 @@
 import React from "react";
 
 import { ITutorial } from "types/gameDataInterfaces";
-import { setGameData, useGameData } from "hooks/useGameData";
 import { useTimeLapsed } from "hooks/useTimeLapsed";
+import { setGameData, useGameData } from "hooks/useGameData";
 import { setGameTime, useGameTime } from "hooks/useGameTime";
 import WorkScreen from "components/screens/WorkScreen";
 import FileController from "controllers/components/work/ItemController";
@@ -24,12 +24,12 @@ const WorkScreenController: React.FC<IWorkScreenControllerProps> = ({
 }): JSX.Element => {
   const gameData = useGameData();
   const { timeLapsed } = useGameTime();
-  useTimeLapsed(500, () =>
+  useTimeLapsed(500, () => {
     setGameData({
       ...gameData,
       states: { ...gameData.states, isDayComplete: true },
-    })
-  );
+    });
+  });
 
   const pauseGameTime = (isPaused: boolean) =>
     setGameTime(timeLapsed, isPaused);
