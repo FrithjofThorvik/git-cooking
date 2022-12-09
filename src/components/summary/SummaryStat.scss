@@ -9,13 +9,26 @@
 
   &-value {
     color: $white;
+    position: relative;
+
+    &.max {
+      color: $gray !important;
+      position: absolute;
+      text-align: left;
+      font-size: 10px;
+      width: 100px;
+      right: -105px;
+      bottom: 2px;
+    }
 
     &.positive {
       color: $line-green;
     }
+
     &.negative {
       color: $line-red;
     }
+
     &.neutral {
       color: $gray;
     }

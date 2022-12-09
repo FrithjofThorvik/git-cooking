@@ -39,6 +39,7 @@ export interface ISummaryStats {
   bonusFromPercentage: number;
   bonusFromEndedDayTime: number;
   maxBonusFromPercentage: number;
+  maxBonusFromEndedDayTime: number;
 }
 
 export interface INewUnlockedItems {
