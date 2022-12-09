@@ -33,10 +33,12 @@ const SummaryModal: React.FC<ISummaryModalProps> = ({
             <SummaryStat
               text="Early finish: "
               value={summaryStats.bonusFromEndedDayTime}
+              maxValue={summaryStats.maxBonusFromEndedDayTime}
             />
             <SummaryStat
               text="Order accuracy: "
               value={summaryStats.bonusFromPercentage}
+              maxValue={summaryStats.maxBonusFromPercentage}
             />
             <SummaryStat
               text="Revenue multiplier: "
@@ -65,9 +67,8 @@ const SummaryModal: React.FC<ISummaryModalProps> = ({
         <div className="summary-modal-content-bottom">
           <p>Profit: </p>
           <p
-            className={`${
-              summaryStats.profit > 0 ? "color-default" : "color-negative"
-            }`}
+            className={`${summaryStats.profit > 0 ? "color-default" : "color-negative"
+              }`}
           >
             {formatNumber(summaryStats.profit, true)} <PaidOutlinedIcon />
           </p>
