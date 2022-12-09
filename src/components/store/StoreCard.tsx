@@ -2,24 +2,27 @@ import React from "react";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import NewReleasesTwoToneIcon from "@mui/icons-material/NewReleasesTwoTone";
 
-import { IStats, StoreItem } from "types/gameDataInterfaces";
 import { formatNumber } from "services/helpers";
+import { IStats, StoreItem } from "types/gameDataInterfaces";
 import { isIngredient, isUpgrade } from "services/typeGuards";
 
 import "./StoreCard.scss";
 
 export interface IStoreCardProps {
+  day: number;
   cash: number;
-  purchasable: StoreItem;
   stats: IStats;
+  purchasable: StoreItem;
   purchase: (purchasable: StoreItem, _stats: IStats) => void;
 }
 
 const StoreCard: React.FC<IStoreCardProps> = ({
+  day,
   cash,
-  purchasable,
   stats,
+  purchasable,
   purchase,
 }): JSX.Element => {
   const cost = isIngredient(purchasable)
@@ -34,29 +37,26 @@ const StoreCard: React.FC<IStoreCardProps> = ({
 
   return (
     <div
-      className={`card ${
-        purchasable.purchased
-          ? "purchased"
-          : purchasable.unlocked === undefined || purchasable.unlocked
+      className={`card ${purchasable.purchased
+        ? "purchased"
+        : purchasable.unlocked === undefined || purchasable.unlocked
           ? cash >= cost
             ? ""
             : "notafford"
           : "locked"
-      }`}
+        }`}
     >
       <div className="card-content">
         <div className="card-content-top">
           {isUpgrade(purchasable) && (
             <div
-              className={`card-content-top-lvl ${
-                purchasable.purchased ? "max" : ""
-              }`}
+              className={`card-content-top-lvl ${purchasable.purchased ? "max" : ""
+                }`}
             >
-              {`${
-                purchasable.purchased
-                  ? `Max level`
-                  : `Level: ${purchasable.level}`
-              }`}
+              {`${purchasable.purchased
+                ? `Max level`
+                : `Level: ${purchasable.level}`
+                }`}
             </div>
           )}
           <div className="card-content-top-img">
@@ -98,6 +98,12 @@ const StoreCard: React.FC<IStoreCardProps> = ({
             </div>
           )}
         </div>
+        {(day === purchasable.unlockDay && (isUpgrade(purchasable) ? purchasable.level === 1 : !purchasable.purchased)) && (
+          <div className="card-content-new">
+            <NewReleasesTwoToneIcon />
+            <p>New item</p>
+          </div>
+        )}
       </div>
     </div>
   );

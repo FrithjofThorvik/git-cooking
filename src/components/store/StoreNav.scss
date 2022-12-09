@@ -51,6 +51,7 @@
     &-item {
       @include blurBackground;
       display: flex;
+      position: relative;
       align-items: center;
       white-space: nowrap;
       color: $white;
@@ -77,6 +78,23 @@
       &-logo {
         display: flex;
         align-items: center;
+      }
+
+      &-new {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        background-color: $red;
+        border: 1px solid $line-red;
+        box-shadow: 0 3px 5px 1px rgba(0, 0, 0, 0.4);
+        top: -7px;
+        right: -7px;
+        width: 10px;
+        height: 10px;
+        padding: 5px;
+        font-size: 14px;
+        border-radius: 100%;
       }
     }
   }
