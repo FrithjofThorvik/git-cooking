@@ -38,9 +38,14 @@ export enum GitStatus {
 }
 
 export enum GitCommandType {
-  RESTORE,
-  CHECKOUT,
-  BRANCH,
+  RESTORE = "restore",
+  CHECKOUT = "checkout",
+  BRANCH = "branch",
+  PUSH = "push",
+  FETCH = "fetch",
+  ADD = "add",
+  COMMIT = "commit",
+  STATUS = "status",
 }
 
 export enum UpgradeType {
