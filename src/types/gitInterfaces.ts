@@ -12,6 +12,7 @@ export interface IHead {
 export interface IBranch {
   name: string;
   targetCommitId: string;
+  remoteTrackingBranch?: string;
 }
 
 export interface ICommit {
@@ -31,6 +32,7 @@ export interface IModifiedItem {
 export interface IRemoteBranch {
   name: string;
   orders: IOrder[];
+  isFetched: boolean;
 }
 
 export interface IRemoteBranchStats {
@@ -76,7 +78,7 @@ export interface IGitTree {
   commit: (commitMessage: string) => IGitTree;
   switchBranch: (branchName: string) => IGitTree;
   getRestoredFile: (itemToRestore: IOrderItem) => IModifiedItem | undefined;
-  addNewBranch: (branchName: string) => IGitTree;
+  addNewBranch: (branchName: string, remoteBranchName?: string) => IGitTree;
   stageItem: (itemToStage: IModifiedItem) => IGitTree;
   stageAllItems: () => IGitTree;
   restoreAllFiles: () => IGitTree;
@@ -84,4 +86,5 @@ export interface IGitTree {
   restoreAllStagedFiles: () => IGitTree;
   restoreStagedFile: (stagedItem: IModifiedItem) => IGitTree;
   getRemoteBranch: (remoteBranchName: string) => IRemoteBranch | null;
+  fetch: () => { updatedGit: IGitTree; newBranches: string[] };
 }

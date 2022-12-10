@@ -163,5 +163,5 @@ export interface IGitCooking {
   itemInterface: IItemInterface;
   endDay: (timeLapsed?: number) => IGitCooking;
   startDay: () => IGitCooking;
-  startPull: () => IGitCooking;
+  startFetch: () => IGitCooking;
 }

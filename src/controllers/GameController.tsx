@@ -4,7 +4,7 @@ import { GameState } from "types/enums";
 import { ITutorial } from "types/gameDataInterfaces";
 import { setGameTime, useGameTime } from "hooks/useGameTime";
 import { setGameData, useGameData } from "hooks/useGameData";
-import PullScreenController from "./screens/PullScreenController";
+import FetchScreenController from "./screens/FetchScreenController";
 import HelpScreenController from "./screens/HelpScreenController";
 import WorkScreenController from "controllers/screens/WorkScreenController";
 import StoreScreenController from "controllers/screens/StoreScreenController";
@@ -15,8 +15,8 @@ const GameController: React.FC = (): JSX.Element => {
   const gameData = useGameData();
   const { timeLapsed } = useGameTime();
 
-  const startPull = () => {
-    let updatedGameData = gameData.startPull();
+  const startFetch = () => {
+    let updatedGameData = gameData.startFetch();
     if (timeLapsed !== 0) setGameTime(0);
     setGameData({ ...updatedGameData });
   };
@@ -45,8 +45,8 @@ const GameController: React.FC = (): JSX.Element => {
             completeTutorial={completeTutorial}
           />
         );
-      case GameState.PULL:
-        return <PullScreenController />;
+      case GameState.FETCH:
+        return <FetchScreenController />;
       case GameState.MERGE:
         return (
           <MergeScreenController
@@ -66,7 +66,7 @@ const GameController: React.FC = (): JSX.Element => {
           <StoreScreenController
             openHelpScreen={openHelpScreen}
             completeTutorial={completeTutorial}
-            goNext={() => startPull()}
+            goNext={() => startFetch()}
             goBack={() => setGameState(GameState.SUMMARY)}
           />
         );

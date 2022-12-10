@@ -366,14 +366,16 @@ export const defaultGitTree: IGitTree = {
       return { item: restoredOrderItem };
     }
   },
-  addNewBranch: function (branchName: string) {
+  addNewBranch: function (branchName: string, remoteBranchName?: string) {
     let copyGit: IGitTree = copyObjectWithoutRef(this);
     const activeCommit = this.getHeadCommit();
     if (activeCommit) {
-      const newBranch: IBranch = {
+      let newBranch: IBranch = {
         name: branchName,
         targetCommitId: activeCommit.id,
       };
+
+      if (remoteBranchName) newBranch.remoteTrackingBranch = remoteBranchName;
 
       // add new branch to gitTree
       copyGit.branches.push(newBranch);
@@ -512,5 +514,19 @@ export const defaultGitTree: IGitTree = {
       if (remoteBranchName === branch.name) remoteBranch = branch;
     });
     return remoteBranch;
+  },
+  fetch: function () {
+    let copyGit: IGitTree = copyObjectWithoutRef(this);
+    let newBranches: string[] = [];
+
+    copyGit.remote.branches = copyGit.remote.branches.map((b) => {
+      if (!b.isFetched) {
+        b.isFetched = true;
+        newBranches.push(b.name);
+      }
+      return b;
+    });
+
+    return { updatedGit: copyGit, newBranches: newBranches };
   },
 };
