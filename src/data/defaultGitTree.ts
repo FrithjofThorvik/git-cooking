@@ -51,6 +51,18 @@ const defaultRemote: IRemote = {
       maxProfit: maxProfit,
     };
   },
+  pushItems: function (branchName, items, orders) {
+    let copy: IRemote = copyObjectWithoutRef(this);
+
+    const branchIndex = this.branches.findIndex((b) => b.name === branchName);
+
+    if (branchIndex) {
+      copy.branches[branchIndex].pushedItems = items;
+      copy.branches[branchIndex].orders = orders;
+    }
+
+    return copy;
+  },
 };
 
 export const defaultDirectory: IDirectory = {
@@ -103,22 +115,20 @@ const defaultCommit: ICommit = {
 };
 
 export const defaultGitTree: IGitTree = {
-  branches: [
-    {
-      name: "master",
-      targetCommitId: defaultCommit.id,
-    },
-  ],
+  branches: [],
   remote: defaultRemote,
   commits: [copyObjectWithoutRef(defaultCommit)],
   HEAD: {
-    targetId: "master",
+    targetId: defaultCommit.id,
   },
   workingDirectory: copyObjectWithoutRef(defaultDirectory),
   stagedItems: [],
   modifiedItems: [],
   isBranchActive: function (branchName: string) {
     return this.HEAD.targetId === branchName;
+  },
+  getActiveBranch: function () {
+    return this.branches.find((b) => b.name === this.HEAD.targetId);
   },
   getCommitFromId: function (commitId: string) {
     return this.commits.find((c) => c.id === commitId);

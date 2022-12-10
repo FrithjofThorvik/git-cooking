@@ -137,11 +137,13 @@ export interface IHelp {
 
 export interface IOrderService {
   _orders: IOrder[];
+  branches: { orders: IOrder[]; name: string }[];
   getAvailableOrders: () => IOrder[];
   getAllOrders: () => IOrder[];
   createOrderFolder: (order: IOrder) => IOrderService;
   updatePercentageCompleted: (createdItems: IOrderItem[]) => IOrderService;
-  setNewOrders: (orders: IOrder[]) => IOrderService;
+  setNewOrders: (orders: IOrder[], branchName?: string) => IOrderService;
+  switchBranch: (fromBranchName: string, toBranchName: string) => IOrderService;
 }
 
 export interface IStates {

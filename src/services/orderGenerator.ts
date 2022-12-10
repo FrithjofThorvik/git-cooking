@@ -71,9 +71,7 @@ class OrderGenerator {
       return food.unlocked;
     });
 
-    const existingOrderNames = gameData.orderService
-      .getAllOrders()
-      .map((o) => o.name);
+    const existingOrderNames = [""];
 
     // Generate random order
     const newOrder = this.generateRandomOrder(
@@ -160,7 +158,7 @@ class OrderGenerator {
         o.startTime = gameTime + gameData.stats.spawnTime.value;
       }
 
-      o.isAvailable = gameTime >= o.startTime;
+      o.isAvailable = gameTime >= o.startTime || gameData.states.isDayComplete;
       return o;
     });
 

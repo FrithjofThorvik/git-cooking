@@ -7,6 +7,7 @@ import Background from "components/Background";
 import SummaryModal from "components/summary/SummaryModal";
 
 import "./SummaryScreen.scss";
+import { formatNumber } from "services/helpers";
 
 export interface ISummaryScreenProps {
   day: number;
@@ -26,7 +27,14 @@ const SummaryScreen: React.FC<ISummaryScreenProps> = ({
   return (
     <Background>
       <div className="summary-screen">
-        <SummaryModal day={day} summaryStats={summaryStats} />
+        <h1 className="summary-screen-day">
+          {`Day ${day} - ${formatNumber(summaryStats.totalProfit, true)}`}
+        </h1>
+        <div className="summary-screen-branches">
+          {summaryStats.branches.map((b, i) => (
+            <SummaryModal summaryBranch={b} key={i} />
+          ))}
+        </div>
         <div className="summary-screen-buttons">
           <div className="summary-screen-buttons-back-button">
             <MenuButton onClick={goBack} text="Back" type="default" />

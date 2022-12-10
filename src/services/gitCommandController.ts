@@ -104,9 +104,18 @@ export const gitCommands: ICommandArg[] = [
                 remoteBranch.name
               );
 
+              const activeBranch = gameData.git.getActiveBranch();
+              if (activeBranch)
+                // switch branch for orders
+                updatedOrderService = updatedOrderService.switchBranch(
+                  activeBranch.name,
+                  branchName
+                );
+
               // update orders
-              updatedOrderService = gameData.orderService.setNewOrders(
-                remoteBranch.orders
+              updatedOrderService = updatedOrderService.setNewOrders(
+                remoteBranch.orders,
+                branchName
               );
 
               // switch branch
@@ -129,17 +138,13 @@ export const gitCommands: ICommandArg[] = [
               );
             }
 
-            if (localBranch?.remoteTrackingBranch) {
-              const remoteBranch = gameData.git.getRemoteBranch(
-                localBranch.remoteTrackingBranch
+            const activeBranch = gameData.git.getActiveBranch();
+            if (activeBranch)
+              // switch branch for orders
+              updatedOrderService = updatedOrderService.switchBranch(
+                activeBranch.name,
+                branchName
               );
-              if (remoteBranch) {
-                // update orders
-                updatedOrderService = gameData.orderService.setNewOrders(
-                  remoteBranch.orders
-                );
-              }
-            }
 
             // switch branch
             copyGit = copyGit.switchBranch(branchName);
@@ -482,12 +487,23 @@ export const gitCommands: ICommandArg[] = [
                 if (typeof branchName !== "string")
                   return gitRes(`Error: '${branchName} is invalid'`, false);
 
-                const branch = gameData.git.getRemoteBranch(branchName);
+                const branch = gameData.git.getBranch(branchName);
                 if (!branch)
                   return gitRes(`Error: '${branchName} does not exist'`, false);
-                // TODO: Check if branch is active
 
-                const updatedGameData = gameData.endDay(timeLapsed);
+                const createdItems = gameData.git.getCommitFromId(
+                  branch.targetCommitId
+                )?.directory.createdItems;
+
+                let updatedGameData = gameData;
+
+                if (createdItems && branch.remoteTrackingBranch)
+                  updatedGameData.git.remote =
+                    updatedGameData.git.remote.pushItems(
+                      branch.remoteTrackingBranch,
+                      createdItems,
+                      updatedGameData.orderService.getAllOrders()
+                    );
 
                 setGameData(updatedGameData);
 
@@ -503,19 +519,58 @@ export const gitCommands: ICommandArg[] = [
         },
       },
     ],
-    cmd: (gameData) => {
+    cmd: (gameData, setGameData) => {
       return middleware(gameData, GitCommandType.PUSH, () => {
-        return gitRes("Error: no remote specified", false);
+        if (gameData.states.gameState !== GameState.WORKING)
+          return gitRes(`Error: This command is currently disabled`, false);
+
+        const activeBranch = gameData.git.getActiveBranch();
+        if (!activeBranch?.remoteTrackingBranch)
+          return gitRes("Error: no remote specified", false);
+
+        const createdItems = gameData.git.getCommitFromId(
+          activeBranch.targetCommitId
+        )?.directory.createdItems;
+        let updatedGameData = gameData;
+
+        if (createdItems)
+          updatedGameData.git.remote = updatedGameData.git.remote.pushItems(
+            activeBranch.remoteTrackingBranch,
+            createdItems,
+            updatedGameData.orderService.getAllOrders()
+          );
+
+        setGameData(updatedGameData);
+
+        return gitRes("Pushing added changes to remote", true);
       });
     },
   },
   {
     key: "branch",
-    args: [],
+    args: [
+      {
+        key: "-r",
+        args: [],
+        cmd: (gameData) => {
+          return middleware(gameData, GitCommandType.BRANCH, () => {
+            let message = "Remote branches:\n";
+            gameData.git.remote.branches.forEach((b) => {
+              message += `\torigin/${b.name}\n`;
+            });
+            return gitRes(message, true);
+          });
+        },
+      },
+    ],
     cmd: (gameData) => {
       return middleware(gameData, GitCommandType.BRANCH, () => {
-        let branches = "";
-        return gitRes("Hei", true);
+        let message = "Local branches:\n";
+        gameData.git.branches.forEach((b) => {
+          const isActive = gameData.git.isBranchActive(b.name);
+          message += `\t${isActive ? "* " : ""}${b.name}\n`;
+        });
+        return gitRes(message, true);
       });
     },
   },

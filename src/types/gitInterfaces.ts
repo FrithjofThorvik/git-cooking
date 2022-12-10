@@ -32,6 +32,7 @@ export interface IModifiedItem {
 export interface IRemoteBranch {
   name: string;
   orders: IOrder[];
+  pushedItems: IOrderItem[];
   isFetched: boolean;
 }
 
@@ -45,6 +46,11 @@ export interface IRemoteBranchStats {
 export interface IRemote {
   branches: IRemoteBranch[];
   getBranchStats: (branch: IRemoteBranch) => IRemoteBranchStats;
+  pushItems: (
+    branchName: string,
+    items: IOrderItem[],
+    orders: IOrder[]
+  ) => IRemote;
 }
 
 export interface IGitTree {
@@ -56,6 +62,7 @@ export interface IGitTree {
   modifiedItems: IModifiedItem[];
   workingDirectory: IDirectory;
   isBranchActive: (branchName: string) => boolean;
+  getActiveBranch: () => IBranch | undefined;
   getCommitFromId: (commitId: string) => ICommit | undefined;
   getCommitHistory: () => ICommit[];
   getHeadCommit: () => ICommit | undefined;

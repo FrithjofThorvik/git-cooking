@@ -2,64 +2,62 @@ import React from "react";
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 
 import { formatNumber } from "services/helpers";
-import { ISummaryStats } from "types/interfaces";
+import { ISummaryBranch } from "types/interfaces";
 import SummaryStat from "./SummaryStat";
 
 import "./SummaryModal.scss";
 
 export interface ISummaryModalProps {
-  day: number;
-  summaryStats: ISummaryStats;
+  summaryBranch: ISummaryBranch;
 }
 
 const SummaryModal: React.FC<ISummaryModalProps> = ({
-  day,
-  summaryStats,
+  summaryBranch: summaryStats,
 }): JSX.Element => {
   return (
     <div className="summary-modal">
       <div className="summary-modal-content">
         <div className="summary-modal-content-top">
-          <div className="summary-modal-content-top-title">{`DAY ${day}`}</div>
+          <div className="summary-modal-content-top-title">{`${summaryStats.name}`}</div>
           <div className="summary-modal-content-top-info">
             <SummaryStat
               text="Base revenue: "
-              value={summaryStats.baseRevenue}
+              value={summaryStats.stats.baseRevenue}
             />
             <SummaryStat
               text="Ingredients cost: "
-              value={-summaryStats.baseCost}
+              value={-summaryStats.stats.baseCost}
             />
             <SummaryStat
               text="Early finish: "
-              value={summaryStats.bonusFromEndedDayTime}
-              maxValue={summaryStats.maxBonusFromEndedDayTime}
+              value={summaryStats.stats.bonusFromEndedDayTime}
+              maxValue={summaryStats.stats.maxBonusFromEndedDayTime}
             />
             <SummaryStat
               text="Order accuracy: "
-              value={summaryStats.bonusFromPercentage}
-              maxValue={summaryStats.maxBonusFromPercentage}
+              value={summaryStats.stats.bonusFromPercentage}
+              maxValue={summaryStats.stats.maxBonusFromPercentage}
             />
             <SummaryStat
               text="Revenue multiplier: "
-              value={summaryStats.bonusFromMultiplier}
+              value={summaryStats.stats.bonusFromMultiplier}
             />
             <SummaryStat
               text="Cost reduction: "
-              value={summaryStats.bonusFromCostReduction}
+              value={summaryStats.stats.bonusFromCostReduction}
             />
           </div>
           <div className="summary-modal-content-top-totals">
             <div className="summary-modal-content-top-totals-total">
               <p>Revenue: </p>
               <p className="summary-modal-content-top-totals-total-value positive">
-                {formatNumber(summaryStats.totalRevenue, true)}
+                {formatNumber(summaryStats.stats.totalRevenue, true)}
               </p>
             </div>
             <div className="summary-modal-content-top-totals-total">
               <p>Cost: </p>
               <p className="summary-modal-content-top-totals-total-value negative">
-                {formatNumber(summaryStats.totalCost, true)}
+                {formatNumber(summaryStats.stats.totalCost, true)}
               </p>
             </div>
           </div>
@@ -67,10 +65,11 @@ const SummaryModal: React.FC<ISummaryModalProps> = ({
         <div className="summary-modal-content-bottom">
           <p>Profit: </p>
           <p
-            className={`${summaryStats.profit > 0 ? "color-default" : "color-negative"
-              }`}
+            className={`${
+              summaryStats.stats.profit > 0 ? "color-default" : "color-negative"
+            }`}
           >
-            {formatNumber(summaryStats.profit, true)} <PaidOutlinedIcon />
+            {formatNumber(summaryStats.stats.profit, true)} <PaidOutlinedIcon />
           </p>
         </div>
       </div>
