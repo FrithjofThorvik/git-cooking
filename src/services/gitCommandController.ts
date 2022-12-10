@@ -4,6 +4,7 @@ import { IGitCooking, IOrderItem } from "types/gameDataInterfaces";
 import { copyObjectWithoutRef } from "./helpers";
 import { gitCommandDoesNotExist, gitRes } from "services/git";
 import { isGitCmdPurchased } from "./gameDataHelper";
+import { defaultItemData } from "data/defaultItemData";
 
 const middleware = (
   gameData: IGitCooking,
@@ -104,7 +105,7 @@ export const gitCommands: ICommandArg[] = [
                 remoteBranch.name
               );
 
-              const activeBranch = gameData.git.getActiveBranch();
+              const activeBranch = copyGit.getActiveBranch();
               if (activeBranch)
                 // switch branch for orders
                 updatedOrderService = updatedOrderService.switchBranch(
@@ -127,6 +128,7 @@ export const gitCommands: ICommandArg[] = [
 
               setGameData({
                 ...gameData,
+                itemInterface: copyObjectWithoutRef(defaultItemData),
                 states: { ...gameData.states, gameState: newGameState },
                 orderService: updatedOrderService,
                 git: copyGit,
@@ -151,6 +153,7 @@ export const gitCommands: ICommandArg[] = [
 
             setGameData({
               ...gameData,
+              itemInterface: copyObjectWithoutRef(defaultItemData),
               orderService: updatedOrderService,
               git: copyGit,
             });
@@ -174,10 +177,12 @@ export const gitCommands: ICommandArg[] = [
                 if (gameData.git.doesBranchNameExists(branchName))
                   return gitRes(`Error: '${branchName} already exist'`, false);
 
-                const gitTreeWithNewBranch =
-                  gameData.git.addNewBranch(branchName);
+                let copyGit = gameData.git.addNewBranch(branchName);
 
-                setGameData({ ...gameData, git: gitTreeWithNewBranch });
+                // switch branch
+                copyGit = copyGit.switchBranch(branchName);
+
+                setGameData({ ...gameData, git: copyGit });
 
                 return gitRes(`Switched to a new branch '${branchName}'`, true);
               });

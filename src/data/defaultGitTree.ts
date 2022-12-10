@@ -56,7 +56,7 @@ const defaultRemote: IRemote = {
 
     const branchIndex = this.branches.findIndex((b) => b.name === branchName);
 
-    if (branchIndex) {
+    if (branchIndex !== -1) {
       copy.branches[branchIndex].pushedItems = items;
       copy.branches[branchIndex].orders = orders;
     }
@@ -382,16 +382,13 @@ export const defaultGitTree: IGitTree = {
     if (activeCommit) {
       let newBranch: IBranch = {
         name: branchName,
-        targetCommitId: activeCommit.id,
+        targetCommitId: remoteBranchName ? defaultCommit.id : activeCommit.id,
       };
 
       if (remoteBranchName) newBranch.remoteTrackingBranch = remoteBranchName;
 
       // add new branch to gitTree
       copyGit.branches.push(newBranch);
-
-      // switch branch
-      copyGit = copyGit.switchBranch(newBranch.name);
     }
     return copyGit;
   },
