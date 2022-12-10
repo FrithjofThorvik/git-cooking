@@ -33,6 +33,23 @@ const InfoBox: React.FC<IInfoBoxProps> = ({
     );
   }, [timeLapsed]);
 
+  const colorText = (text: string) => {
+    const temp = text.split("%");
+    return (
+      <span>
+        {temp.map((v, i) => {
+          if (i !== 0 && i !== temp.length - 1) {
+            return (
+              <span style={{ color: "orange" }} key={i}>
+                {v}
+              </span>
+            );
+          } else return <span key={i}>{v}</span>;
+        })}
+      </span>
+    );
+  };
+
   return (
     <div className="info-box">
       <div className="info-box-clock">
@@ -43,18 +60,18 @@ const InfoBox: React.FC<IInfoBoxProps> = ({
             text={formattedClock.time}
             arcStart={formattedClock.startAngle}
             arcEnd={formattedClock.endAngle}
-            size={100}
+            size={60}
             animation={false}
             fillColor={formattedClock.color}
-            textStyle={{ color: "#e2e8f0", font: "Nunito Sans" }}
-            thickness={6}
+            textStyle={{ color: "#e2e8f0", font: "Nunito Sans", size: "12px" }}
+            thickness={5}
           />
         ) : (
-          <div>Complete</div>
+          <div className="info-box-clock-text completed">Completed</div>
         )}
       </div>
       <div className="info-box-text">
-        <p>{infoText}</p>
+        <p>{colorText(infoText)}</p>
       </div>
     </div>
   );

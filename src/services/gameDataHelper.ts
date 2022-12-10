@@ -142,9 +142,10 @@ export const calculateRevenueAndCost = (
   let bonusFromMultiplier = 0;
   let bonusFromCostReduction = 0;
   let bonusFromEndedDayTime = 0;
-  let maxBonusFromEndedDayTime = dayLength - endedDayTime > 0 && endedDayTime
-    ? (1 - endedDayTime / dayLength) * baseEarlyFinishEarning
-    : 0;;
+  let maxBonusFromEndedDayTime =
+    dayLength - endedDayTime > 0 && endedDayTime
+      ? (1 - endedDayTime / dayLength) * baseEarlyFinishEarning
+      : 0;
 
   const parentCommit = git.getHeadCommit();
   const prevDirectory = parentCommit?.directory;
@@ -171,7 +172,7 @@ export const calculateRevenueAndCost = (
       bonusFromCostReduction += orderCost - orderCost * useCostReduction;
     });
   }
-  bonusFromEndedDayTime = maxBonusFromEndedDayTime * avgPercentage / 100;
+  bonusFromEndedDayTime = (maxBonusFromEndedDayTime * avgPercentage) / 100;
 
   const totalRevenue =
     baseRevenue +
