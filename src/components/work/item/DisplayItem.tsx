@@ -8,11 +8,13 @@ import "./DisplayItem.scss";
 
 interface DisplayItemProps {
   item: IOrderItem;
+  size?: number;
   removeIngredient?: (index: number) => void;
 }
 
 const DisplayItem: React.FC<DisplayItemProps> = ({
   item,
+  size = 30,
   removeIngredient,
 }) => {
   return (
@@ -38,6 +40,7 @@ const DisplayItem: React.FC<DisplayItemProps> = ({
                   className={`${
                     removeIngredient ? "item-display-img-remove" : ""
                   }`}
+                  style={{ width: `${size}px` }}
                   onClick={() => removeIngredient && removeIngredient(index)}
                 />
               </Tooltip>

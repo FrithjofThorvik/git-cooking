@@ -54,6 +54,7 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
       <div className="item-interface-item">
         <DisplayItem
           item={activeItem}
+          size={75}
           removeIngredient={(index: number) =>
             modifyOrderItem(activeItem, { removeIngredientAtIndex: index })
           }
