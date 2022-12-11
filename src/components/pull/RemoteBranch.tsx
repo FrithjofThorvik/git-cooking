@@ -1,7 +1,6 @@
 import { ThemeProvider, Tooltip } from "@mui/material";
 import React from "react";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
-
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 
 import { theme } from "styles/muiThemes";
@@ -30,14 +29,15 @@ const RemoteBranch: React.FC<IRemoteBranchProps> = ({
                 Customers
               </p>
               <div className="remote-branch-content-top-content-item-images">
-                {stats.orders.map((o) => (
-                  <div
-                    key={o.id}
-                    className="remote-branch-content-top-content-item-images-image"
-                  >
-                    <img src={o.image} alt="customer" />
-                  </div>
-                ))}
+                <ThemeProvider theme={theme}>
+                  {stats.orders.map((o) => (
+                    <Tooltip key={o.id} title={o.name} arrow disableInteractive>
+                      <div className="remote-branch-content-top-content-item-images-image">
+                        <img src={o.image} alt="customer" />
+                      </div>
+                    </Tooltip>
+                  ))}
+                </ThemeProvider>
               </div>
             </div>
             <div className="remote-branch-content-top-content-seperator"></div>
@@ -50,7 +50,12 @@ const RemoteBranch: React.FC<IRemoteBranchProps> = ({
                   <div className="remote-branch-content-top-content-item-images">
                     <ThemeProvider theme={theme}>
                       {stats.missingIngredients.map((i) => (
-                        <Tooltip key={i.id} title={i.name} arrow>
+                        <Tooltip
+                          key={i.id}
+                          title={i.name}
+                          arrow
+                          disableInteractive
+                        >
                           <div className="remote-branch-content-top-content-item-images-image">
                             <img src={i.image} alt={i.name} />
                             <NewReleasesIcon />
