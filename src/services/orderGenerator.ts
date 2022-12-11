@@ -1,8 +1,8 @@
 import { v4 } from "uuid";
 
-import { names } from "data/names";
 import { IFood } from "types/foodInterfaces";
-import { imgChef } from "assets";
+import { femaleNames, maleNames } from "data/names";
+import { femaleImages, maleImages } from "assets/avatars";
 import { IGitCooking, IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { copyObjectWithoutRef, randomIntFromInterval } from "./helpers";
 
@@ -10,11 +10,25 @@ class OrderGenerator {
   private maxItems = 4;
   private maxOrders = 4;
 
-  private getOrderName = (existingOrderNames: string[]) => {
-    const unusedNames = names.filter((n) => !existingOrderNames.includes(n));
-    let newName = unusedNames[randomIntFromInterval(0, unusedNames.length - 1)];
+  private getOrderNameAndImage = (
+    existingOrderNames: string[],
+    existingImages: string[]
+  ) => {
+    const isFemale = Boolean(randomIntFromInterval(0, 1));
 
-    return newName;
+    const unusedNames = isFemale
+      ? femaleNames.filter((n) => !existingOrderNames.includes(n))
+      : maleNames.filter((n) => !existingOrderNames.includes(n));
+    const unusedImages = isFemale
+      ? femaleImages.filter((i) => !existingImages.includes(i))
+      : maleImages.filter((i) => !existingImages.includes(i));
+
+    const orderName =
+      unusedNames[randomIntFromInterval(0, unusedNames.length - 1)];
+    const orderImage =
+      unusedImages[randomIntFromInterval(0, unusedImages.length - 1)];
+
+    return { orderName, orderImage };
   };
 
   private chooseItems = (items: IFood[]): IFood[] => {
@@ -33,10 +47,14 @@ class OrderGenerator {
 
   private generateRandomOrder = (
     items: IFood[],
-    existingOrderNames: string[]
+    existingOrderNames: string[],
+    existingImages: string[]
   ): IOrder => {
     const orderId = v4();
-    const orderName = this.getOrderName(existingOrderNames);
+    const { orderName, orderImage } = this.getOrderNameAndImage(
+      existingOrderNames,
+      existingImages
+    );
     const pathPrefx = `orders/${orderName}`;
 
     // Choose which and how many items
@@ -57,7 +75,7 @@ class OrderGenerator {
     return {
       id: orderId,
       name: orderName,
-      image: imgChef,
+      image: orderImage,
       isAvailable: false,
       isCreated: false,
       orderItems: orderItems,
@@ -65,29 +83,37 @@ class OrderGenerator {
     };
   };
 
-  public generateNewOrder = (gameData: IGitCooking): IOrder => {
+  public generateNewOrder = (
+    gameData: IGitCooking,
+    orders: IOrder[]
+  ): IOrder => {
     // Filter out locked items
     const unlockedItems = gameData.store.foods.filter((food) => {
       return food.unlocked;
     });
 
-    const existingOrderNames = [""];
+    const existingOrderNames = orders.map((o) => o.name);
+    const existingOrderImages = orders.map((o) => o.image);
 
     // Generate random order
     const newOrder = this.generateRandomOrder(
       unlockedItems,
-      existingOrderNames
+      existingOrderNames,
+      existingOrderImages
     );
 
     return newOrder;
   };
 
   public generateNewOrders = (gameData: IGitCooking): IOrder[] => {
-    let orders = [];
+    let orders: IOrder[] = [];
     const nrOrders = randomIntFromInterval(1, this.maxOrders);
     for (let i = 0; i < nrOrders; i++) {
       // Choose a random item
-      const newOrder = this.generateNewOrder(copyObjectWithoutRef(gameData));
+      const newOrder = this.generateNewOrder(
+        copyObjectWithoutRef(gameData),
+        orders
+      );
       orders.push(newOrder);
     }
     return orders;

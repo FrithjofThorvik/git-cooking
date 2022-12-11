@@ -3,6 +3,7 @@ import React from "react";
 import { useGameData } from "hooks/useGameData";
 import { useGameTime } from "hooks/useGameTime";
 import InfoBox from "components/work/InfoBox";
+import { useInfoBoxText } from "hooks/useInfoBoxText";
 
 interface IInfoBoxControllerProps {}
 
@@ -11,10 +12,11 @@ const InfoBoxController: React.FC<
 > = (): JSX.Element => {
   const gameData = useGameData();
   const { timeLapsed } = useGameTime();
+  const infoText = useInfoBoxText(gameData);
 
   return (
     <InfoBox
-      infoText="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo"
+      infoText={infoText}
       timeLapsed={timeLapsed}
       baseDayLength={gameData.stats.dayLength.base}
       dayLengthModifier={

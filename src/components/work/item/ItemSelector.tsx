@@ -90,7 +90,7 @@ const ItemSelector: React.FC<IItemSelectorProps> = ({
                   }`}
                   onClick={() => openOrderItem(i)}
                 >
-                  {i.name}
+                  <p>{i.name}</p>
                   <CloseIcon
                     className="item-selector-group-items-item-icon"
                     onClick={(e) => close(e, i)}

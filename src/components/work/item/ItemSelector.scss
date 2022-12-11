@@ -1,22 +1,23 @@
 @import "styles/imports/colors";
+@import "styles/imports/mixins";
 
 .item-selector {
   display: flex;
+  overflow-x: scroll;
   align-content: center;
   box-sizing: border-box;
   justify-content: flex-start;
-  overflow-x: scroll;
+  background-color: rgba($dark, 0.5);
 
   width: 100%;
-  background-color: rgba($dark, 0.5);
   height: 40px;
-  padding-bottom: 7px;
+  padding-bottom: 0px;
   border-top-left-radius: 12px;
 
   &-group {
     display: flex;
     align-items: flex-end;
-    border-bottom: 1px solid $gray;
+    border-bottom: 1px solid rgba($white, 0.1);
     margin: 0 5px;
 
     &-items {
@@ -34,6 +35,13 @@
         font-size: 14px;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
+
+        p {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          max-width: 50px;
+        }
 
         &-icon {
           color: $gray;
@@ -55,22 +63,22 @@
 
       &-item-selected {
         background-color: $black;
-        border: 1px solid $gray;
+        border: 1px solid rgba($white, 0.1);
         border-bottom: none;
       }
     }
 
     &-label {
+      @include blurBackground;
       display: flex;
       white-space: nowrap;
       align-items: center;
       justify-content: center;
-      background-color: $gray;
-      color: $black;
-      font-size: 8px;
-      padding: 2px 5px;
+      font-size: 11px;
+      padding: 2px 7px;
       margin-bottom: 5px;
       border-radius: 10px;
+      font-weight: 600;
       margin-right: 4px;
       user-select: none;
       -webkit-user-select: none;

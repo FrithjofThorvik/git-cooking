@@ -1,6 +1,5 @@
 import React from "react";
 
-import { imgChef } from "assets";
 import { IOrder } from "types/gameDataInterfaces";
 import DisplayItem from "../item/DisplayItem";
 
@@ -24,7 +23,11 @@ const OrderCard: React.FC<IOrderCardProps> = ({ order }): JSX.Element => {
         <div className="order-card-person-info" style={{ color: textColor }}>
           {`${order.name} - ${Math.trunc(order.percentageCompleted)}%`}
         </div>
-        <img src={imgChef} alt="chef" style={{ borderColor: borderColor }} />
+        <img
+          src={order.image}
+          alt="customer"
+          style={{ borderColor: borderColor }}
+        />
       </div>
       <div className="order-card-items">
         {order.orderItems.map((item, index) => (

@@ -1,20 +1,29 @@
 import React from "react";
-
-import { IOrderItem } from "types/gameDataInterfaces";
 import { ThemeProvider, Tooltip } from "@mui/material";
 
+import { theme } from "styles/muiThemes";
+import { IOrderItem } from "types/gameDataInterfaces";
+
 import "./DisplayItem.scss";
-import {theme} from "styles/muiThemes";
 
 interface DisplayItemProps {
   item: IOrderItem;
+  removeIngredient?: (index: number) => void;
 }
 
-const DisplayItem: React.FC<DisplayItemProps> = ({ item }) => {
+const DisplayItem: React.FC<DisplayItemProps> = ({
+  item,
+  removeIngredient,
+}) => {
   return (
     <div className="item-display">
       <ThemeProvider theme={theme}>
-        <Tooltip title={item.name} placement="bottom" disableInteractive>
+        <Tooltip
+          title={item.name}
+          placement="bottom"
+          disableHoverListener={removeIngredient ? true : false}
+          disableInteractive
+        >
           <div className="item-display-img">
             {item.ingredients.map((ing, index) => (
               <Tooltip
@@ -24,7 +33,13 @@ const DisplayItem: React.FC<DisplayItemProps> = ({ item }) => {
                 arrow
                 disableInteractive
               >
-                <img src={ing.image} />
+                <img
+                  src={ing.image}
+                  className={`${
+                    removeIngredient ? "item-display-img-remove" : ""
+                  }`}
+                  onClick={() => removeIngredient && removeIngredient(index)}
+                />
               </Tooltip>
             ))}
           </div>
