@@ -56,4 +56,89 @@ export const defaultGitCommands: IGitCommand[] = [
     purchased: false,
     gitCommandType: GitCommandType.CHECKOUT,
   },
+  {
+    id: v4(),
+    image: imgCommand,
+    name: function () {
+      return "git pull";
+    },
+    description: function () {
+      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+    },
+    cost: function (discountMultiplier: number) {
+      return Math.round(3250 * discountMultiplier);
+    },
+    unlocked: true,
+    unlockDay: 0,
+    purchased: true,
+    gitCommandType: GitCommandType.PULL,
+  },
+  {
+    id: v4(),
+    image: imgCommand,
+    name: function () {
+      return "git push";
+    },
+    description: function () {
+      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+    },
+    cost: function (discountMultiplier: number) {
+      return Math.round(3250 * discountMultiplier);
+    },
+    unlocked: true,
+    unlockDay: 0,
+    purchased: true,
+    gitCommandType: GitCommandType.PUSH,
+  },
+  {
+    id: v4(),
+    image: imgCommand,
+    name: function () {
+      return "git commit";
+    },
+    description: function () {
+      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+    },
+    cost: function (discountMultiplier: number) {
+      return Math.round(3250 * discountMultiplier);
+    },
+    unlocked: true,
+    unlockDay: 0,
+    purchased: true,
+    gitCommandType: GitCommandType.COMMIT,
+  },
+  {
+    id: v4(),
+    image: imgCommand,
+    name: function () {
+      return "git add";
+    },
+    description: function () {
+      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+    },
+    cost: function (discountMultiplier: number) {
+      return Math.round(3250 * discountMultiplier);
+    },
+    unlocked: true,
+    unlockDay: 0,
+    purchased: true,
+    gitCommandType: GitCommandType.ADD,
+  },
+  {
+    id: v4(),
+    image: imgCommand,
+    name: function () {
+      return "git status";
+    },
+    description: function () {
+      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+    },
+    cost: function (discountMultiplier: number) {
+      return Math.round(3250 * discountMultiplier);
+    },
+    unlocked: true,
+    unlockDay: 0,
+    purchased: true,
+    gitCommandType: GitCommandType.STATUS,
+  },
 ];

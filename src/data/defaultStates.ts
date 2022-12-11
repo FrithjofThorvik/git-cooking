@@ -2,7 +2,7 @@ import { IStates } from "types/gameDataInterfaces";
 import { GameState } from "types/enums";
 
 export const defaultStates: IStates = {
-  day: 1,
+  day: 0,
   isDayComplete: false,
   endedDayTime: 0,
   gameState: GameState.LOADING,
