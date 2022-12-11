@@ -1,7 +1,7 @@
 import { IStats } from "types/gameDataInterfaces";
 
 const baseDiscountMultiplier = 1;
-const baseDayLength = 60000;
+const baseDayLength = 960000;
 const baseCostReductionMultiplier = 1;
 const baseRevenueMultiplier = 1;
 const baseSpawnTime = 10000;

@@ -1,8 +1,12 @@
+import { Tooltip } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import StoreFoodSelector from "components/store/StoreFoodSelector";
+import ForwardTwoToneIcon from "@mui/icons-material/ForwardTwoTone";
 
 import { IngredientType } from "types/enums";
 import { FoodType, IFood } from "types/foodInterfaces";
 import { IIngredient, IOrderItem } from "types/gameDataInterfaces";
+import DisplayItem from "./DisplayItem";
 
 import "./ItemInterface.scss";
 
@@ -26,9 +30,9 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
 }): JSX.Element => {
   const [foodTypeIngredients, setFoodTypeIngredients] = useState<FoodType>();
 
-  const handleTypeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTypeSelect = (type: IngredientType) => {
     Object.values(IngredientType).forEach((val) => {
-      if (val === e.target.value && activeItem) {
+      if (val === type && activeItem) {
         modifyOrderItem(activeItem, { type: val });
       }
     });
@@ -43,57 +47,54 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
   }, [activeItem?.type]);
 
   if (activeItem === null) return <></>;
-
   return (
     <div className="item-interface">
       <h1>{activeItem.name}</h1>
-      <div className="item-interface-section">
-        <div>Item type:</div>
-        <select
-          name="type"
-          id="type"
-          value={activeItem.type}
-          onChange={handleTypeSelect}
-        >
-          {Object.values(IngredientType).map((val: IngredientType, i) => {
-            return (
-              <option key={i} value={val}>
-                {val}
-              </option>
-            );
-          })}
-        </select>
+      {/* Created Item */}
+      <div className="item-interface-item">
+        <DisplayItem
+          item={activeItem}
+          removeIngredient={(index: number) =>
+            modifyOrderItem(activeItem, { removeIngredientAtIndex: index })
+          }
+        />
+        {activeItem.ingredients.length > 0 && (
+          <p>Remove items by clicking them...</p>
+        )}
       </div>
-      <div className="item-interface-section">
-        <div>Ingredients: </div>
-        <div className="item-interface-section-ingredients">
-          {activeItem.ingredients
-            .filter((i) => i.purchased)
-            .map((ing, i) => (
-              <div
-                key={i}
-                className="item-interface-section-ingredients-ingredient"
-                onClick={() =>
-                  modifyOrderItem(activeItem, { removeIngredientAtIndex: i })
-                }
-              >
-                {ing.name}
-              </div>
-            ))}
-        </div>
+
+      {/* Food Ingredients */}
+      <div className="item-interface-ingredients">
         {foodTypeIngredients &&
           Object.values(foodTypeIngredients)
             .filter((i) => i.purchased)
-            .map((ing, i) => (
-              <button
-                key={i}
-                onClick={() =>
-                  modifyOrderItem(activeItem, { addIngredient: ing })
-                }
+            .map((ing) => (
+              <Tooltip
+                key={ing.id}
+                title={ing.name}
+                placement="bottom"
+                arrow
+                disableInteractive
               >
-                {ing.name}
-              </button>
+                <div
+                  className="item-interface-ingredients-ingredient"
+                  onClick={() =>
+                    modifyOrderItem(activeItem, { addIngredient: ing })
+                  }
+                >
+                  <img src={ing.image} alt={ing.name} />
+                  <ForwardTwoToneIcon />
+                </div>
+              </Tooltip>
             ))}
+      </div>
+
+      {/* Food Types */}
+      <div className="item-interface-types">
+        <StoreFoodSelector
+          activeType={activeItem.type}
+          setType={handleTypeSelect}
+        />
       </div>
     </div>
   );
