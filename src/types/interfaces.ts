@@ -25,21 +25,29 @@ export interface IArcProgressClock {
   startAngle: number;
 }
 
+export interface ISummaryBranch {
+  name: string;
+  stats: {
+    profit: number;
+    totalCost: number;
+    totalRevenue: number;
+    baseRevenue: number;
+    baseCost: number;
+    revenueMultiplier: number;
+    useCostReduction: number;
+    avgPercentage: number;
+    bonusFromCostReduction: number;
+    bonusFromMultiplier: number;
+    bonusFromPercentage: number;
+    bonusFromEndedDayTime: number;
+    maxBonusFromPercentage: number;
+    maxBonusFromEndedDayTime: number;
+  };
+}
+
 export interface ISummaryStats {
-  profit: number;
-  totalCost: number;
-  totalRevenue: number;
-  baseRevenue: number;
-  baseCost: number;
-  revenueMultiplier: number;
-  useCostReduction: number;
-  avgPercentage: number;
-  bonusFromCostReduction: number;
-  bonusFromMultiplier: number;
-  bonusFromPercentage: number;
-  bonusFromEndedDayTime: number;
-  maxBonusFromPercentage: number;
-  maxBonusFromEndedDayTime: number;
+  branches: ISummaryBranch[];
+  totalProfit: number;
 }
 
 export interface INewUnlockedItems {

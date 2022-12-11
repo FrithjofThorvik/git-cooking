@@ -51,9 +51,9 @@ export const defaultGitCommands: IGitCommand[] = [
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
     },
-    unlocked: false,
-    unlockDay: 10,
-    purchased: false,
+    unlocked: true,
+    unlockDay: 0,
+    purchased: true,
     gitCommandType: GitCommandType.CHECKOUT,
   },
   {
@@ -71,7 +71,7 @@ export const defaultGitCommands: IGitCommand[] = [
     unlocked: true,
     unlockDay: 0,
     purchased: true,
-    gitCommandType: GitCommandType.PULL,
+    gitCommandType: GitCommandType.FETCH,
   },
   {
     id: v4(),

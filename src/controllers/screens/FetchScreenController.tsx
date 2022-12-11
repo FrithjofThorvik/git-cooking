@@ -1,22 +1,22 @@
 import React from "react";
 
 import { useGameData } from "hooks/useGameData";
-import PullScreen from "components/screens/PullScreen";
+import FetchScreen from "components/screens/FetchScreen";
 import TerminalController from "controllers/components/work/TerminalController";
 
-interface IPullScreenControllerProps {}
+interface IFetchScreenControllerProps {}
 
-const PullScreenController: React.FC<
-  IPullScreenControllerProps
+const FetchScreenController: React.FC<
+  IFetchScreenControllerProps
 > = (): JSX.Element => {
   const gameData = useGameData();
 
   return (
-    <PullScreen
+    <FetchScreen
       remote={gameData.git.remote}
       terminalController={<TerminalController />}
     />
   );
 };
 
-export default PullScreenController;
+export default FetchScreenController;

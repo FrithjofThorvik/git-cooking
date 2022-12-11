@@ -6,7 +6,7 @@ import { IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { copyObjectWithoutRef } from "services/helpers";
 import Stage, { IStageProps } from "components/work/Stage";
 
-interface IStageControllerProps { }
+interface IStageControllerProps {}
 
 const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
   const gameData = useGameData();
@@ -27,7 +27,9 @@ const StageController: React.FC<IStageControllerProps> = (): JSX.Element => {
     gameData.git.stagedItems.forEach((stagedItem: IModifiedItem) => {
       const item = stagedItem.item;
 
-      const relatedUpdatedOrder = updatedOrders.find((o: IOrder) => o.id === item.orderId);
+      const relatedUpdatedOrder = updatedOrders.find(
+        (o: IOrder) => o.id === item.orderId
+      );
 
       const elementIndex = stagedItemsWithOrder.findIndex(
         (element) => element.order.id === relatedUpdatedOrder?.id

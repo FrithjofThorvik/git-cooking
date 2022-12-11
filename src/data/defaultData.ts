@@ -28,11 +28,11 @@ export const defaultGameData: IGitCooking = {
     copy.states.endedDayTime =
       timeLapsed && !copy.states.isDayComplete ? timeLapsed : dayLength;
 
-    const { profit } = calculateRevenueAndCost(copy);
+    const { totalProfit } = calculateRevenueAndCost(copy);
     let updatedStore: IStore = copy.store.unlockStoreItemsByDay(
       copy.states.day
     );
-    updatedStore.cash += profit;
+    updatedStore.cash += totalProfit;
 
     copy.states.gameState = GameState.SUMMARY;
     copy.store = updatedStore;
@@ -46,7 +46,7 @@ export const defaultGameData: IGitCooking = {
     copy.states.dayIsCompleted = false;
     return copy;
   },
-  startPull: function () {
+  startFetch: function () {
     let copy: IGitCooking = copyObjectWithoutRef(this);
 
     const gitReset: IGitTree = copyObjectWithoutRef(defaultGitTree);
@@ -66,11 +66,26 @@ export const defaultGameData: IGitCooking = {
     const nrOfBranches = 3;
     const orders = orderGenerator.generateSetOfNewORders(copy, nrOfBranches);
 
-    copy.git.remote.branches.push({ orders: orders[0], name: "main" });
-    copy.git.remote.branches.push({ orders: orders[1], name: "dev" });
-    copy.git.remote.branches.push({ orders: orders[2], name: "test" });
+    copy.git.remote.branches.push({
+      orders: orders[0],
+      name: "main",
+      isFetched: false,
+      pushedItems: [],
+    });
+    copy.git.remote.branches.push({
+      orders: orders[1],
+      name: "dev",
+      isFetched: false,
+      pushedItems: [],
+    });
+    copy.git.remote.branches.push({
+      orders: orders[2],
+      name: "test",
+      isFetched: false,
+      pushedItems: [],
+    });
 
-    copy.states.gameState = GameState.PULL;
+    copy.states.gameState = GameState.FETCH;
 
     return copy;
   },

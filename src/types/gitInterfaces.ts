@@ -12,6 +12,7 @@ export interface IHead {
 export interface IBranch {
   name: string;
   targetCommitId: string;
+  remoteTrackingBranch?: string;
 }
 
 export interface ICommit {
@@ -31,6 +32,8 @@ export interface IModifiedItem {
 export interface IRemoteBranch {
   name: string;
   orders: IOrder[];
+  pushedItems: IOrderItem[];
+  isFetched: boolean;
 }
 
 export interface IRemoteBranchStats {
@@ -43,6 +46,11 @@ export interface IRemoteBranchStats {
 export interface IRemote {
   branches: IRemoteBranch[];
   getBranchStats: (branch: IRemoteBranch) => IRemoteBranchStats;
+  pushItems: (
+    branchName: string,
+    items: IOrderItem[],
+    orders: IOrder[]
+  ) => IRemote;
 }
 
 export interface IGitTree {
@@ -54,6 +62,7 @@ export interface IGitTree {
   modifiedItems: IModifiedItem[];
   workingDirectory: IDirectory;
   isBranchActive: (branchName: string) => boolean;
+  getActiveBranch: () => IBranch | undefined;
   getCommitFromId: (commitId: string) => ICommit | undefined;
   getCommitHistory: () => ICommit[];
   getHeadCommit: () => ICommit | undefined;
@@ -76,7 +85,7 @@ export interface IGitTree {
   commit: (commitMessage: string) => IGitTree;
   switchBranch: (branchName: string) => IGitTree;
   getRestoredFile: (itemToRestore: IOrderItem) => IModifiedItem | undefined;
-  addNewBranch: (branchName: string) => IGitTree;
+  addNewBranch: (branchName: string, remoteBranchName?: string) => IGitTree;
   stageItem: (itemToStage: IModifiedItem) => IGitTree;
   stageAllItems: () => IGitTree;
   restoreAllFiles: () => IGitTree;
@@ -84,4 +93,5 @@ export interface IGitTree {
   restoreAllStagedFiles: () => IGitTree;
   restoreStagedFile: (stagedItem: IModifiedItem) => IGitTree;
   getRemoteBranch: (remoteBranchName: string) => IRemoteBranch | null;
+  fetch: () => { updatedGit: IGitTree; newBranches: string[] };
 }

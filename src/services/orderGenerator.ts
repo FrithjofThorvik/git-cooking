@@ -184,7 +184,7 @@ class OrderGenerator {
         o.startTime = gameTime + gameData.stats.spawnTime.value;
       }
 
-      o.isAvailable = gameTime >= o.startTime;
+      o.isAvailable = gameTime >= o.startTime || gameData.states.isDayComplete;
       return o;
     });
 

@@ -51,6 +51,18 @@ const defaultRemote: IRemote = {
       maxProfit: maxProfit,
     };
   },
+  pushItems: function (branchName, items, orders) {
+    let copy: IRemote = copyObjectWithoutRef(this);
+
+    const branchIndex = this.branches.findIndex((b) => b.name === branchName);
+
+    if (branchIndex !== -1) {
+      copy.branches[branchIndex].pushedItems = items;
+      copy.branches[branchIndex].orders = orders;
+    }
+
+    return copy;
+  },
 };
 
 export const defaultDirectory: IDirectory = {
@@ -103,22 +115,20 @@ const defaultCommit: ICommit = {
 };
 
 export const defaultGitTree: IGitTree = {
-  branches: [
-    {
-      name: "master",
-      targetCommitId: defaultCommit.id,
-    },
-  ],
+  branches: [],
   remote: defaultRemote,
   commits: [copyObjectWithoutRef(defaultCommit)],
   HEAD: {
-    targetId: "master",
+    targetId: defaultCommit.id,
   },
   workingDirectory: copyObjectWithoutRef(defaultDirectory),
   stagedItems: [],
   modifiedItems: [],
   isBranchActive: function (branchName: string) {
     return this.HEAD.targetId === branchName;
+  },
+  getActiveBranch: function () {
+    return this.branches.find((b) => b.name === this.HEAD.targetId);
   },
   getCommitFromId: function (commitId: string) {
     return this.commits.find((c) => c.id === commitId);
@@ -366,20 +376,19 @@ export const defaultGitTree: IGitTree = {
       return { item: restoredOrderItem };
     }
   },
-  addNewBranch: function (branchName: string) {
+  addNewBranch: function (branchName: string, remoteBranchName?: string) {
     let copyGit: IGitTree = copyObjectWithoutRef(this);
     const activeCommit = this.getHeadCommit();
     if (activeCommit) {
-      const newBranch: IBranch = {
+      let newBranch: IBranch = {
         name: branchName,
-        targetCommitId: activeCommit.id,
+        targetCommitId: remoteBranchName ? defaultCommit.id : activeCommit.id,
       };
+
+      if (remoteBranchName) newBranch.remoteTrackingBranch = remoteBranchName;
 
       // add new branch to gitTree
       copyGit.branches.push(newBranch);
-
-      // switch branch
-      copyGit = copyGit.switchBranch(newBranch.name);
     }
     return copyGit;
   },
@@ -512,5 +521,19 @@ export const defaultGitTree: IGitTree = {
       if (remoteBranchName === branch.name) remoteBranch = branch;
     });
     return remoteBranch;
+  },
+  fetch: function () {
+    let copyGit: IGitTree = copyObjectWithoutRef(this);
+    let newBranches: string[] = [];
+
+    copyGit.remote.branches = copyGit.remote.branches.map((b) => {
+      if (!b.isFetched) {
+        b.isFetched = true;
+        newBranches.push(b.name);
+      }
+      return b;
+    });
+
+    return { updatedGit: copyGit, newBranches: newBranches };
   },
 };

@@ -1,5 +1,5 @@
 export enum GameState {
-  PULL,
+  FETCH,
   SUMMARY,
   WORKING,
   UPGRADE,
@@ -42,7 +42,7 @@ export enum GitCommandType {
   CHECKOUT = "checkout",
   BRANCH = "branch",
   PUSH = "push",
-  PULL = "pull",
+  FETCH = "fetch",
   ADD = "add",
   COMMIT = "commit",
   STATUS = "status",

@@ -61,11 +61,12 @@ beforeEach(() => {
   burger = defaultGameData.store.foods[0];
   newOrderItem.ingredients = burger.builder();
   newOrder.orderItems = [newOrderItem];
-  defaultGameData.orderService = defaultGameData.orderService.setNewOrders([
-    newOrder,
-  ]);
-  defaultGameData.orderService =
-    defaultGameData.orderService.createOrderFolder(newOrder);
+  defaultGameData.orderService = defaultGameData.orderService.setNewOrders(
+    [newOrder]
+  );
+  defaultGameData.orderService = defaultGameData.orderService.createOrderFolder(
+    newOrder
+  );
 });
 describe("restore", () => {
   test("new file -> should not restore", () => {
