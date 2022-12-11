@@ -5,10 +5,15 @@
   align-items: center;
   flex-direction: column;
 
-
   &-img {
     display: flex;
     flex-direction: column;
+
+    &-remove {
+      &:hover {
+        cursor: pointer;
+      }
+    }
 
     img {
       width: 30px;
