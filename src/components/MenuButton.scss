@@ -13,11 +13,20 @@
   font-size: 20px;
   border-radius: 50px;
   box-shadow: 0 4px 4px 0 rgba($black, 0.6);
+  transition: text-shadow 100ms ease-in-out;
+
+  svg {
+    transition: filter 100ms ease-in-out;
+  }
 
   &:hover {
     cursor: pointer;
     box-shadow: 0 2px 4px 0px rgba($black, 0.6);
-    transition: box-shadow 0.1s ease-in-out;
+    text-shadow: 0 0 7px $white;
+
+    svg {
+      filter: drop-shadow(0 0 7px $white);
+    }
   }
 }
 .default {

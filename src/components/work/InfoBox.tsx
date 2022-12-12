@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ArcProgress from "react-arc-progress";
+import HighlightText from "components/HighlightText";
 
 import { formatClock } from "services/helpers";
 import { IArcProgressClock } from "types/interfaces";
@@ -37,24 +38,6 @@ const InfoBox: React.FC<IInfoBoxProps> = ({
     );
   }, [timeLapsed]);
 
-  const colorText = (text: string) => {
-    const temp = text.split("%");
-    console.log(temp);
-    return (
-      <span>
-        {temp.map((v, i) => {
-          if (i !== 0 && i !== temp.length - 1 && i % 2 !== 0) {
-            return (
-              <span style={{ color: "orange" }} key={i}>
-                {v}
-              </span>
-            );
-          } else return <span key={i}>{v}</span>;
-        })}
-      </span>
-    );
-  };
-
   return (
     <div className="info-box">
       <div className="info-box-clock">
@@ -76,7 +59,7 @@ const InfoBox: React.FC<IInfoBoxProps> = ({
         )}
       </div>
       <div className="info-box-text">
-        <p>{colorText(infoText)}</p>
+        <HighlightText text={infoText} />
       </div>
       {(itemsHaveBeenPushed || dayIsCompleted) && (
         <div className="info-box-end" onClick={() => endDay()}>

@@ -3,15 +3,14 @@
 
 .summary-modal {
   @include blurBackground;
-  margin: auto;
   overflow: hidden;
   border: 5px solid $line-dark;
   box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.6),
     inset 0 0 5px 1px rgba(0, 0, 0, 0.6);
   color: $white;
-  width: 400px;
+  width: 350px;
   height: 500px;
-  border-radius: 75px;
+  border-radius: 50px;
 
   &-content {
     display: flex;
