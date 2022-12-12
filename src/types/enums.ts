@@ -60,4 +60,13 @@ export enum TutorialType {
   STORE_UPGRADES = "Upgrades",
   STORE_INGREDIENTS = "Ingredients",
   STORE_GIT_COMMANDS = "Purchase Git Commands",
+  WORK_FILES = "Order Files",
+  WORK_ORDERS = "Orders",
+  WORK_TERMINAL = "Terminal",
+}
+
+export enum Difficulty {
+  EASY = "easy",
+  NORMAL = "normal",
+  HARD = "hard",
 }

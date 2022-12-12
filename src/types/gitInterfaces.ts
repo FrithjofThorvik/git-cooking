@@ -1,9 +1,11 @@
 import {
   IDirectory,
+  IGitCooking,
   IIngredient,
   IOrder,
   IOrderItem,
 } from "./gameDataInterfaces";
+import { Difficulty } from "types/enums";
 
 export interface IHead {
   targetId: string;
@@ -34,6 +36,7 @@ export interface IRemoteBranch {
   orders: IOrder[];
   pushedItems: IOrderItem[];
   isFetched: boolean;
+  stats: IRemoteBranchStats;
 }
 
 export interface IRemoteBranchStats {
@@ -41,11 +44,12 @@ export interface IRemoteBranchStats {
   maxProfit: number;
   orders: IOrder[];
   itemCount: number;
+  difficulty: Difficulty;
 }
 
 export interface IRemote {
   branches: IRemoteBranch[];
-  getBranchStats: (branch: IRemoteBranch) => IRemoteBranchStats;
+  updateBranchStats: (gameData: IGitCooking) => IRemote;
   pushItems: (
     branchName: string,
     items: IOrderItem[],

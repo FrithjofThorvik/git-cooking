@@ -153,9 +153,10 @@ export const calculateRevenueAndCost = (
         const percentageCompleted = order.percentageCompleted;
         let orderCost = 0;
         b.pushedItems.forEach((item) => {
-          item.ingredients.forEach(
-            (ingredient) => (orderCost += ingredient.useCost)
-          );
+          if (item.orderId === order.id)
+            item.ingredients.forEach(
+              (ingredient) => (orderCost += ingredient.useCost)
+            );
         });
         const orderRevenue = orderCost * profitMarginMultiplier;
 
@@ -179,9 +180,17 @@ export const calculateRevenueAndCost = (
       const totalCost = baseCost - bonusFromCostReduction;
       const profit = totalRevenue - totalCost;
 
+      const maxProfit =
+        baseRevenue +
+        maxBonusFromEndedDayTime +
+        maxBonusFromPercentage +
+        bonusFromMultiplier -
+        totalCost;
+
       return {
         name: b.name,
         stats: {
+          maxProfit,
           profit,
           totalCost,
           totalRevenue,

@@ -64,26 +64,13 @@ export const defaultGameData: IGitCooking = {
     copy.git.remote.branches = [];
 
     const nrOfBranches = 3;
-    const orders = orderGenerator.generateSetOfNewORders(copy, nrOfBranches);
+    const branches = orderGenerator.generateSetOfBranches(copy, nrOfBranches);
 
-    copy.git.remote.branches.push({
-      orders: orders[0],
-      name: "main",
-      isFetched: false,
-      pushedItems: [],
+    branches.forEach((b) => {
+      copy.git.remote.branches.push(b);
     });
-    copy.git.remote.branches.push({
-      orders: orders[1],
-      name: "dev",
-      isFetched: false,
-      pushedItems: [],
-    });
-    copy.git.remote.branches.push({
-      orders: orders[2],
-      name: "test",
-      isFetched: false,
-      pushedItems: [],
-    });
+
+    copy.git.remote = copy.git.remote.updateBranchStats(copy);
 
     copy.states.gameState = GameState.FETCH;
 

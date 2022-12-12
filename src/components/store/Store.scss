@@ -30,30 +30,8 @@
     margin-top: 50px;
 
     &.hovered {
-      &::-webkit-scrollbar {
-        visibility: visible;
-        background: transparent;
-        height: 10px;
-      }
-
-      &::-webkit-scrollbar-track {
-        display: none;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        @include blurBackground(100px);
-        border: 1px solid rgba($gray, 0.3);
-        border-radius: 10px;
-
-        &:hover {
-          background-color: rgba($gray, 0.1);
-        }
-      }
+      @include horizontalScrollBar;
     }
-
-    &::-webkit-scrollbar {
-      visibility: none;
-      height: 10px;
-    }
+    @include hideHorizontalScrollbar;
   }
 }

@@ -1,5 +1,5 @@
-import { IngredientType } from "./enums";
 import { IIngredient } from "./gameDataInterfaces";
+import { Difficulty, IngredientType } from "./enums";
 
 export interface IFood {
   id: string;
@@ -7,7 +7,7 @@ export interface IFood {
   unlocked: boolean;
   type: IngredientType;
   ingredients: FoodType;
-  builder: () => IIngredient[];
+  builder: (difficulty: Difficulty) => IIngredient[];
 }
 
 export type FoodType = IBurger | IFries;

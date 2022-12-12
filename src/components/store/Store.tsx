@@ -32,10 +32,11 @@ const Store: React.FC<IStoreProps> = ({
     null
   );
 
-  const filterFoodType = (storeItem: StoreItem): boolean => {
-    if (!isIngredient(storeItem) || !activeFoodType) return true;
-    if (storeItem.type === activeFoodType) return true;
-    return false;
+  const addFilter = (storeItem: StoreItem): boolean => {
+    if (isGitCommand(storeItem)) if (storeItem.unlockDay === 0) return false;
+    if (isIngredient(storeItem))
+      if (storeItem.type !== activeFoodType) return false;
+    return true;
   };
 
   useEffect(() => {
@@ -76,7 +77,7 @@ const Store: React.FC<IStoreProps> = ({
         className={`store-items ${isHovered ? "hovered" : ""}`}
         ref={itemsRef}
       >
-        {activeStoreItems.filter(filterFoodType).map((storeItem) => (
+        {activeStoreItems.filter(addFilter).map((storeItem) => (
           <StoreCard
             key={storeItem.id}
             day={day}

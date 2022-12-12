@@ -1,7 +1,9 @@
 @import "./styles/imports/colors";
+@import "./styles/imports/mixins";
 @import url("https://fonts.googleapis.com/css?family=Nunito+Sans:100,200,300,400,500,700,800&display=swap");
 
 body {
+  @include toggleHighlight(none);
   font-family: "Nunito Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -10,12 +12,6 @@ body {
   overflow: hidden;
   margin: 0;
   padding: 0;
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently */
 
   p,
   h1,

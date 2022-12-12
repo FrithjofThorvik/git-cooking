@@ -15,19 +15,26 @@
     margin-bottom: auto;
   }
 
+  p {
+    color: rgba($white, 0.3);
+    font-size: 10px;
+    font-weight: 400;
+    margin-top: 20px;
+    text-align: center;
+  }
+
   &-item {
     display: flex;
     overflow-y: scroll;
     flex-direction: column;
     justify-content: flex-start;
+    width: 100%;
     max-height: 250px;
 
-    p {
-      color: rgba($white, 0.3);
-      font-size: 10px;
-      font-weight: 400;
-      margin-top: 20px;
+    &.hovered {
+      @include verticalScrollBar;
     }
+    @include hideVerticalScrollbar;
   }
 
   &-ingredients {

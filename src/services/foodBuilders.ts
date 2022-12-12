@@ -1,14 +1,34 @@
+import { Difficulty } from "types/enums";
 import { IIngredient } from "types/gameDataInterfaces";
 import { IBurger, IFries } from "types/foodInterfaces";
 import { randomIntFromInterval } from "./helpers";
 
 class FoodBuilder {
-  public buildBurger = (burger: IBurger): IIngredient[] => {
+  public buildBurger = (
+    burger: IBurger,
+    difficulty: Difficulty
+  ): IIngredient[] => {
     let availableIngredients = Object.values(burger).filter(
-      (i) =>
-        i.id !== burger.bunBottom.id && i.id !== burger.bunTop.id && i.unlocked
+      (i) => i.id !== burger.bunBottom.id && i.id !== burger.bunTop.id
     );
-    const nrItems = randomIntFromInterval(1, availableIngredients.length);
+    let nrItems = 0;
+
+    switch (difficulty) {
+      case Difficulty.EASY:
+        // only purchased items available
+        availableIngredients = availableIngredients.filter((i) => i.purchased);
+        nrItems = randomIntFromInterval(1, 2);
+        break;
+      case Difficulty.NORMAL:
+        availableIngredients = availableIngredients.filter((i) => i.purchased);
+        nrItems = randomIntFromInterval(1, 3);
+        break;
+      case Difficulty.HARD:
+        // all unlocked items available
+        availableIngredients = availableIngredients.filter((i) => i.unlocked);
+        nrItems = randomIntFromInterval(2, 4);
+        break;
+    }
 
     let chosenItems: IIngredient[] = [burger.bunTop];
     for (let i = 0; i < nrItems; i++) {
@@ -24,11 +44,25 @@ class FoodBuilder {
     return chosenItems;
   };
 
-  public buildFries = (fries: IFries): IIngredient[] => {
-    let availableItems = Object.values(fries).filter(
-      (i) =>
-        i.unlocked
-    );
+  public buildFries = (
+    fries: IFries,
+    difficulty: Difficulty
+  ): IIngredient[] => {
+    let availableItems = Object.values(fries);
+
+    switch (difficulty) {
+      case Difficulty.EASY:
+        // only purchased items available
+        availableItems = availableItems.filter((i) => i.purchased);
+        break;
+      case Difficulty.NORMAL:
+        availableItems = availableItems.filter((i) => i.purchased);
+        break;
+      case Difficulty.HARD:
+        // all unlocked items available
+        availableItems = availableItems.filter((i) => i.unlocked);
+        break;
+    }
 
     const choosenItemIndex = randomIntFromInterval(
       0,
@@ -36,8 +70,7 @@ class FoodBuilder {
     );
 
     const choosenItem = availableItems.at(choosenItemIndex);
-    if (choosenItem)
-      return [choosenItem]
+    if (choosenItem) return [choosenItem];
 
     return [fries.normal];
   };

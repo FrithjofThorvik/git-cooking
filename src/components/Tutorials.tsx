@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { ITutorial, ITutorialScreen } from "types/gameDataInterfaces";
 import TutorialsNav from "./tutorial/TutorialsNav";
 import TutorialScreen from "./tutorial/TutorialScreen";
 
 import "./Tutorials.scss";
+import { useKeyPress } from "hooks/useKeyPress";
 
 interface ITutorialState {
   tutorial: ITutorial;
@@ -37,6 +39,8 @@ const Tutorials: React.FC<ITutorialProps> = ({
   const [state, setState] = useState<ITutorialState | null>(null);
   const [isHidden, setIsHidden] = useState<boolean>(true);
   const [firstRender, setFirstRender] = useState<boolean>(false);
+
+  useKeyPress("Escape", () => closeTutorials(true));
 
   const nextTutorial = () => {
     if (!state) return;
@@ -167,6 +171,12 @@ const Tutorials: React.FC<ITutorialProps> = ({
     return false;
   };
 
+  const closeTutorials = (completeTutorials: boolean) => {
+    if (completeTutorials && completeTutorial)
+      tutorials.forEach((t) => completeTutorial(t));
+    setIsHidden(true);
+  };
+
   // Update state when tutorials is updated
   useEffect(() => {
     const tutorialsIsValid = isTutorialsValid(tutorials);
@@ -216,6 +226,9 @@ const Tutorials: React.FC<ITutorialProps> = ({
   if ((hideOnCompletion && isHidden) || !state) return <></>;
   return (
     <div className="tutorial">
+      <div className="tutorial-close" onClick={() => closeTutorials(true)}>
+        <CloseIcon />
+      </div>
       <TutorialScreen
         tutorial={state.tutorial}
         screen={state.screen}

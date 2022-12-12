@@ -1,14 +1,35 @@
 import { v4 } from "uuid";
 
 import { IFood } from "types/foodInterfaces";
+import { Difficulty } from "types/enums";
+import { IRemoteBranch } from "types/gitInterfaces";
 import { femaleNames, maleNames } from "data/names";
 import { femaleImages, maleImages } from "assets/avatars";
 import { IGitCooking, IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { copyObjectWithoutRef, randomIntFromInterval } from "./helpers";
 
 class OrderGenerator {
-  private maxItems = 4;
-  private maxOrders = 4;
+  private getNumberOfItems = (difficulty: Difficulty) => {
+    switch (difficulty) {
+      case Difficulty.EASY:
+        return randomIntFromInterval(1, 2);
+      case Difficulty.NORMAL:
+        return randomIntFromInterval(1, 3);
+      case Difficulty.HARD:
+        return randomIntFromInterval(2, 4);
+    }
+  };
+
+  private getNumberOfOrders = (difficulty: Difficulty) => {
+    switch (difficulty) {
+      case Difficulty.EASY:
+        return randomIntFromInterval(1, 2);
+      case Difficulty.NORMAL:
+        return randomIntFromInterval(2, 3);
+      case Difficulty.HARD:
+        return randomIntFromInterval(3, 4);
+    }
+  };
 
   private getOrderNameAndImage = (
     existingOrderNames: string[],
@@ -31,8 +52,8 @@ class OrderGenerator {
     return { orderName, orderImage };
   };
 
-  private chooseItems = (items: IFood[]): IFood[] => {
-    const nrItems = randomIntFromInterval(1, this.maxItems);
+  private chooseItems = (items: IFood[], difficulty: Difficulty): IFood[] => {
+    const nrItems = this.getNumberOfItems(difficulty);
 
     let choosenItems = [];
     for (let i = 0; i < nrItems; i++) {
@@ -48,7 +69,8 @@ class OrderGenerator {
   private generateRandomOrder = (
     items: IFood[],
     existingOrderNames: string[],
-    existingImages: string[]
+    existingImages: string[],
+    difficulty: Difficulty
   ): IOrder => {
     const orderId = v4();
     const { orderName, orderImage } = this.getOrderNameAndImage(
@@ -58,7 +80,7 @@ class OrderGenerator {
     const pathPrefx = `orders/${orderName}`;
 
     // Choose which and how many items
-    const choosenItems = this.chooseItems(items);
+    const choosenItems = this.chooseItems(items, difficulty);
 
     // Generate the orderItems
     const orderItems: IOrderItem[] = choosenItems.map((item) => {
@@ -67,7 +89,7 @@ class OrderGenerator {
         orderId: orderId,
         path: `${pathPrefx}/${item.name}`,
         type: item.type,
-        ingredients: item.builder(),
+        ingredients: item.builder(difficulty),
       };
     });
 
@@ -85,7 +107,8 @@ class OrderGenerator {
 
   public generateNewOrder = (
     gameData: IGitCooking,
-    orders: IOrder[]
+    orders: IOrder[],
+    difficulty: Difficulty
   ): IOrder => {
     // Filter out locked items
     const unlockedItems = gameData.store.foods.filter((food) => {
@@ -99,36 +122,87 @@ class OrderGenerator {
     const newOrder = this.generateRandomOrder(
       unlockedItems,
       existingOrderNames,
-      existingOrderImages
+      existingOrderImages,
+      difficulty
     );
 
     return newOrder;
   };
 
-  public generateNewOrders = (gameData: IGitCooking): IOrder[] => {
+  public generateNewOrders = (
+    gameData: IGitCooking,
+    difficulty: Difficulty
+  ): IOrder[] => {
     let orders: IOrder[] = [];
-    const nrOrders = randomIntFromInterval(1, this.maxOrders);
+    const nrOrders = this.getNumberOfOrders(difficulty);
     for (let i = 0; i < nrOrders; i++) {
       // Choose a random item
       const newOrder = this.generateNewOrder(
         copyObjectWithoutRef(gameData),
-        orders
+        orders,
+        difficulty
       );
       orders.push(newOrder);
     }
     return orders;
   };
 
-  public generateSetOfNewORders = (
+  public generateSetOfNewOrders = (
     gameData: IGitCooking,
     nrSets: number
   ): IOrder[][] => {
     let orderSets = [];
+
     for (let i = 0; i < nrSets; i++) {
-      const newSet = this.generateNewOrders(copyObjectWithoutRef(gameData));
+      const difficulty =
+        i === 0
+          ? Difficulty.EASY
+          : i === nrSets - 1
+          ? Difficulty.HARD
+          : Difficulty.NORMAL;
+
+      const newSet = this.generateNewOrders(
+        copyObjectWithoutRef(gameData),
+        difficulty
+      );
       orderSets.push(newSet);
     }
     return orderSets;
+  };
+
+  public generateSetOfBranches = (
+    gameData: IGitCooking,
+    nrSets: number
+  ): IRemoteBranch[] => {
+    const orderSet = this.generateSetOfNewOrders(gameData, nrSets);
+    const defaultProps = {
+      isFetched: false,
+      pushedItems: [],
+      stats: {
+        missingIngredients: [],
+        maxProfit: 0,
+        orders: [],
+        itemCount: 0,
+        difficulty: Difficulty.NORMAL,
+      },
+    };
+
+    return orderSet.map((orders, i) => {
+      return {
+        orders: orders,
+        name: i === 0 ? "GitWay" : i === 1 ? "GitBite" : "GitDonald",
+        ...defaultProps,
+        stats: {
+          ...defaultProps.stats,
+          difficulty:
+            i === 0
+              ? Difficulty.EASY
+              : i === nrSets - 1
+              ? Difficulty.HARD
+              : Difficulty.NORMAL,
+        },
+      };
+    });
   };
 
   private spaceOrdersEvenly = (endTime: number, orders: IOrder[]): IOrder[] => {

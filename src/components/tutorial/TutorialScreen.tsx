@@ -27,7 +27,9 @@ const TutorialScreen: React.FC<ITutorialScreenProps> = ({
 }): JSX.Element => {
   return (
     <div className="tutorial-screen">
-      <img src={screen.img} alt={screen.title} />
+      <div className="tutorial-screen-image">
+        <img src={screen.img} alt={screen.title} />
+      </div>
       <TutorialPrompt text={prompt} />
       <TutorialScreenNav
         tutorial={tutorial}
