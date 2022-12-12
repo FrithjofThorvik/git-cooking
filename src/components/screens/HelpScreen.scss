@@ -20,16 +20,16 @@
     max-width: 950px;
 
     &-tutorial {
-      @include blurBackground;
+      @include blurBackground(2px);
       display: flex;
       position: relative;
       box-sizing: border-box;
       flex-direction: column;
       align-items: flex-start;
       justify-content: flex-start;
-      border: 3px solid $line-dark;
-      box-shadow: 3px 5px 5px rgba($white, 0.1);
-      transition: box-shadow 300ms ease-in-out, border-color 300ms ease-in-out;
+      border: 1px solid $line-dark;
+      box-shadow: 0 4px 5px 1px rgba(black, 0.4);
+      transition: box-shadow 100ms ease-in-out, border-color 100ms ease-in-out;
       width: 175px;
       height: 225px;
       padding: 20px;
@@ -37,8 +37,8 @@
 
       &-title {
         color: $white;
-        text-shadow: 1px 2px 1px rgba(0, 0, 0, 1);
-        transition: text-shadow 200ms ease-in-out;
+        text-shadow: 1px 2px 1px rgba(0, 0, 0, 0.5);
+        transition: text-shadow 100ms ease-in-out;
         font-size: 18px;
         font-weight: 600;
       }
@@ -48,7 +48,7 @@
         transition: color 200ms ease-in-out;
         font-size: 15px;
         margin-top: 5px;
-        font-weight: 200;
+        font-weight: 300;
       }
 
       &-play {

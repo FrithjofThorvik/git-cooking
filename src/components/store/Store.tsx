@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { useHover } from "hooks/useHover";
 import { IStats, StoreItem } from "types/gameDataInterfaces";
-import { isIngredient } from "services/typeGuards";
+import { isGitCommand, isIngredient, isUpgrade } from "services/typeGuards";
 import { IngredientType } from "types/enums";
 import StoreCard from "./StoreCard";
 import StoreFoodSelector from "./StoreFoodSelector";
 
 import "./Store.scss";
+import InfoText from "components/InfoText";
 
 interface IStoreProps {
   day: number;
@@ -26,6 +27,7 @@ const Store: React.FC<IStoreProps> = ({
 }): JSX.Element => {
   const itemsRef = useRef<HTMLDivElement>(null);
   const isHovered = useHover(itemsRef);
+  const [infoText, setInfoText] = useState<string>("");
   const [activeFoodType, setActiveFoodType] = useState<IngredientType | null>(
     null
   );
@@ -41,6 +43,24 @@ const Store: React.FC<IStoreProps> = ({
       if (isIngredient(activeStoreItems[0]))
         setActiveFoodType(IngredientType.BURGER);
       else setActiveFoodType(null);
+    }
+  }, [activeStoreItems]);
+
+  useEffect(() => {
+    if (activeStoreItems.length > 0) {
+      if (isIngredient(activeStoreItems[0]))
+        setInfoText(
+          "Make sure to purchase %new ingredients%, as orders will start using newly unlocked ingredients"
+        );
+      else if (isGitCommand(activeStoreItems[0])) {
+        setInfoText(
+          "Unlock new %git commands% to enable new features with git to improve your processes"
+        );
+      } else if (isUpgrade(activeStoreItems[0])) {
+        setInfoText(
+          "Make sure to level up upgrades frequently to %progress faster% in the game"
+        );
+      }
     }
   }, [activeStoreItems]);
 
@@ -66,6 +86,9 @@ const Store: React.FC<IStoreProps> = ({
             purchase={purchase}
           />
         ))}
+      </div>
+      <div className="store-info">
+        <InfoText text={infoText} />
       </div>
     </div>
   );
