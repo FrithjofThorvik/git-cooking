@@ -13,15 +13,19 @@ interface IInfoBoxProps {
   baseDayLength: number;
   dayIsCompleted: boolean;
   dayLengthModifier: number;
+  itemsHaveBeenPushed: boolean;
+  endDay: () => void;
 }
 
 const InfoBox: React.FC<IInfoBoxProps> = ({
-  infoText,
   day,
+  infoText,
   timeLapsed,
   baseDayLength,
   dayIsCompleted,
   dayLengthModifier,
+  itemsHaveBeenPushed,
+  endDay,
 }): JSX.Element => {
   const [formattedClock, setFormattedClock] = useState<IArcProgressClock>(
     formatClock(timeLapsed, baseDayLength, dayLengthModifier)
@@ -35,10 +39,11 @@ const InfoBox: React.FC<IInfoBoxProps> = ({
 
   const colorText = (text: string) => {
     const temp = text.split("%");
+    console.log(temp);
     return (
       <span>
         {temp.map((v, i) => {
-          if (i !== 0 && i !== temp.length - 1) {
+          if (i !== 0 && i !== temp.length - 1 && i % 2 !== 0) {
             return (
               <span style={{ color: "orange" }} key={i}>
                 {v}
@@ -73,6 +78,11 @@ const InfoBox: React.FC<IInfoBoxProps> = ({
       <div className="info-box-text">
         <p>{colorText(infoText)}</p>
       </div>
+      {(itemsHaveBeenPushed || dayIsCompleted) && (
+        <div className="info-box-end" onClick={() => endDay()}>
+          End Day
+        </div>
+      )}
     </div>
   );
 };

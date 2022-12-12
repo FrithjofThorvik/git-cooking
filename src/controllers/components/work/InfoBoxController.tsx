@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { useGameData } from "hooks/useGameData";
+import { setGameData, useGameData } from "hooks/useGameData";
 import { useGameTime } from "hooks/useGameTime";
-import InfoBox from "components/work/InfoBox";
 import { useInfoBoxText } from "hooks/useInfoBoxText";
+import InfoBox from "components/work/InfoBox";
 
 interface IInfoBoxControllerProps {}
 
@@ -13,6 +13,20 @@ const InfoBoxController: React.FC<
   const gameData = useGameData();
   const { timeLapsed } = useGameTime();
   const infoText = useInfoBoxText(gameData);
+  const [isPushed, setIsPushed] = useState<boolean>(false);
+
+  const endDay = () => {
+    let updatedGameData = gameData.endDay();
+    setGameData({ ...updatedGameData });
+  };
+
+  useEffect(() => {
+    if (!isPushed) {
+      gameData.git.remote.branches.forEach((b) => {
+        if (b.pushedItems.length > 0) setIsPushed(true);
+      });
+    }
+  }, [gameData.git.remote.branches]);
 
   return (
     <InfoBox
@@ -24,6 +38,8 @@ const InfoBoxController: React.FC<
       }
       day={gameData.states.day}
       dayIsCompleted={gameData.states.isDayComplete}
+      itemsHaveBeenPushed={isPushed}
+      endDay={endDay}
     />
   );
 };

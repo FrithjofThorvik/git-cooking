@@ -21,11 +21,6 @@ const GameController: React.FC = (): JSX.Element => {
     setGameData({ ...updatedGameData });
   };
 
-  const endDay = () => {
-    let updatedGameData = gameData.endDay();
-    setGameData({ ...updatedGameData });
-  };
-
   const completeTutorial = (tutorial: ITutorial) => {
     const updatedHelp = gameData.help.completeTutorial(tutorial);
     setGameData({ ...gameData, help: updatedHelp });
