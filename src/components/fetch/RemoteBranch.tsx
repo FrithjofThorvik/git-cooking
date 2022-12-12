@@ -5,24 +5,27 @@ import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 
 import { theme } from "styles/muiThemes";
 import { formatNumber } from "services/helpers";
-import { IRemoteBranch, IRemoteBranchStats } from "types/gitInterfaces";
+import { IRemoteBranch } from "types/gitInterfaces";
 
 import "./RemoteBranch.scss";
 
 interface IRemoteBranchProps {
   branch: IRemoteBranch;
-  stats: IRemoteBranchStats;
 }
 
 const RemoteBranch: React.FC<IRemoteBranchProps> = ({
   branch,
-  stats,
 }): JSX.Element => {
   return (
     <div className="remote-branch">
       <div className="remote-branch-content">
         <div className="remote-branch-content-top">
-          <div className="remote-branch-content-top-title">{branch.name}</div>
+          <div className="remote-branch-content-top-title">
+            <h1>{branch.name}</h1>
+            <p className={`${branch.stats.difficulty}`}>
+              {branch.stats.difficulty}
+            </p>
+          </div>
           <div className="remote-branch-content-top-content">
             <div className="remote-branch-content-top-content-item">
               <p className="remote-branch-content-top-content-item-title">
@@ -30,7 +33,7 @@ const RemoteBranch: React.FC<IRemoteBranchProps> = ({
               </p>
               <div className="remote-branch-content-top-content-item-images">
                 <ThemeProvider theme={theme}>
-                  {stats.orders.map((o) => (
+                  {branch.stats.orders.map((o) => (
                     <Tooltip key={o.id} title={o.name} arrow disableInteractive>
                       <div className="remote-branch-content-top-content-item-images-image">
                         <img src={o.image} alt="customer" />
@@ -42,14 +45,14 @@ const RemoteBranch: React.FC<IRemoteBranchProps> = ({
             </div>
             <div className="remote-branch-content-top-content-seperator"></div>
             <div className="remote-branch-content-top-content-item">
-              {stats.missingIngredients.length > 0 ? (
+              {branch.stats.missingIngredients.length > 0 ? (
                 <>
                   <p className="remote-branch-content-top-content-item-title">
                     Missing Ingredients
                   </p>
                   <div className="remote-branch-content-top-content-item-images">
                     <ThemeProvider theme={theme}>
-                      {stats.missingIngredients.map((i) => (
+                      {branch.stats.missingIngredients.map((i) => (
                         <Tooltip
                           key={i.id}
                           title={i.name}
@@ -75,14 +78,14 @@ const RemoteBranch: React.FC<IRemoteBranchProps> = ({
           <div className="remote-branch-content-bottom-info">
             <div className="remote-branch-content-bottom-info-stat">
               <p>Total items: </p>
-              <p>{stats.itemCount}</p>
+              <p>{branch.stats.itemCount}</p>
             </div>
             <hr />
             <div className="remote-branch-content-bottom-info-stat">
               <p>Max profit: </p>
               <div className="remote-branch-content-bottom-info-stat-label">
                 <PaidOutlinedIcon />
-                <p> {formatNumber(stats.maxProfit, true)}</p>
+                <p> {formatNumber(branch.stats.maxProfit, true)}</p>
               </div>
             </div>
           </div>

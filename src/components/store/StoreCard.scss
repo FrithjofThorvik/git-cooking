@@ -135,6 +135,7 @@
       }
 
       &-locked-icon {
+        transition: opacity 100ms ease-in-out;
         display: flex;
         position: absolute;
         flex-direction: column;
@@ -146,6 +147,10 @@
         left: 0;
         right: 0;
         bottom: 0;
+
+        &:hover {
+          opacity: 0;
+        }
 
         span {
           color: $line-orange;

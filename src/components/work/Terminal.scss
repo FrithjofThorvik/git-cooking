@@ -1,6 +1,8 @@
 @import "styles/imports/colors";
+@import "styles/imports/mixins";
 
 .terminal {
+  @include toggleHighlight(text);
   display: flex;
   position: relative;
   flex-direction: column;

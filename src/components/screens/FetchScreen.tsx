@@ -26,11 +26,7 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
             <>
               <div className="fetch-screen-content-branches">
                 {fetchedBranches.map((rb, i) => (
-                  <RemoteBranch
-                    key={i}
-                    branch={rb}
-                    stats={remote.getBranchStats(rb)}
-                  />
+                  <RemoteBranch key={i} branch={rb} />
                 ))}
               </div>
               <div className="fetch-screen-content-text">

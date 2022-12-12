@@ -79,8 +79,8 @@ export const defaultFoods: IFood[] = [
         useCost: 10,
       },
     },
-    builder: function () {
-      return foodBuilder.buildBurger(this.ingredients as IBurger);
+    builder: function (difficulty) {
+      return foodBuilder.buildBurger(this.ingredients as IBurger, difficulty);
     },
   },
   {
@@ -113,8 +113,8 @@ export const defaultFoods: IFood[] = [
         useCost: 10,
       },
     },
-    builder: function () {
-      return foodBuilder.buildFries(this.ingredients as IFries);
+    builder: function (difficulty) {
+      return foodBuilder.buildFries(this.ingredients as IFries, difficulty);
     },
   },
 ];

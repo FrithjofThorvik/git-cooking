@@ -153,10 +153,10 @@ export const defaultUpgrades: IUpgrade[] = [
     level: 1,
     maxLevel: 5,
     name: function () {
-      return `Reduce customer spawn time`;
+      return `Reduce spawn time`;
     },
     description: function () {
-      return `Reduce spawn time by x${this.effect().next.toFixed(2)}`;
+      return `Reduces order spawn time by x${this.effect().next.toFixed(2)}`;
     },
     effect: function () {
       const base = 0.85;

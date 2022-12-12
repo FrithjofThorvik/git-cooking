@@ -463,7 +463,7 @@ export const gitCommands: ICommandArg[] = [
 
         let message = "";
         for (let i = 0; i < newBranches.length; i++) {
-          message += `* [new branch]\t${newBranches[i]}  \t-> origin/${newBranches[i]}\n`;
+          message += `* [new branch]\t${newBranches[i]}    \t-> origin/${newBranches[i]}\n`;
         }
         if (newBranches.length === 0) message = "No new changes";
 

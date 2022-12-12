@@ -16,7 +16,7 @@ const HighlightText: React.FC<IHighlightTextProps> = ({
     return (
       <span>
         {temp.map((v, i) => {
-          if (i !== 0 && i !== temp.length - 1) {
+          if (i !== 0 && i !== temp.length - 1 && i % 2 !== 0) {
             return (
               <span style={{ color: "orange" }} key={i}>
                 {v}

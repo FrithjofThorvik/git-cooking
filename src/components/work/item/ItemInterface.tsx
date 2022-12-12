@@ -1,8 +1,9 @@
 import { Tooltip } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import StoreFoodSelector from "components/store/StoreFoodSelector";
 import ForwardTwoToneIcon from "@mui/icons-material/ForwardTwoTone";
 
+import { useHover } from "hooks/useHover";
 import { IngredientType } from "types/enums";
 import { FoodType, IFood } from "types/foodInterfaces";
 import { IIngredient, IOrderItem } from "types/gameDataInterfaces";
@@ -28,6 +29,8 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
   foods,
   modifyOrderItem,
 }): JSX.Element => {
+  const itemRef = useRef<HTMLDivElement>(null);
+  const isHovered = useHover(itemRef);
   const [foodTypeIngredients, setFoodTypeIngredients] = useState<FoodType>();
 
   const handleTypeSelect = (type: IngredientType) => {
@@ -51,7 +54,10 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
     <div className="item-interface">
       <h1>{activeItem.name}</h1>
       {/* Created Item */}
-      <div className="item-interface-item">
+      <div
+        className={`item-interface-item ${isHovered ? "hovered" : ""}`}
+        ref={itemRef}
+      >
         <DisplayItem
           item={activeItem}
           size={75}
@@ -59,10 +65,10 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
             modifyOrderItem(activeItem, { removeIngredientAtIndex: index })
           }
         />
-        {activeItem.ingredients.length > 0 && (
-          <p>Remove items by clicking them...</p>
-        )}
       </div>
+      {activeItem.ingredients.length > 0 && (
+        <p>Remove items by clicking them...</p>
+      )}
 
       {/* Food Ingredients */}
       <div className="item-interface-ingredients">

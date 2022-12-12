@@ -58,7 +58,10 @@ const WorkScreen: React.FC<IWorkScreenProps> = ({
           </div>
         </div>
         <Tutorials
-          tutorials={help.getTutorialsByTypes([TutorialType.STORE_INGREDIENTS])}
+          tutorials={help.getTutorialsByTypes([
+            TutorialType.WORK_ORDERS,
+            TutorialType.WORK_FILES,
+          ])}
           completeTutorial={completeTutorial}
           hideOnCompletion
           stopGameTime

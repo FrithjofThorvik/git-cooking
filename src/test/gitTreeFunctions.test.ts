@@ -4,12 +4,13 @@ import {
   IOrder,
   IOrderItem,
 } from "types/gameDataInterfaces";
-import { IGitTree } from "types/gitInterfaces";
-import { defaultGameData } from "data/defaultData";
-import { createNewOrderItem } from "services/gameDataHelper";
-import { IngredientType } from "types/enums";
 import { IFood } from "types/foodInterfaces";
 import { imgChef } from "assets";
+import { IGitTree } from "types/gitInterfaces";
+import { Difficulty } from "types/enums";
+import { IngredientType } from "types/enums";
+import { defaultGameData } from "data/defaultData";
+import { createNewOrderItem } from "services/gameDataHelper";
 import { copyObjectWithoutRef } from "services/helpers";
 
 const createNewFile = (gameData: IGitCooking, name: string) => {
@@ -59,14 +60,13 @@ beforeEach(() => {
   };
   const newOrderItem: IOrderItem = createNewOrderItem(newOrder, "test item");
   burger = defaultGameData.store.foods[0];
-  newOrderItem.ingredients = burger.builder();
+  newOrderItem.ingredients = burger.builder(Difficulty.EASY);
   newOrder.orderItems = [newOrderItem];
-  defaultGameData.orderService = defaultGameData.orderService.setNewOrders(
-    [newOrder]
-  );
-  defaultGameData.orderService = defaultGameData.orderService.createOrderFolder(
-    newOrder
-  );
+  defaultGameData.orderService = defaultGameData.orderService.setNewOrders([
+    newOrder,
+  ]);
+  defaultGameData.orderService =
+    defaultGameData.orderService.createOrderFolder(newOrder);
 });
 describe("restore", () => {
   test("new file -> should not restore", () => {

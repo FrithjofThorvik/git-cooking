@@ -2,21 +2,8 @@ import { useEffect, useState } from "react";
 
 import { IGitCooking } from "types/gameDataInterfaces";
 
-export const useInfoBoxText = (gameData: IGitCooking) => {
+export const useInfoBoxText = (gameData: IGitCooking, isPushed: boolean) => {
   const [infoText, setInfoText] = useState<string>("");
-  const [isPushed, setIsPushed] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!isPushed) {
-      const activeBranch = gameData.git.getActiveBranch()?.name;
-      if (activeBranch) {
-        const remoteBranch = gameData.git.getRemoteBranch(activeBranch);
-        if (remoteBranch) {
-          if (remoteBranch.pushedItems.length > 0) setIsPushed(true);
-        }
-      }
-    }
-  }, [gameData.git.remote.branches]);
 
   useEffect(() => {
     const git = gameData.git;
@@ -69,7 +56,7 @@ export const useInfoBoxText = (gameData: IGitCooking) => {
         `You can %git checkout% other branches to make more progress, or %end the day% right away`
       );
     } else setInfoText("...");
-  }, [gameData]);
+  }, [gameData, isPushed]);
 
   return infoText;
 };

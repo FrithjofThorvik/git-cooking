@@ -12,13 +12,13 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git restore";
     },
     description: function () {
-      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+      return "The restore command is used to discard uncommitted changes.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(1250 * discountMultiplier);
     },
     unlocked: false,
-    unlockDay: 2,
+    unlockDay: 4,
     purchased: false,
     gitCommandType: GitCommandType.RESTORE,
   },
@@ -29,13 +29,13 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git branch";
     },
     description: function () {
-      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+      return "Use 'git branch' to list up local branches.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(2250 * discountMultiplier);
     },
     unlocked: false,
-    unlockDay: 5,
+    unlockDay: 2,
     purchased: false,
     gitCommandType: GitCommandType.BRANCH,
   },
@@ -46,7 +46,7 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git checkout";
     },
     description: function () {
-      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+      return "Switch to another branch and check it out into your working directory";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
@@ -60,10 +60,10 @@ export const defaultGitCommands: IGitCommand[] = [
     id: v4(),
     image: imgCommand,
     name: function () {
-      return "git pull";
+      return "git fetch";
     },
     description: function () {
-      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+      return "Fetch down branches from the remote.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
@@ -80,7 +80,7 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git push";
     },
     description: function () {
-      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+      return "Push local branch commits to the remote repository branch";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
@@ -97,7 +97,7 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git commit";
     },
     description: function () {
-      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+      return "Commit your staged items, and deliver them the customer.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
@@ -114,7 +114,7 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git add";
     },
     description: function () {
-      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+      return "Adds your modified items to the staging area.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
@@ -131,7 +131,7 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git status";
     },
     description: function () {
-      return "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo";
+      return "Show modified items in working directory, and staged items for your next commit";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);

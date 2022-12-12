@@ -1,12 +1,13 @@
 @import "styles/imports/colors";
+@import "styles/imports/mixins";
 
 .content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-y: auto;
   height: 100%;
   width: 100%;
+
   &-info {
     width: 80%;
     text-align: right;
@@ -18,16 +19,21 @@
   align-items: center;
   flex-direction: column;
   justify-content: flex-start;
+  overflow-y: auto;
   gap: 30px;
-  height: 100%;
   width: 100%;
+  height: 100%;
 
   &-new {
     color: $white;
-
     animation: glow 2s;
     animation-iteration-count: infinite;
   }
+
+  &.hovered {
+    @include verticalScrollBar;
+  }
+  @include hideVerticalScrollbar;
 }
 
 @keyframes glow {

@@ -28,6 +28,7 @@ export interface IArcProgressClock {
 export interface ISummaryBranch {
   name: string;
   stats: {
+    maxProfit: number;
     profit: number;
     totalCost: number;
     totalRevenue: number;

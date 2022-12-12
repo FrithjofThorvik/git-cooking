@@ -2,6 +2,7 @@ import { v4 } from "uuid";
 
 import {
   IDirectory,
+  IGitCooking,
   IIngredient,
   IOrder,
   IOrderItem,
@@ -16,40 +17,71 @@ import {
 } from "types/gitInterfaces";
 import { IngredientType } from "types/enums";
 import { copyObjectWithoutRef, objectsEqual } from "services/helpers";
+import { calculateRevenueAndCost } from "services/gameDataHelper";
 
 const defaultRemote: IRemote = {
   branches: [],
-  getBranchStats: function (branch: IRemoteBranch) {
-    let missingIngredients: IIngredient[] = [];
-    let orders: IOrder[] = [];
-    let maxProfit = 0;
-    let itemCount = 0;
+  updateBranchStats: function (gameData: IGitCooking) {
+    const copyRemote: IRemote = copyObjectWithoutRef(this);
+    const copyGameData: IGitCooking = copyObjectWithoutRef(gameData);
 
-    this.branches.forEach((b) => {
-      if (b.name !== branch.name) return;
-      b.orders.forEach((o) => {
+    // simulate completing a order 100%
+    copyGameData.git.remote.branches = copyGameData.git.remote.branches.map(
+      (b) => {
+        let copyBranch: IRemoteBranch = copyObjectWithoutRef(b);
+        // make branch pushed items = order.orderItems
+        let pushedItems: IOrderItem[] = [];
+        copyBranch.orders.map((o) => {
+          return pushedItems.push(...o.orderItems);
+        });
+        copyBranch.pushedItems = pushedItems;
+
+        return copyBranch;
+      }
+    );
+
+    // calculate max profit for the simulated orders
+    const { branches } = calculateRevenueAndCost(copyGameData);
+
+    copyRemote.branches = copyRemote.branches.map((b) => {
+      const copyBranch: IRemoteBranch = copyObjectWithoutRef(b);
+      let missingIngredients: IIngredient[] = [];
+      let orders: IOrder[] = [];
+      let itemCount = 0;
+
+      let maxProfit = branches.find(
+        (summaryBranch) => summaryBranch.name === b.name
+      )?.stats.maxProfit;
+
+      copyBranch.orders.forEach((o) => {
         orders.push(o);
+
         o.orderItems.forEach((oi) => {
           itemCount += 1;
+
           oi.ingredients.forEach((i) => {
-            maxProfit += i.useCost;
             const alreadyAdded = missingIngredients.some(
               (ing) => ing.id === i.id
             );
             const unlockedNotPurchased = i.unlocked && !i.purchased;
+
             if (!alreadyAdded && unlockedNotPurchased)
               missingIngredients.push(i);
           });
         });
       });
+      return {
+        ...b,
+        stats: {
+          ...b.stats,
+          itemCount: itemCount,
+          missingIngredients: missingIngredients,
+          orders: orders,
+          maxProfit: maxProfit != undefined ? maxProfit : 0,
+        },
+      };
     });
-
-    return {
-      itemCount: itemCount,
-      missingIngredients: missingIngredients,
-      orders: orders,
-      maxProfit: maxProfit,
-    };
+    return copyRemote;
   },
   pushItems: function (branchName, items, orders) {
     let copy: IRemote = copyObjectWithoutRef(this);
