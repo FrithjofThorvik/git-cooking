@@ -4,6 +4,19 @@ import { IGitCooking } from "types/gameDataInterfaces";
 
 export const useInfoBoxText = (gameData: IGitCooking) => {
   const [infoText, setInfoText] = useState<string>("");
+  const [isPushed, setIsPushed] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isPushed) {
+      const activeBranch = gameData.git.getActiveBranch()?.name;
+      if (activeBranch) {
+        const remoteBranch = gameData.git.getRemoteBranch(activeBranch);
+        if (remoteBranch) {
+          if (remoteBranch.pushedItems.length > 0) setIsPushed(true);
+        }
+      }
+    }
+  }, [gameData.git.remote.branches]);
 
   useEffect(() => {
     const git = gameData.git;
@@ -28,8 +41,12 @@ export const useInfoBoxText = (gameData: IGitCooking) => {
         );
       else setInfoText("...");
     }
-    // State 4: Committed for the first time
-    else if (git.commits.length > 1 && !gameData.states.isDayComplete) {
+    // State 2: Committed for the first time
+    else if (
+      git.commits.length > 1 &&
+      !gameData.states.isDayComplete &&
+      !isPushed
+    ) {
       const allOrdersCount = gameData.orderService.getAllOrders().length;
       const availableOrdersCount =
         gameData.orderService.getAvailableOrders().length;
@@ -42,9 +59,15 @@ export const useInfoBoxText = (gameData: IGitCooking) => {
         );
       } else setInfoText("...");
     }
-    // State [X]: Day is completed
-    else if (gameData.states.isDayComplete) {
+    // State 3: Day is completed
+    else if (gameData.states.isDayComplete && !isPushed) {
       setInfoText(`Finish up, and %git push% to the branch you pulled from`);
+    }
+    // State 4: Pushed items for the first time
+    else if (isPushed) {
+      setInfoText(
+        `You can %git checkout% other branches to make more progress, or %end the day% right away`
+      );
     } else setInfoText("...");
   }, [gameData]);
 
