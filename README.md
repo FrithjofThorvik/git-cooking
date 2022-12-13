@@ -1,6 +1,5 @@
 <div align="center">
-  <img src="src/assets/logo.png" alt="logo" width="100" />
-  <h2>Git Cooking</h2>
+  <img src="src/assets/logo.png" alt="logo" width="200" />
 </div>
 
 ## Setup
