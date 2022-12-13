@@ -1,7 +1,6 @@
 import React from "react";
 import { Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import LunchDiningIcon from "@mui/icons-material/LunchDining";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 
@@ -24,8 +23,6 @@ const StoreFoodSelector: React.FC<IStoreFoodSelectorProps> = ({
         return <LunchDiningIcon />;
       case IngredientType.EXTRA:
         return <AddIcon />;
-      case IngredientType.DRINKS:
-        return <LocalDrinkIcon />;
       default:
         return <QuestionMarkIcon />;
     }
