@@ -1,0 +1,73 @@
+@import "styles/imports/colors";
+
+.order-item {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  width: 100%;
+  font-size: 18px;
+  margin: 3px 12px;
+  opacity: 0.5;
+
+  &.modified {
+    color: $line-orange;
+
+    &.active {
+      opacity: 1;
+      text-shadow: 0 0 7px rgba($line-orange, 1);
+
+      .order-item-icon {
+        filter: drop-shadow(0 0 5px rgba($line-orange, 1));
+      }
+    }
+  }
+
+  &.staged {
+    color: $line-green;
+
+    &.active {
+      opacity: 1;
+      text-shadow: 0 0 7px rgba($line-green, 1);
+
+      .order-item-icon {
+        filter: drop-shadow(0 0 5px rgba($line-green, 1));
+      }
+    }
+  }
+
+  &.active {
+    opacity: 1;
+    text-shadow: 0 0 7px rgba($white, 1);
+
+    .order-item-icon {
+      filter: drop-shadow(0 0 5px rgba($white, 1));
+    }
+  }
+
+  &-icon {
+    font-size: 18px !important;
+    margin-right: 3px;
+
+    &-delete {
+      visibility: hidden;
+      margin-left: auto;
+      color: $gray;
+      font-size: 18px !important;
+      z-index: 2;
+
+      &:hover {
+        cursor: pointer;
+        color: $red;
+      }
+    }
+  }
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.8;
+
+    .order-item-icon-delete {
+      visibility: visible;
+    }
+  }
+}

@@ -1,0 +1,30 @@
+@import "styles/imports/colors";
+
+.item-input {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  box-sizing: border-box;
+  background-color: $dark;
+  width: 100%;
+  font-size: 14px;
+  padding: 2px 10px;
+  margin-top: 10px;
+  border-radius: 15px;
+
+  svg {
+    color: $gray;
+    font-size: inherit !important;
+
+    &:hover {
+      cursor: pointer;
+      color: $white;
+    }
+  }
+
+  input {
+    all: unset;
+    width: 100%;
+    padding: 2px 5px;
+  }
+}

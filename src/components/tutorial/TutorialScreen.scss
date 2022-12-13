@@ -1,0 +1,31 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.tutorial-screen {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  width: 100%;
+
+  &-image {
+    @include blurBackground(50px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 10px solid $line-dark;
+    background-color: rgba($black, 0.65);
+    box-shadow: inset 0 0 10px 9px rgba(black, 0.4);
+    width: 70%;
+    height: 60%;
+    border-radius: 50px;
+    img {
+      max-width: 90%;
+      max-height: 90%;
+      border: 2px solid $line-dark;
+      border-radius: 15px;
+      box-shadow: 0 5px 5px 2px rgba(black, 0.5);
+    }
+  }
+}

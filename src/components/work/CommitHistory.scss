@@ -1,0 +1,59 @@
+@import "styles/imports/colors";
+
+.commit-history {
+  display: flex;
+  width: 90%;
+  margin: 0 auto;
+  margin-top: 5px;
+  height: 100px;
+  background-color: rgba($black, 0.5);
+  border-radius: 15px;
+  border: 3px $line-dark solid;
+
+  &-content {
+    display: flex;
+    position: relative;
+    overflow-x: scroll;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    padding: 0 15px;
+
+    &::-webkit-scrollbar-track {
+      border-radius: 15px;
+    }
+
+    &::-webkit-scrollbar {
+      height: 4px;
+      border-radius: 15px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $line-dark;
+      border-radius: 15px;
+    }
+  }
+}
+
+.commit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $line-dark;
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+
+  &-text {
+    width: 80%;
+    text-align: center;
+    margin: 0 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+}

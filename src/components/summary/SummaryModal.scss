@@ -1,0 +1,117 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.summary-modal {
+  @include blurBackground;
+  overflow: hidden;
+  border: 5px solid $line-dark;
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.6),
+    inset 0 0 5px 1px rgba(0, 0, 0, 0.6);
+  color: $white;
+  width: 350px;
+  height: 500px;
+  border-radius: 50px;
+
+  &-content {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+
+    p {
+      margin: 0;
+    }
+
+    &-top {
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      flex-direction: column;
+      justify-content: flex-start;
+      height: 80%;
+      width: 100%;
+      padding: 0 25px;
+
+      &-title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 1);
+        font-size: 50px;
+        font-weight: 900;
+        margin-top: 30px;
+      }
+
+      &-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        margin: 5px auto;
+        color: $gray;
+        width: 70%;
+        margin-top: auto;
+      }
+
+      &-totals {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        margin: 0 auto;
+        border-top: 1px solid rgba($white, 0.1);
+        border-top-style: dashed;
+        padding: 15px;
+        padding-bottom: 5px;
+        margin-top: 15px;
+        width: 70%;
+        margin-bottom: 25px;
+
+        &-total {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          font-size: 18px;
+          margin: 0 auto;
+          font-weight: 800;
+
+          &-value {
+            color: $white;
+
+            &.positive {
+              color: $line-green;
+            }
+            &.negative {
+              color: $line-red;
+            }
+          }
+        }
+      }
+    }
+
+    &-bottom {
+      display: flex;
+      font-weight: bold;
+      align-items: center;
+      justify-content: center;
+      border-top: 1px dashed $line-dark;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.4);
+      background-color: rgba($black, 0.4);
+      gap: 10px;
+      width: 100%;
+      height: 20%;
+      font-size: 32px;
+    }
+  }
+}
+
+.color-default {
+  color: $line-green;
+}
+
+.color-negative {
+  color: $line-red;
+}
