@@ -4,7 +4,6 @@ import { formatNumber } from "services/helpers";
 import { ISummaryStats } from "types/interfaces";
 import InfoText from "components/InfoText";
 import MenuButton from "components/MenuButton";
-import HelpButton from "components/HelpButton";
 import Background from "components/Background";
 import SummaryModal from "components/summary/SummaryModal";
 
@@ -14,16 +13,12 @@ export interface ISummaryScreenProps {
   day: number;
   summaryStats: ISummaryStats;
   goNext: () => void;
-  goBack: () => void;
-  openHelpScreen: () => void;
 }
 
 const SummaryScreen: React.FC<ISummaryScreenProps> = ({
   day,
   summaryStats,
   goNext,
-  goBack,
-  openHelpScreen,
 }): JSX.Element => {
   return (
     <Background>
@@ -43,14 +38,10 @@ const SummaryScreen: React.FC<ISummaryScreenProps> = ({
           )}% today! Purchase more upgrades to increase your profits in the next screen`}
         />
         <div className="summary-screen-buttons">
-          <div className="summary-screen-buttons-back-button">
-            <MenuButton onClick={goBack} text="Back" type="default" />
-          </div>
           <div className="summary-screen-buttons-next-button">
             <MenuButton onClick={goNext} text="Next" type="green" />
           </div>
         </div>
-        <HelpButton onClick={openHelpScreen} isOpen={false} />
       </div>
     </Background>
   );

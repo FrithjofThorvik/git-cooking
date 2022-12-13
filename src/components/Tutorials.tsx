@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
+import { useKeyPress } from "hooks/useKeyPress";
 import { ITutorial, ITutorialScreen } from "types/gameDataInterfaces";
 import TutorialsNav from "./tutorial/TutorialsNav";
 import TutorialScreen from "./tutorial/TutorialScreen";
 
 import "./Tutorials.scss";
-import { useKeyPress } from "hooks/useKeyPress";
 
 interface ITutorialState {
   tutorial: ITutorial;
@@ -22,9 +22,10 @@ interface ITutorialProps {
   stopGameTime?: boolean;
   hideOnCompletion?: boolean;
   hideOnLastTutorial?: boolean;
+  typewriter?: boolean;
   onCompletion?: () => void;
   pauseGameTime?: (isPaused: boolean) => void;
-  completeTutorial?: (tutorial: ITutorial) => void;
+  completeTutorials?: (tutorials: ITutorial[]) => void;
 }
 
 const Tutorials: React.FC<ITutorialProps> = ({
@@ -32,19 +33,20 @@ const Tutorials: React.FC<ITutorialProps> = ({
   stopGameTime,
   hideOnCompletion,
   hideOnLastTutorial,
+  typewriter = false,
   onCompletion,
   pauseGameTime,
-  completeTutorial,
+  completeTutorials,
 }): JSX.Element => {
   const [state, setState] = useState<ITutorialState | null>(null);
   const [isHidden, setIsHidden] = useState<boolean>(true);
   const [firstRender, setFirstRender] = useState<boolean>(false);
 
-  useKeyPress("Escape", () => closeTutorials(true));
+  useKeyPress("Escape", () => closeTutorials());
 
   const nextTutorial = () => {
     if (!state) return;
-    if (completeTutorial) completeTutorial(state.tutorial);
+    if (completeTutorials) completeTutorials([state.tutorial]);
     if (state.tutorialIndex + 1 < tutorials.length) {
       const tutorialIndex = state.tutorialIndex + 1;
       const tutorial = tutorials[tutorialIndex];
@@ -171,9 +173,10 @@ const Tutorials: React.FC<ITutorialProps> = ({
     return false;
   };
 
-  const closeTutorials = (completeTutorials: boolean) => {
-    if (completeTutorials && completeTutorial)
-      tutorials.forEach((t) => completeTutorial(t));
+  const closeTutorials = () => {
+    if (completeTutorials) completeTutorials(tutorials);
+    if (onCompletion) onCompletion();
+    setState(null);
     setIsHidden(true);
   };
 
@@ -226,10 +229,11 @@ const Tutorials: React.FC<ITutorialProps> = ({
   if ((hideOnCompletion && isHidden) || !state) return <></>;
   return (
     <div className="tutorial">
-      <div className="tutorial-close" onClick={() => closeTutorials(true)}>
+      <div className="tutorial-close" onClick={() => closeTutorials()}>
         <CloseIcon />
       </div>
       <TutorialScreen
+        typewriter={typewriter}
         tutorial={state.tutorial}
         screen={state.screen}
         prompt={state.prompt}

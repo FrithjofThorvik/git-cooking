@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-import { ITutorial } from "types/gameDataInterfaces";
+import { useGameTime } from "hooks/useGameTime";
+import { TutorialType } from "types/enums";
 import { useTimeLapsed } from "hooks/useTimeLapsed";
+import { toMilliseconds } from "services/helpers";
 import { setGameData, useGameData } from "hooks/useGameData";
-import { setGameTime, useGameTime } from "hooks/useGameTime";
 import WorkScreen from "components/screens/WorkScreen";
 import FileController from "controllers/components/work/ItemController";
 import StageController from "controllers/components/work/StageController";
@@ -14,13 +15,11 @@ import DirectoryController from "controllers/components/work/DirectoryController
 import CommitHistoryController from "controllers/components/work/CommitHistoryController";
 
 interface IWorkScreenControllerProps {
-  openHelpScreen: () => void;
-  completeTutorial: (tutorial: ITutorial) => void;
+  setActiveTutorialTypes: (tutorials: TutorialType[]) => void;
 }
 
 const WorkScreenController: React.FC<IWorkScreenControllerProps> = ({
-  openHelpScreen,
-  completeTutorial,
+  setActiveTutorialTypes,
 }): JSX.Element => {
   const gameData = useGameData();
   const { timeLapsed } = useGameTime();
@@ -31,15 +30,46 @@ const WorkScreenController: React.FC<IWorkScreenControllerProps> = ({
     });
   });
 
-  const pauseGameTime = (isPaused: boolean) =>
-    setGameTime(timeLapsed, isPaused);
+  useEffect(() => {
+    setActiveTutorialTypes([
+      TutorialType.WORK_SCREEN,
+      TutorialType.WORK_ORDERS,
+    ]);
+  }, []);
+
+  useEffect(() => {
+    if (
+      timeLapsed > toMilliseconds(0, 10) &&
+      gameData.orderService.getAllOrders().every((o) => !o.isCreated)
+    )
+      setActiveTutorialTypes([
+        TutorialType.WORK_FOLDERS,
+        TutorialType.WORK_ITEMS,
+      ]);
+    if (
+      timeLapsed > toMilliseconds(0, 10) &&
+      gameData.orderService.getAllOrders().some((o) => o.isCreated) &&
+      gameData.git.modifiedItems.length === 0
+    )
+      setActiveTutorialTypes([TutorialType.WORK_ITEMS]);
+    if (
+      gameData.git.workingDirectory.createdItems.some(
+        (i) => i.ingredients.length > 0
+      )
+    )
+      setActiveTutorialTypes([TutorialType.WORK_TERMINAL]);
+    if (
+      gameData.states.isDayComplete ||
+      gameData.orderService
+        .getAllOrders()
+        .every((o) => o.percentageCompleted >= 100)
+    ) {
+      setActiveTutorialTypes([TutorialType.WORK_PUSH]);
+    }
+  }, [timeLapsed]);
 
   return (
     <WorkScreen
-      help={gameData.help}
-      pauseGameTime={pauseGameTime}
-      openHelpScreen={openHelpScreen}
-      completeTutorial={completeTutorial}
       ordersController={<OrdersController />}
       infoBoxController={<InfoBoxController />}
       terminalController={<TerminalController />}

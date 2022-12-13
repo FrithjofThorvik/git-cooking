@@ -80,3 +80,9 @@ export const formatNumber = (
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return parts.join(".");
 };
+
+/**
+ * Converts minutes and seconds to milliseconds
+ */
+export const toMilliseconds = (minutes: number, seconds: number) =>
+  (minutes * 60 + seconds) * 1000;

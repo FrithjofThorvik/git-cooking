@@ -21,7 +21,8 @@
     height: 60%;
     border-radius: 50px;
     img {
-      height: 80%;
+      max-width: 90%;
+      max-height: 90%;
       border: 2px solid $line-dark;
       border-radius: 15px;
       box-shadow: 0 5px 5px 2px rgba(black, 0.5);

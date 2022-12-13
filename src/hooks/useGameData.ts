@@ -20,7 +20,7 @@ const useGameDataIml = () => {
   useEffect(() => {
     if (!localStorage.getItem("git-cooking")) {
       let copyGit: IGitCooking = copyObjectWithoutRef(defaultGameData);
-      copyGit.states.gameState = GameState.UPGRADE;
+      copyGit.states.gameState = GameState.FETCH;
       setGameData(copyGit);
     } else {
       const data = localStorage.getItem("git-cooking");

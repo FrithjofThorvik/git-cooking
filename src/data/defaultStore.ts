@@ -17,7 +17,7 @@ export const defaultStore: IStore = {
   foods: copyObjectWithoutRef(defaultFoods),
   upgrades: copyObjectWithoutRef(defaultUpgrades),
   gitCommands: copyObjectWithoutRef(defaultGitCommands),
-  cash: 30000,
+  cash: 0,
   purchase: function (purchasable: StoreItem, stats: IStats) {
     const discountMultiplier: number = stats.discountMultiplier.value;
     let copyStore: IStore = copyObjectWithoutRef(this);

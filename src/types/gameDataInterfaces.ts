@@ -115,7 +115,7 @@ export interface IStats {
 }
 
 export interface ITutorialScreen {
-  img: string;
+  img?: string;
   title: string;
   prompts: string[];
 }
@@ -130,7 +130,7 @@ export interface ITutorial {
 export interface IHelp {
   tutorials: ITutorial[];
   isHelpScreenOpen: boolean;
-  completeTutorial: (tutorial: ITutorial) => IHelp;
+  completeTutorials: (tutorials: ITutorial[]) => IHelp;
   setIsHelpScreenOpen: (isOpen: boolean) => IHelp;
   getTutorialsByTypes: (types: TutorialType[]) => ITutorial[];
 }
