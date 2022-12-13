@@ -1,0 +1,36 @@
+@import "styles/imports/colors";
+
+.summary-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 2px 0;
+
+  &-value {
+    color: $white;
+    position: relative;
+
+    &.max {
+      color: $gray !important;
+      position: absolute;
+      text-align: left;
+      font-size: 10px;
+      width: 100px;
+      right: -105px;
+      bottom: 2px;
+    }
+
+    &.positive {
+      color: $line-green;
+    }
+
+    &.negative {
+      color: $line-red;
+    }
+
+    &.neutral {
+      color: $gray;
+    }
+  }
+}

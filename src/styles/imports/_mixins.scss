@@ -1,0 +1,74 @@
+@import "./colors";
+
+@mixin blurBackground($blur: 20px) {
+  backdrop-filter: blur($blur);
+  background: radial-gradient(
+    90% 140% at 15% 21%,
+    rgba(165, 239, 255, 0.2) 0%,
+    rgba(110, 191, 244, 0.0447917) 77%,
+    rgba(70, 144, 213, 0) 100%
+  );
+  background-blend-mode: overlay, normal;
+  box-shadow: 0 5px 5px 2px rgba(#000, 0.2);
+}
+
+@mixin toggleHighlight($val: none) {
+  -webkit-touch-callout: $val; /* iOS Safari */
+  -webkit-user-select: $val; /* Safari */
+  -khtml-user-select: $val; /* Konqueror HTML */
+  -moz-user-select: $val; /* Old versions of Firefox */
+  -ms-user-select: $val; /* Internet Explorer/Edge */
+  user-select: $val;
+}
+
+@mixin verticalScrollBar {
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(black, 0.3);
+    border-radius: 15px;
+
+    &:hover {
+      background: rgba(black, 0.5);
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    display: none;
+  }
+}
+
+@mixin horizontalScrollBar {
+  &::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(black, 0.4);
+    border-radius: 15px;
+
+    &:hover {
+      background: rgba(black, 0.6);
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    display: none;
+  }
+}
+
+@mixin hideHorizontalScrollbar {
+  &::-webkit-scrollbar {
+    visibility: none;
+    height: 10px;
+  }
+}
+
+@mixin hideVerticalScrollbar {
+  &::-webkit-scrollbar {
+    visibility: none;
+    width: 10px;
+  }
+}

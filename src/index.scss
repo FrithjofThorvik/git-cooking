@@ -1,11 +1,24 @@
 @import "./styles/imports/colors";
-@import url("https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,800,800i,900i&display=swap");
+@import "./styles/imports/mixins";
+@import url("https://fonts.googleapis.com/css?family=Nunito+Sans:100,200,300,400,500,700,800&display=swap");
 
 body {
+  @include toggleHighlight(none);
   font-family: "Nunito Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: $black;
   color: $white;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    padding: 0;
+  }
 }

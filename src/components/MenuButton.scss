@@ -1,0 +1,39 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.menu-button {
+  @include blurBackground;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $white;
+  border: 1px solid rgba($white, 1);
+  width: 150px;
+  height: 45px;
+  font-size: 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 4px 0 rgba($black, 0.6);
+  transition: text-shadow 100ms ease-in-out;
+
+  svg {
+    transition: filter 100ms ease-in-out;
+  }
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 2px 4px 0px rgba($black, 0.6);
+    text-shadow: 0 0 7px $white;
+
+    svg {
+      filter: drop-shadow(0 0 7px $white);
+    }
+  }
+}
+.default {
+  background-color: rgba($dark, 0.8);
+  padding-right: 20px;
+}
+
+.green {
+  padding-left: 20px;
+}

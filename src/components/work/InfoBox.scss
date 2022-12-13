@@ -1,0 +1,80 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.info-box {
+  display: flex;
+  position: relative;
+  background-color: rgba($black, 0.5);
+  border: 3px $line-dark solid;
+  width: 90%;
+  height: 150px;
+  border-radius: 15px;
+
+  &-clock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 30%;
+    height: 100%;
+    font-size: 12px;
+
+    &-text {
+      text-align: center;
+      color: $white;
+      font-weight: 800;
+
+      &.completed {
+        color: $gray;
+        font-weight: 300;
+      }
+    }
+  }
+
+  &-text {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    color: $white;
+    width: 70%;
+    padding: 0 10px;
+  }
+
+  &-end {
+    @include blurBackground;
+    display: flex;
+    position: absolute;
+    border: 3px solid $line-dark;
+    animation: grow 1.5s infinite;
+    transition: scale 200ms ease-in-out;
+    right: 10px;
+    bottom: 10px;
+    padding: 2px 10px;
+    border-radius: 10px;
+
+    &:hover {
+      cursor: pointer;
+      animation-play-state: paused;
+      transform: scale(0.98);
+    }
+  }
+}
+
+@keyframes grow {
+  0% {
+    box-shadow: 0 0 0 0 rgba($white, 0);
+    text-shadow: 0 0 0 $white;
+    border-color: rgba($white, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 5px 2px rgba($white, 0.2);
+    text-shadow: 0 0 4px $white;
+    border-color: rgba($white, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba($white, 0);
+    text-shadow: 0 0 0 $white;
+    border-color: rgba($white, 0.2);
+  }
+}

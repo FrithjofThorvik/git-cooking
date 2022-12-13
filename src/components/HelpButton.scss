@@ -1,0 +1,42 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.help-button {
+  @include blurBackground;
+  display: flex;
+  position: fixed;
+  align-items: center;
+  box-sizing: border-box;
+  justify-content: center;
+  transition: all 200ms ease-in-out;
+  border: 1px solid rgba($white, 0.5);
+  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.8);
+  left: 10px;
+  width: 40px;
+  bottom: 10px;
+  height: 40px;
+  padding: 5px;
+  border-radius: 100%;
+  z-index: 1;
+
+  &::before {
+    content: " ";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    background-color: rgba($dark, 0.4);
+  }
+
+  svg {
+    filter: drop-shadow(0 0 7px $white);
+    color: $white;
+    font-size: 22px;
+  }
+
+  &:hover {
+    cursor: pointer;
+    scale: 0.95;
+    transition: all 200ms ease-in-out;
+  }
+}

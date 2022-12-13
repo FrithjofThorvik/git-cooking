@@ -1,0 +1,28 @@
+@import "styles/imports/colors";
+
+.store-screen {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+
+  &-top {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+
+  &-bottom {
+    display: flex;
+    margin-top: auto;
+    align-items: center;
+    box-sizing: border-box;
+    justify-content: center;
+    margin: 50px auto 25px auto;
+    gap: 25px;
+    width: 90%;
+    padding: 0 25px;
+  }
+}

@@ -1,0 +1,27 @@
+@import "styles/imports/colors";
+
+.item-display {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  &-img {
+    display: flex;
+    flex-direction: column;
+
+    &-remove {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    img {
+      width: 30px;
+      height: auto;
+
+      &:hover {
+        scale: 1.2;
+      }
+    }
+  }
+}

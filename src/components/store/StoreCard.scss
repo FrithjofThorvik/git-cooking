@@ -1,0 +1,216 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.card {
+  @include blurBackground;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  scroll-snap-align: start;
+  border: 1px solid $gray;
+  height: 350px;
+  width: 250px;
+  min-width: 250px;
+  min-height: 350px;
+  border-radius: 15px;
+
+  &-content {
+    display: flex;
+    text-align: center;
+    position: relative;
+    align-items: center;
+    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+
+    &-top {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      box-sizing: border-box;
+      justify-content: flex-start;
+      gap: 5px;
+      height: 80%;
+      padding: 0 5px;
+      padding-top: 60px;
+
+      &-lvl {
+        position: absolute;
+        background-color: $dark;
+        border: 1px solid $gray;
+        box-shadow: inset 0 0 4px 4px rgba($black, 1);
+        top: 20px;
+        padding: 2px 13px;
+        border-radius: 20px;
+
+        &.max {
+          background-color: $green;
+          border: 1px solid $line-green;
+          box-shadow: inset 0 0 4px 0 rgba($black, 0.8);
+        }
+      }
+
+      &-img {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 35%;
+
+        img {
+          width: 100px;
+        }
+      }
+
+      &-title {
+        font-weight: bolder;
+        font-size: 18px;
+      }
+
+      &-desc {
+        font-weight: 200;
+        font-size: 14px;
+      }
+    }
+
+    &-bottom {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: flex-start;
+      height: 20%;
+
+      &-buy {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+        &-button {
+          display: flex;
+          align-items: center;
+          box-sizing: border-box;
+          justify-content: center;
+          background-color: $black;
+          border: 1px solid $gray;
+          color: $white;
+          margin: 0;
+          padding: 5px 20px;
+          border-radius: 50px;
+          box-shadow: 0 3px 5px 2px rgba($black, 1);
+          transition: box-shadow 100ms ease-in-out,
+            border-color 100ms ease-in-out;
+
+          p {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            gap: 5px;
+            font-size: 14px;
+            font-weight: 200;
+            transition: text-shadow 100ms ease-in-out;
+          }
+
+          svg {
+            font-size: 16px;
+            transition: filter 100ms ease-in-out;
+          }
+
+          &:hover {
+            cursor: pointer;
+            box-shadow: 0 0 5px 0 rgba($white, 0.4);
+            border-color: $white;
+
+            p {
+              text-shadow: 0 0 7px $white;
+            }
+
+            svg {
+              filter: drop-shadow(0 0 7px $white);
+            }
+          }
+        }
+      }
+
+      &-locked-icon {
+        transition: opacity 100ms ease-in-out;
+        display: flex;
+        position: absolute;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba($black, 0.75);
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        &:hover {
+          opacity: 0;
+        }
+
+        span {
+          color: $line-orange;
+        }
+
+        svg {
+          color: $white;
+          font-size: 125px !important;
+        }
+      }
+    }
+
+    &-new {
+      display: flex;
+      position: absolute;
+      align-items: center;
+      justify-content: center;
+      bottom: 15px;
+
+      svg {
+        color: $line-green;
+        filter: drop-shadow(0 0 7px $line-green);
+        font-size: 18px;
+        margin-right: 5px;
+      }
+
+      p {
+        color: $line-green;
+        font-weight: bold;
+        font-size: 13px;
+        text-shadow: 0 0 7px $line-green;
+      }
+    }
+  }
+
+  &.notafford {
+    .card-content-buy-button {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+
+  &.purchased {
+    pointer-events: none;
+    border-color: $line-green;
+    background-color: rgba($line-green, 0.1);
+
+    svg {
+      color: $white;
+      font-size: 50px;
+    }
+  }
+
+  &.locked {
+    overflow: hidden;
+
+    .card-content {
+      &-bottom-buy-button {
+        pointer-events: none;
+      }
+    }
+  }
+}

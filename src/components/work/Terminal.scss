@@ -1,0 +1,88 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.terminal {
+  @include toggleHighlight(text);
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  backdrop-filter: blur(10px);
+  border: 3px $line-dark solid;
+  background-color: rgba($black-dark, 0.5);
+  width: 100%;
+  height: 100%;
+  border-radius: 0px 0px 15px 15px;
+
+  &-content {
+    width: 100%;
+    height: 100%;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow-y: hidden;
+
+    &-history {
+      color: $gray;
+      opacity: 0.7;
+      height: auto;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      margin: 0 auto;
+      width: 90%;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      p {
+        margin: 0;
+        width: 100%;
+      }
+    }
+
+    &-input {
+      display: flex;
+      margin: 0 auto;
+      flex-wrap: nowrap;
+      gap: 5px;
+      width: 90%;
+
+      input {
+        background-color: transparent;
+        color: $white;
+        border: 0;
+        font-family: "Nunito Sans", sans-serif;
+        font-size: 16px;
+        width: 100%;
+
+        &:focus {
+          outline: none !important;
+          border: 0px;
+        }
+      }
+    }
+  }
+
+  &-empty {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    gap: 0px;
+    top: 50%;
+    left: 50%;
+
+    svg {
+      color: rgba($white, 0.1);
+      font-size: 75px;
+    }
+    p {
+      color: rgba($white, 0.15);
+      font-size: 22px;
+      text-align: center;
+    }
+  }
+}
