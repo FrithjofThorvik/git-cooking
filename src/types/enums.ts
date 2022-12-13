@@ -3,7 +3,6 @@ export enum GameState {
   SUMMARY,
   WORKING,
   UPGRADE,
-  MERGE,
   LOADING,
 }
 
@@ -57,12 +56,14 @@ export enum UpgradeType {
 }
 
 export enum TutorialType {
-  STORE_UPGRADES = "Upgrades",
-  STORE_INGREDIENTS = "Ingredients",
-  STORE_GIT_COMMANDS = "Purchase Git Commands",
-  WORK_FILES = "Order Files",
+  FETCH_INTRO = "Welcome to GitCookin",
+  FETCH_CONTENT = "Learn to fetch from origin",
+  WORK_FOLDERS = "Order Folders",
+  WORK_ITEMS = "Order Items",
+  WORK_SCREEN = "Get familiar with the Work Screen",
+  WORK_TERMINAL = "How to use the terminal",
   WORK_ORDERS = "Orders",
-  WORK_TERMINAL = "Terminal",
+  WORK_PUSH = "End day",
 }
 
 export enum Difficulty {

@@ -23,12 +23,14 @@ export const defaultHelp: IHelp = {
     });
     return filteredTutorials;
   },
-  completeTutorial: function (tutorial) {
+  completeTutorials: function (tutorials) {
     let copy: IHelp = copyObjectWithoutRef(this);
-    copy.tutorials.forEach((t) => {
-      if (tutorial.type === t.type) {
-        t.completed = true;
-      }
+    tutorials.forEach((_t) => {
+      copy.tutorials.forEach((t) => {
+        if (_t.type === t.type) {
+          t.completed = true;
+        }
+      });
     });
     return copy;
   },

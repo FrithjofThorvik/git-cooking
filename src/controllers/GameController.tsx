@@ -1,19 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { GameState } from "types/enums";
 import { ITutorial } from "types/gameDataInterfaces";
+import { GameState, TutorialType } from "types/enums";
 import { setGameTime, useGameTime } from "hooks/useGameTime";
 import { setGameData, useGameData } from "hooks/useGameData";
+import Tutorials from "components/Tutorials";
+import HelpButton from "components/HelpButton";
 import FetchScreenController from "./screens/FetchScreenController";
 import HelpScreenController from "./screens/HelpScreenController";
 import WorkScreenController from "controllers/screens/WorkScreenController";
 import StoreScreenController from "controllers/screens/StoreScreenController";
-import MergeScreenController from "./screens/MergeScreenController";
 import SummaryScreenController from "controllers/screens/SummaryScreenController";
 
 const GameController: React.FC = (): JSX.Element => {
   const gameData = useGameData();
   const { timeLapsed } = useGameTime();
+  const [activeTutorialTypes, setActiveTutorialTypes] = useState<
+    TutorialType[]
+  >([]);
+
+  useEffect(() => {
+    const terminal = document.getElementById("git-terminal");
+    if (!terminal) return;
+    if (
+      gameData.help
+        .getTutorialsByTypes(activeTutorialTypes)
+        .every((t) => !t.completed)
+    )
+      terminal.blur();
+  }, [activeTutorialTypes]);
 
   const startFetch = () => {
     let updatedGameData = gameData.startFetch();
@@ -21,8 +36,8 @@ const GameController: React.FC = (): JSX.Element => {
     setGameData({ ...updatedGameData });
   };
 
-  const completeTutorial = (tutorial: ITutorial) => {
-    const updatedHelp = gameData.help.completeTutorial(tutorial);
+  const completeTutorials = (tutorials: ITutorial[]) => {
+    const updatedHelp = gameData.help.completeTutorials(tutorials);
     setGameData({ ...gameData, help: updatedHelp });
   };
 
@@ -36,36 +51,34 @@ const GameController: React.FC = (): JSX.Element => {
     setGameData({ ...gameData, states: updatedStates });
   };
 
+  const pauseGameTime = (isPaused: boolean) =>
+    setGameTime(timeLapsed, isPaused);
+
   const gameStateMachine = () => {
     switch (gameData.states.gameState) {
       case GameState.WORKING:
         return (
           <WorkScreenController
-            openHelpScreen={openHelpScreen}
-            completeTutorial={completeTutorial}
+            setActiveTutorialTypes={setActiveTutorialTypes}
           />
         );
       case GameState.FETCH:
-        return <FetchScreenController />;
-      case GameState.MERGE:
+        if (gameData.states.day === 0) startFetch();
         return (
-          <MergeScreenController
-            goNext={() => setGameState(GameState.SUMMARY)}
+          <FetchScreenController
+            setActiveTutorialTypes={setActiveTutorialTypes}
           />
         );
       case GameState.SUMMARY:
         return (
           <SummaryScreenController
-            openHelpScreen={openHelpScreen}
             goNext={() => setGameState(GameState.UPGRADE)}
-            goBack={() => setGameState(GameState.MERGE)}
           />
         );
       case GameState.UPGRADE:
         return (
           <StoreScreenController
-            openHelpScreen={openHelpScreen}
-            completeTutorial={completeTutorial}
+            setActiveTutorialTypes={setActiveTutorialTypes}
             goNext={() => startFetch()}
             goBack={() => setGameState(GameState.SUMMARY)}
           />
@@ -91,9 +104,20 @@ const GameController: React.FC = (): JSX.Element => {
   return (
     <div className="game">
       {gameData && gameData.help.isHelpScreenOpen ? (
-        <HelpScreenController completeTutorial={completeTutorial} />
+        <HelpScreenController />
       ) : (
-        gameStateMachine()
+        <>
+          {gameStateMachine()}
+          <Tutorials
+            tutorials={gameData.help.getTutorialsByTypes(activeTutorialTypes)}
+            completeTutorials={completeTutorials}
+            hideOnCompletion
+            stopGameTime
+            typewriter
+            pauseGameTime={pauseGameTime}
+          />
+          <HelpButton onClick={openHelpScreen} isOpen={false} />
+        </>
       )}
     </div>
   );

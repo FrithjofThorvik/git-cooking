@@ -1,17 +1,11 @@
 import React from "react";
 
 import { imgRestaurant } from "assets";
-import { TutorialType } from "types/enums";
-import Tutorials from "components/Tutorials";
 import Background from "components/Background";
-import HelpButton from "components/HelpButton";
-
-import { IHelp, ITutorial } from "types/gameDataInterfaces";
 
 import "./WorkScreen.scss";
 
 interface IWorkScreenProps {
-  help: IHelp;
   ordersController: JSX.Element;
   infoBoxController: JSX.Element;
   terminalController: JSX.Element;
@@ -19,13 +13,9 @@ interface IWorkScreenProps {
   stageController: JSX.Element;
   directoryController: JSX.Element;
   commitHistoryController: JSX.Element;
-  pauseGameTime: (isPaused: boolean) => void;
-  openHelpScreen: () => void;
-  completeTutorial: (tutorial: ITutorial) => void;
 }
 
 const WorkScreen: React.FC<IWorkScreenProps> = ({
-  help,
   ordersController,
   infoBoxController,
   terminalController,
@@ -33,9 +23,6 @@ const WorkScreen: React.FC<IWorkScreenProps> = ({
   stageController,
   directoryController,
   commitHistoryController,
-  pauseGameTime,
-  openHelpScreen,
-  completeTutorial,
 }): JSX.Element => {
   return (
     <Background img={imgRestaurant} opacity={0.75} blur={0}>
@@ -57,17 +44,6 @@ const WorkScreen: React.FC<IWorkScreenProps> = ({
             {commitHistoryController}
           </div>
         </div>
-        <Tutorials
-          tutorials={help.getTutorialsByTypes([
-            TutorialType.WORK_ORDERS,
-            TutorialType.WORK_FILES,
-          ])}
-          completeTutorial={completeTutorial}
-          hideOnCompletion
-          stopGameTime
-          pauseGameTime={pauseGameTime}
-        />
-        <HelpButton onClick={openHelpScreen} isOpen={false} />
       </div>
     </Background>
   );

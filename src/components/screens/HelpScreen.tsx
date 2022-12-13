@@ -4,22 +4,25 @@ import { IHelp, ITutorial } from "types/gameDataInterfaces";
 import { imgLibrary } from "assets";
 import Tutorials from "components/Tutorials";
 import HelpButton from "components/HelpButton";
+import Background from "components/Background";
 
 import "./HelpScreen.scss";
-import Background from "components/Background";
+import { useKeyPress } from "hooks/useKeyPress";
 
 interface IHelpScreenProps {
   help: IHelp;
   closeHelpScreen: () => void;
-  completeTutorial: (tutorial: ITutorial) => void;
 }
 
 const HelpScreen: React.FC<IHelpScreenProps> = ({
   help,
   closeHelpScreen,
-  completeTutorial,
 }): JSX.Element => {
   const [activeTutorials, setActiveTutorials] = useState<ITutorial[]>([]);
+  useKeyPress(
+    "Escape",
+    () => activeTutorials.length === 0 && closeHelpScreen()
+  );
 
   return (
     <Background img={imgLibrary} blur={10} opacity={0.8}>

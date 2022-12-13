@@ -1,7 +1,7 @@
 import { TerminalOutlined } from "@mui/icons-material";
 import React, { useEffect, useRef, useState } from "react";
-import { IGitCooking } from "types/gameDataInterfaces";
 
+import { IGitCooking } from "types/gameDataInterfaces";
 import { IGitResponse } from "types/interfaces";
 
 import "./Terminal.scss";
@@ -81,6 +81,8 @@ const Terminal: React.FC<ITerminalProps> = ({
             value={value}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
+            autoComplete="off"
+            id="git-terminal"
           />
         </div>
       </div>

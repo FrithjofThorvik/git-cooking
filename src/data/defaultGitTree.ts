@@ -16,8 +16,8 @@ import {
   IRemoteBranch,
 } from "types/gitInterfaces";
 import { IngredientType } from "types/enums";
-import { copyObjectWithoutRef, objectsEqual } from "services/helpers";
 import { calculateRevenueAndCost } from "services/gameDataHelper";
+import { copyObjectWithoutRef, objectsEqual } from "services/helpers";
 
 const defaultRemote: IRemote = {
   branches: [],
@@ -299,9 +299,6 @@ export const defaultGitTree: IGitTree = {
   addStagedOnPrevDirectory: function (prevCommitDirectory: IDirectory) {
     let newCommitDirectory: IDirectory =
       copyObjectWithoutRef(prevCommitDirectory);
-    const safeCopyWorkingDirectory: IDirectory = copyObjectWithoutRef(
-      this.workingDirectory
-    );
 
     this.stagedItems.forEach((stagedItem) => {
       const item = copyObjectWithoutRef(stagedItem.item);

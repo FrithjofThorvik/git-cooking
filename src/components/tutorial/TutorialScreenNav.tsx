@@ -37,7 +37,7 @@ const TutorialScreenNav: React.FC<ITutorialScreenNavProps> = ({
         return s.prompts.map((p, pIdx) => {
           return (
             <div
-              key={sIdx * (pIdx + 1)}
+              key={sIdx + pIdx}
               className={`tutorial-screen-nav-dot ${
                 sIdx === screenIndex && pIdx === promptIndex ? "active" : ""
               }`}

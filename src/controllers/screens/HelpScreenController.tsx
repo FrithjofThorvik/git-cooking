@@ -1,18 +1,15 @@
 import React, { useEffect } from "react";
 
 import { GameState } from "types/enums";
-import { ITutorial } from "types/gameDataInterfaces";
 import { setGameData, useGameData } from "hooks/useGameData";
 import { setGameTime, useGameTime } from "hooks/useGameTime";
 import HelpScreen from "components/screens/HelpScreen";
 
-interface IHelpScreenControllerProps {
-  completeTutorial: (tutorial: ITutorial) => void;
-}
+interface IHelpScreenControllerProps {}
 
-const HelpScreenController: React.FC<IHelpScreenControllerProps> = ({
-  completeTutorial,
-}): JSX.Element => {
+const HelpScreenController: React.FC<
+  IHelpScreenControllerProps
+> = ({}): JSX.Element => {
   const gameData = useGameData();
   const { timeLapsed, isPaused } = useGameTime();
 
@@ -31,13 +28,7 @@ const HelpScreenController: React.FC<IHelpScreenControllerProps> = ({
     };
   }, [isPaused]);
 
-  return (
-    <HelpScreen
-      help={gameData.help}
-      closeHelpScreen={closeHelpScreen}
-      completeTutorial={completeTutorial}
-    />
-  );
+  return <HelpScreen help={gameData.help} closeHelpScreen={closeHelpScreen} />;
 };
 
 export default HelpScreenController;
