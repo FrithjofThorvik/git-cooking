@@ -69,7 +69,7 @@ export const defaultTutorials: ITutorial[] = [
         ],
       },
     ],
-    completed: false,
+    completed: true,
   },
   {
     type: TutorialType.WORK_SCREEN,
@@ -119,7 +119,7 @@ export const defaultTutorials: ITutorial[] = [
         ],
       },
     ],
-    completed: false,
+    completed: true,
   },
   {
     type: TutorialType.WORK_TERMINAL,
