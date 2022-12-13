@@ -20,7 +20,6 @@ export enum FileType {
 export enum IngredientType {
   BURGER = "Burger",
   EXTRA = "Extra",
-  DRINKS = "Drinks",
 }
 
 export enum PurchaseType {
