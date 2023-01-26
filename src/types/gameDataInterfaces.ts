@@ -70,6 +70,7 @@ export interface IIngredient extends IPurchasable {
   type: IngredientType;
   useCost: number;
   default?: boolean;
+  isSingle?: boolean;
   name: string;
   cost: number;
 }

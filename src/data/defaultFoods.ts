@@ -99,6 +99,7 @@ export const defaultFoods: IFood[] = [
         unlockDay: 2,
         type: IngredientType.EXTRA,
         useCost: 15,
+        isSingle: true,
       },
       normal: {
         id: v4(),
@@ -111,6 +112,7 @@ export const defaultFoods: IFood[] = [
         unlockDay: 0,
         type: IngredientType.EXTRA,
         useCost: 10,
+        isSingle: true,
       },
     },
     builder: function (difficulty) {
