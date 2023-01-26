@@ -73,7 +73,7 @@ class Git {
         if (tempCmdArg) {
           currentCmdArg = tempCmdArg;
           if (tempCmdArg.isDynamic) dynamicInput = currentArgKey;
-        } else return gitRes("Invalid git command", false);
+        } else return gitCommandDoesNotExist();
       }
 
       if (currentCmdArg?.cmd) {
