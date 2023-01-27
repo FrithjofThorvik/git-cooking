@@ -58,6 +58,7 @@ export const defaultGameData: IGitCooking = {
     };
 
     copy.states.day += 1;
+    copy.states.endedDayTime = 0;
     copy.git = gitUpdated;
     copy.itemInterface = itemInterfaceReset;
 
