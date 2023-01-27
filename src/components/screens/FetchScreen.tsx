@@ -1,6 +1,9 @@
+import { ThemeProvider, Tooltip } from "@mui/material";
 import React from "react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloudDownloadTwoToneIcon from "@mui/icons-material/CloudDownloadTwoTone";
 
+import { theme } from "styles/muiThemes";
 import { IRemote } from "types/gitInterfaces";
 import InfoText from "components/InfoText";
 import Background from "components/Background";
@@ -11,11 +14,15 @@ import "./FetchScreen.scss";
 interface IFetchScreenProps {
   remote: IRemote;
   terminalController: JSX.Element;
+  isFirstDay: boolean;
+  goBack: () => void;
 }
 
 const FetchScreen: React.FC<IFetchScreenProps> = ({
   terminalController,
   remote,
+  isFirstDay,
+  goBack,
 }): JSX.Element => {
   const fetchedBranches = remote.branches.filter((rb) => rb.isFetched);
   return (
@@ -42,6 +49,15 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
           )}
         </div>
         <div className="fetch-screen-terminal">{terminalController}</div>
+        {!isFirstDay && (
+          <div className="fetch-screen-return" onClick={() => goBack()}>
+            <ThemeProvider theme={theme}>
+              <Tooltip title={"Shop"}>
+                <ArrowBackIcon className="fetch-screen-return-button" />
+              </Tooltip>
+            </ThemeProvider>
+          </div>
+        )}
       </div>
     </Background>
   );

@@ -37,6 +37,7 @@ export const defaultGameData: IGitCooking = {
     copy.states.gameState = GameState.SUMMARY;
     copy.store = updatedStore;
     copy.states.isDayComplete = false;
+    copy.states.hasFetched = false;
 
     return copy;
   },
@@ -48,6 +49,10 @@ export const defaultGameData: IGitCooking = {
   },
   startFetch: function () {
     let copy: IGitCooking = copyObjectWithoutRef(this);
+    if (this.states.hasFetched) {
+      copy.states.gameState = GameState.FETCH;
+      return copy;
+    }
 
     const gitReset: IGitTree = copyObjectWithoutRef(defaultGitTree);
     const itemInterfaceReset: IItemInterface =
@@ -71,7 +76,7 @@ export const defaultGameData: IGitCooking = {
     });
 
     copy.git.remote = copy.git.remote.updateBranchStats(copy);
-
+    copy.states.hasFetched = true;
     copy.states.gameState = GameState.FETCH;
 
     return copy;

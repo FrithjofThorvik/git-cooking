@@ -151,6 +151,7 @@ export interface IStates {
   day: number;
   gameState: GameState;
   isDayComplete: boolean;
+  hasFetched: boolean;
   endedDayTime: number;
   setGameState: (state: GameState) => IStates;
 }
