@@ -54,8 +54,10 @@ export const gitCommands: ICommandArg[] = [
       {
         key: "end-day",
         args: [],
-        cmd: (gameData, setGameData) => {
-          let updatedGameData = gameData.endDay();
+        cmd: (gameData, setGameData, input, timeLapsed) => {
+          if (timeLapsed === undefined)
+            return gitRes("Error: timelapsed undefined", false);
+          let updatedGameData = gameData.endDay(timeLapsed);
 
           setGameData({
             ...updatedGameData,
@@ -481,7 +483,7 @@ export const gitCommands: ICommandArg[] = [
             key: "<PATH>",
             isDynamic: true,
             args: [],
-            cmd: (gameData, setGameData, branchName, timeLapsed) => {
+            cmd: (gameData, setGameData, branchName) => {
               return middleware(gameData, GitCommandType.PUSH, () => {
                 if (gameData.states.gameState !== GameState.WORKING)
                   return gitRes(

@@ -165,7 +165,7 @@ export interface IGitCooking {
   orderService: IOrderService;
   commandHistory: string[];
   itemInterface: IItemInterface;
-  endDay: (timeLapsed?: number) => IGitCooking;
+  endDay: (timeLapsed: number) => IGitCooking;
   startDay: () => IGitCooking;
   startFetch: () => IGitCooking;
 }

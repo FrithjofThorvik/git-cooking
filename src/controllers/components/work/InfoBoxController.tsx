@@ -16,7 +16,7 @@ const InfoBoxController: React.FC<
   const infoText = useInfoBoxText(gameData, isPushed);
 
   const endDay = () => {
-    let updatedGameData = gameData.endDay();
+    let updatedGameData = gameData.endDay(timeLapsed);
     setGameData({ ...updatedGameData });
   };
 
