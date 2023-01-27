@@ -25,22 +25,6 @@ const defaultRemote: IRemote = {
     const copyRemote: IRemote = copyObjectWithoutRef(this);
     const copyGameData: IGitCooking = copyObjectWithoutRef(gameData);
 
-    // simulate completing a order 100%
-    copyGameData.git.remote.branches = copyGameData.git.remote.branches.map(
-      (b) => {
-        let copyBranch: IRemoteBranch = copyObjectWithoutRef(b);
-        // make branch pushed items = order.orderItems
-        let pushedItems: IOrderItem[] = [];
-        copyBranch.orders.map((o) => {
-          return pushedItems.push(...o.orderItems);
-        });
-        copyBranch.pushedItems = pushedItems;
-
-        return copyBranch;
-      }
-    );
-
-    // calculate max profit for the simulated orders
     const { branches } = calculateRevenueAndCost(copyGameData);
 
     copyRemote.branches = copyRemote.branches.map((b) => {

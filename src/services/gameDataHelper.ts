@@ -7,6 +7,7 @@ import {
 } from "types/gameDataInterfaces";
 import { ISummaryBranch, ISummaryStats } from "types/interfaces";
 import { GitCommandType, IngredientType } from "types/enums";
+import { sumObjectValues } from "./helpers";
 
 export const createNewOrderItem = (order: IOrder, name: string): IOrderItem => {
   return {
@@ -136,74 +137,145 @@ export const calculateRevenueAndCost = (
 
   const summaryBranches: ISummaryBranch[] = gameData.git.remote.branches.map(
     (b) => {
-      let baseRevenue = 0;
-      let baseCost = 0;
-      let avgPercentage = 0;
-      let bonusFromPercentage = 0;
-      let maxBonusFromPercentage = 0;
-      let bonusFromMultiplier = 0;
-      let bonusFromCostReduction = 0;
-      let bonusFromEndedDayTime = 0;
-      let maxBonusFromEndedDayTime =
-        dayLength - endedDayTime > 0 && endedDayTime
-          ? (1 - endedDayTime / dayLength) * baseEarlyFinishEarning
-          : 0;
+      interface IOrderStat {
+        cost: number;
+        price: number;
+        percentageCompleted: number;
+      }
+      let maxBonusFromEndedDayTime = baseEarlyFinishEarning;
 
-      b.orders.forEach((order) => {
+      const orderStats: IOrderStat[] = b.orders.map((order) => {
         const percentageCompleted = order.percentageCompleted;
-        let orderCost = 0;
+
+        // Calculate order cost from ingredients used to make order
+        let cost = 0;
         b.pushedItems.forEach((item) => {
           if (item.orderId === order.id)
             item.ingredients.forEach(
-              (ingredient) => (orderCost += ingredient.useCost)
+              (ingredient) => (cost += ingredient.useCost)
             );
         });
-        const orderRevenue = orderCost * profitMarginMultiplier;
 
-        baseCost += orderCost;
-        baseRevenue += orderRevenue;
-        avgPercentage += percentageCompleted / b.orders.length;
-        bonusFromPercentage +=
-          orderRevenue * (percentageCompleted / 100) * accuracyMultiplier;
-        maxBonusFromPercentage +=
-          orderRevenue * (100 / 100) * accuracyMultiplier;
-        bonusFromMultiplier += orderRevenue * revenueMultiplier - orderRevenue;
-        bonusFromCostReduction += orderCost - orderCost * useCostReduction;
+        // Calculate order price from ingredients in order
+        let price = 0;
+        order.orderItems.forEach((item) => {
+          item.ingredients.forEach(
+            (ingredient) => (price += ingredient.useCost)
+          );
+        });
+
+        return {
+          cost,
+          price,
+          percentageCompleted,
+        };
       });
-      bonusFromEndedDayTime = (maxBonusFromEndedDayTime * avgPercentage) / 100;
 
-      const totalRevenue =
-        baseRevenue +
-        bonusFromMultiplier +
-        bonusFromPercentage +
-        bonusFromEndedDayTime;
-      const totalCost = baseCost - bonusFromCostReduction;
-      const profit = totalRevenue - totalCost;
+      const calculateSum = (orderStats: IOrderStat[]) => {
+        let baseRevenue = 0;
+        let baseCost = 0;
+        let avgPercentage = 0;
 
-      const maxProfit =
-        baseRevenue +
-        maxBonusFromEndedDayTime +
-        maxBonusFromPercentage +
-        bonusFromMultiplier -
-        totalCost;
+        let expectedCost = 0;
+        let expectedRevenue = 0;
+
+        const addToTotal = (oStat: IOrderStat) => {
+          // Calculate order revenue for ordered item
+          const expectedOrderRevenue = oStat.price * profitMarginMultiplier;
+
+          baseCost += oStat.cost;
+          expectedCost += oStat.price;
+          expectedRevenue += expectedOrderRevenue;
+          avgPercentage += oStat.percentageCompleted / b.orders.length;
+
+          // assuming you have completed something of an order
+          if (oStat.percentageCompleted > 0)
+            baseRevenue += expectedOrderRevenue;
+        };
+        orderStats.forEach(addToTotal);
+
+        // Sums up total revenue with bonuses
+        const partSum = (
+          revenue: number,
+          cost: number,
+          percentage: number,
+          max?: boolean
+        ) => {
+          const calculateBonuses = (
+            revenue: number,
+            percentage: number,
+            max?: boolean
+          ) => {
+            let bonusFromEndedDayTime = max
+              ? maxBonusFromEndedDayTime
+              : avgPercentage > 0
+              ? (1 - endedDayTime / dayLength) * baseEarlyFinishEarning
+              : 0;
+
+            const percentageBonus =
+              revenue * (percentage / 100) * accuracyMultiplier;
+            const multiplierBonus = revenue * revenueMultiplier - revenue;
+            return {
+              bonusFromEndedDayTime,
+              percentageBonus,
+              multiplierBonus,
+            };
+          };
+
+          const calculateReductions = (cost: number) => {
+            const costReduction = cost - cost * useCostReduction;
+            return {
+              costReduction,
+            };
+          };
+
+          const bonuses = calculateBonuses(revenue, percentage, max);
+          const reductions = calculateReductions(cost);
+
+          const totalRevenue = revenue + sumObjectValues(bonuses);
+
+          const totalCost = cost - sumObjectValues(reductions);
+
+          const profit = totalRevenue - totalCost;
+          return {
+            baseRevenue,
+            baseCost,
+            avgPercentage,
+            totalRevenue,
+            totalCost,
+            profit,
+            costReduction: reductions.costReduction,
+            multiplierBonus: bonuses.multiplierBonus,
+            percentageBonus: bonuses.percentageBonus,
+            bonusFromEndedDayTime: bonuses.bonusFromEndedDayTime,
+          };
+        };
+
+        return {
+          totalSum: partSum(baseRevenue, baseCost, avgPercentage),
+          maxSum: partSum(expectedRevenue, expectedCost, 100, true),
+        };
+      };
+
+      const { totalSum, maxSum } = calculateSum(orderStats);
 
       return {
         name: b.name,
         stats: {
-          maxProfit,
-          profit,
-          totalCost,
-          totalRevenue,
-          baseRevenue,
-          baseCost,
+          maxProfit: maxSum.profit,
+          profit: totalSum.profit,
+          totalCost: totalSum.totalCost,
+          totalRevenue: totalSum.totalRevenue,
+          baseRevenue: totalSum.baseRevenue,
+          baseCost: totalSum.baseRevenue,
           revenueMultiplier,
           useCostReduction,
-          avgPercentage,
-          bonusFromCostReduction,
-          bonusFromMultiplier,
-          bonusFromPercentage,
-          bonusFromEndedDayTime,
-          maxBonusFromPercentage,
+          avgPercentage: totalSum.avgPercentage,
+          bonusFromCostReduction: totalSum.costReduction,
+          bonusFromMultiplier: totalSum.multiplierBonus,
+          bonusFromPercentage: totalSum.percentageBonus,
+          bonusFromEndedDayTime: totalSum.bonusFromEndedDayTime,
+          maxBonusFromPercentage: maxSum.percentageBonus,
           maxBonusFromEndedDayTime,
         },
       };
