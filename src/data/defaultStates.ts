@@ -4,6 +4,7 @@ import { GameState } from "types/enums";
 export const defaultStates: IStates = {
   day: 0,
   isDayComplete: false,
+  hasFetched: false,
   endedDayTime: 0,
   gameState: GameState.LOADING,
   setGameState: function (state) {

@@ -1,9 +1,9 @@
 import React from "react";
 
+import { TutorialType } from "types/enums";
 import { IStats, StoreItem } from "types/gameDataInterfaces";
 import { setGameData, useGameData } from "hooks/useGameData";
 import StoreScreen from "components/screens/StoreScreen";
-import { TutorialType } from "types/enums";
 
 interface IStoreScreenControllerProps {
   goNext: () => void;
