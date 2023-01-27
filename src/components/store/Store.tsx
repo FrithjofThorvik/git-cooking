@@ -15,7 +15,7 @@ interface IStoreProps {
   availableCash: number;
   activeStoreItems: StoreItem[];
   stats: IStats;
-  purchase: (purchasable: StoreItem, _stats: IStats) => void;
+  purchase: (purchasable: StoreItem) => void;
 }
 
 const Store: React.FC<IStoreProps> = ({
@@ -33,11 +33,13 @@ const Store: React.FC<IStoreProps> = ({
   );
 
   const addFilter = (storeItem: StoreItem): boolean => {
-    if (isGitCommand(storeItem)) if (storeItem.unlockDay === 0) return false;
-    if (isIngredient(storeItem))
-      if (storeItem.type !== activeFoodType) return false;
+    if (isGitCommand(storeItem) && storeItem.unlockDay === 0) return false;
+    if (isIngredient(storeItem) && storeItem.type !== activeFoodType)
+      return false;
     return true;
   };
+
+  console.log(activeStoreItems);
 
   useEffect(() => {
     if (activeStoreItems.length > 0) {

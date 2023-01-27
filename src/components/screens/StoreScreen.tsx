@@ -23,7 +23,7 @@ export interface IStoreScreenProps {
   stats: IStats;
   goNext: () => void;
   goBack: () => void;
-  purchase: (purchasable: StoreItem, _stats: IStats) => void;
+  purchase: (purchasable: StoreItem) => void;
   setActiveTutorialTypes: (tutorials: TutorialType[]) => void;
 }
 
