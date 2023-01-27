@@ -127,7 +127,12 @@ export const defaultDirectory: IDirectory = {
           i.type = data.type;
           i.ingredients = [];
         } else if (data.addIngredient) {
-          i.ingredients.push(data.addIngredient);
+          if (
+            (data.addIngredient.isSingle &&
+              orderItem.ingredients.length === 0) ||
+            !data.addIngredient.isSingle
+          )
+            i.ingredients.push(data.addIngredient);
         } else if (data.removeIngredientAtIndex !== undefined) {
           i.ingredients.splice(data.removeIngredientAtIndex, 1);
         }
