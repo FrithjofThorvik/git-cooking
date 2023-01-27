@@ -1,7 +1,7 @@
 import { GameState, GitCommandType } from "types/enums";
 import { ICommandArg, IGitResponse } from "types/interfaces";
 import { IGitCooking, IOrderItem } from "types/gameDataInterfaces";
-import { copyObjectWithoutRef } from "./helpers";
+import { copyObjectWithoutRef, objectsEqual } from "./helpers";
 import { gitCommandDoesNotExist, gitRes } from "services/git";
 import { isGitCmdPurchased } from "./gameDataHelper";
 import { defaultItemData } from "data/defaultItemData";
@@ -316,7 +316,28 @@ export const gitCommands: ICommandArg[] = [
     cmd: (gameData) => {
       return middleware(gameData, GitCommandType.STATUS, () => {
         let status = "";
-        status += `On branch ${gameData.git.HEAD.targetId}\n`;
+        status += `\nOn branch ${gameData.git.HEAD.targetId}\n`;
+
+        const activeBranch = gameData.git.getActiveBranch();
+        if (activeBranch) {
+          const activeRemoteBranch = gameData.git.remote.getActiveRemoteBranch(
+            activeBranch.name
+          );
+          const createdItems = gameData.git.getCommitFromId(
+            activeBranch.targetCommitId
+          )?.directory.createdItems;
+          if (
+            createdItems &&
+            activeBranch.remoteTrackingBranch &&
+            activeRemoteBranch
+          ) {
+            if (!objectsEqual(activeRemoteBranch.pushedItems, createdItems)) {
+              status += `You have unsynced changes between 'origin/${activeBranch.remoteTrackingBranch}' and ${activeBranch.name}`;
+            } else {
+              status += `Your branch is up to date with 'origin/${activeBranch.remoteTrackingBranch}'.`;
+            }
+          }
+        }
 
         if (gameData.git.stagedItems.length != 0)
           status += `\nChanges to be committed: \n`;
@@ -500,19 +521,24 @@ export const gitCommands: ICommandArg[] = [
                   branch.targetCommitId
                 )?.directory.createdItems;
 
-                let updatedGameData = gameData;
+                let updatedGameData: IGitCooking =
+                  copyObjectWithoutRef(gameData);
+                let updatedRemote = null;
 
                 if (createdItems && branch.remoteTrackingBranch)
-                  updatedGameData.git.remote =
-                    updatedGameData.git.remote.pushItems(
-                      branch.remoteTrackingBranch,
-                      createdItems,
-                      updatedGameData.orderService.getAllOrders()
-                    );
+                  updatedRemote = updatedGameData.git.remote.pushItems(
+                    branch.remoteTrackingBranch,
+                    createdItems,
+                    updatedGameData.orderService.getAllOrders()
+                  );
 
-                setGameData(updatedGameData);
+                if (updatedRemote !== null) {
+                  updatedGameData.git.remote = updatedRemote;
+                  setGameData(updatedGameData);
+                  return gitRes("Pushing added changes to remote", true);
+                }
 
-                return gitRes("Pushing added changes to remote", true);
+                return gitRes("Everything up-to-date", true);
               });
             },
           },
@@ -536,18 +562,23 @@ export const gitCommands: ICommandArg[] = [
         const createdItems = gameData.git.getCommitFromId(
           activeBranch.targetCommitId
         )?.directory.createdItems;
-        let updatedGameData = gameData;
+        let updatedGameData: IGitCooking = copyObjectWithoutRef(gameData);
 
-        if (createdItems)
-          updatedGameData.git.remote = updatedGameData.git.remote.pushItems(
+        let updatedRemote = null;
+        if (createdItems && activeBranch.remoteTrackingBranch)
+          updatedRemote = updatedGameData.git.remote.pushItems(
             activeBranch.remoteTrackingBranch,
             createdItems,
             updatedGameData.orderService.getAllOrders()
           );
 
-        setGameData(updatedGameData);
+        if (updatedRemote !== null) {
+          updatedGameData.git.remote = updatedRemote;
+          setGameData(updatedGameData);
+          return gitRes("Pushing added changes to remote", true);
+        }
 
-        return gitRes("Pushing added changes to remote", true);
+        return gitRes("Everything up-to-date", true);
       });
     },
   },
