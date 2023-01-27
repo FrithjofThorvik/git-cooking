@@ -71,6 +71,8 @@ const defaultRemote: IRemote = {
     let copy: IRemote = copyObjectWithoutRef(this);
 
     const branchIndex = this.branches.findIndex((b) => b.name === branchName);
+    if (objectsEqual(items, copy.branches[branchIndex].pushedItems))
+      return null;
 
     if (branchIndex !== -1) {
       copy.branches[branchIndex].pushedItems = items;
@@ -78,6 +80,14 @@ const defaultRemote: IRemote = {
     }
 
     return copy;
+  },
+  getActiveRemoteBranch: function (branchName) {
+    let copy: IRemote = copyObjectWithoutRef(this);
+
+    for (let i = 0; i < copy.branches.length; i++) {
+      if (copy.branches[i].name === branchName) return copy.branches[i];
+    }
+    return null;
   },
 };
 

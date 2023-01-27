@@ -54,7 +54,8 @@ export interface IRemote {
     branchName: string,
     items: IOrderItem[],
     orders: IOrder[]
-  ) => IRemote;
+  ) => IRemote | null;
+  getActiveRemoteBranch: (branchName: string) => IRemoteBranch | null;
 }
 
 export interface IGitTree {
