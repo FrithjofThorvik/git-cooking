@@ -124,14 +124,9 @@ export const gitCommands: ICommandArg[] = [
               // switch branch
               copyGit = copyGit.switchBranch(branchName);
 
-              let newGameState = gameData.states.gameState;
-              if (newGameState === GameState.FETCH)
-                newGameState = GameState.WORKING;
-
               setGameData({
                 ...gameData,
                 itemInterface: copyObjectWithoutRef(defaultItemData),
-                states: { ...gameData.states, gameState: newGameState },
                 orderService: updatedOrderService,
                 git: copyGit,
               });
@@ -322,7 +317,7 @@ export const gitCommands: ICommandArg[] = [
 
         const activeBranch = gameData.git.getActiveBranch();
         if (activeBranch) {
-          const activeRemoteBranch = gameData.git.remote.getActiveRemoteBranch(
+          const activeRemoteBranch = gameData.git.remote.getRemoteBranch(
             activeBranch.name
           );
           const createdItems = gameData.git.getCommitFromId(

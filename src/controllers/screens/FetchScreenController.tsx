@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
 
-import { useGameData } from "hooks/useGameData";
+import { setGameData, useGameData } from "hooks/useGameData";
 import { TutorialType } from "types/enums";
 import FetchScreen from "components/screens/FetchScreen";
 import TerminalController from "controllers/components/work/TerminalController";
+import { copyObjectWithoutRef } from "services/helpers";
+import { IGitCooking } from "types/gameDataInterfaces";
 
 interface IFetchScreenControllerProps {
   setActiveTutorialTypes: (tutorials: TutorialType[]) => void;
@@ -23,11 +25,26 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
     }
   }, [gameData.git.remote.branches]);
 
+  // Starts day when a remote branch has been checkout out
+  useEffect(() => {
+    let updatedGameData: IGitCooking = copyObjectWithoutRef(gameData);
+    if (
+      !updatedGameData.git.branches.some(
+        (b) =>
+          b.remoteTrackingBranch &&
+          updatedGameData.git.remote.getRemoteBranch(b.remoteTrackingBranch)
+      )
+    )
+      return;
+    updatedGameData = updatedGameData.startDay();
+    setGameData({ ...updatedGameData });
+  }, [gameData.git.branches]);
+
   return (
     <FetchScreen
       remote={gameData.git.remote}
       terminalController={<TerminalController />}
-      isFirstDay={gameData.states.day === 1}
+      isFirstDay={gameData.states.day === 0}
       goBack={goBack}
     />
   );

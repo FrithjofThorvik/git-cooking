@@ -69,7 +69,7 @@ const GameController: React.FC = (): JSX.Element => {
           />
         );
       case GameState.FETCH:
-        if (gameData.states.day === 0) startFetch();
+        if (!gameData.states.hasFetched) startFetch();
         return (
           <FetchScreenController
             setActiveTutorialTypes={setActiveTutorialTypes}

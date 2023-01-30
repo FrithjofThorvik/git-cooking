@@ -43,6 +43,7 @@ export const defaultGameData: IGitCooking = {
   },
   startDay: function () {
     let copy = copyObjectWithoutRef(this);
+    copy.states.day += 1;
     copy.states.gameState = GameState.WORKING;
     copy.states.dayIsCompleted = false;
     return copy;
@@ -62,7 +63,6 @@ export const defaultGameData: IGitCooking = {
       workingDirectory: { ...gitReset.workingDirectory },
     };
 
-    copy.states.day += 1;
     copy.states.endedDayTime = 0;
     copy.git = gitUpdated;
     copy.itemInterface = itemInterfaceReset;
