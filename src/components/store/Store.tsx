@@ -39,12 +39,10 @@ const Store: React.FC<IStoreProps> = ({
     return true;
   };
 
-  console.log(activeStoreItems);
-
   useEffect(() => {
     if (activeStoreItems.length > 0) {
       if (isIngredient(activeStoreItems[0]))
-        setActiveFoodType(IngredientType.BURGER);
+        !activeFoodType && setActiveFoodType(IngredientType.BURGER);
       else setActiveFoodType(null);
     }
   }, [activeStoreItems]);
