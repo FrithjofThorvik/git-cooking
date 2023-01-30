@@ -81,7 +81,7 @@ const defaultRemote: IRemote = {
 
     return copy;
   },
-  getActiveRemoteBranch: function (branchName) {
+  getRemoteBranch: function (branchName) {
     let copy: IRemote = copyObjectWithoutRef(this);
 
     for (let i = 0; i < copy.branches.length; i++) {
