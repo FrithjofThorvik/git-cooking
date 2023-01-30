@@ -90,6 +90,7 @@ export interface IUpgrade extends IPurchasable {
 export interface IGitCommand extends IPurchasable {
   unlocked: boolean;
   gitCommandType: GitCommandType;
+  useCase: string;
   name: () => string;
   cost: (discountMultiplier: number) => number;
   description: () => string;

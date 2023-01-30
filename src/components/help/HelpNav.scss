@@ -1,0 +1,46 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.help-nav {
+  display: flex;
+  position: fixed;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 50px;
+  bottom: 20px;
+
+  &-filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 20px;
+    margin-top: 25px;
+
+    &-filter {
+      @include blurBackground;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      column-gap: 10px;
+      padding: 3px 15px;
+      border-radius: 50px;
+      border: 1px solid $gray;
+
+      &.selected {
+        color: $white;
+        text-shadow: 0 0 7px rgba($white, 1);
+        box-shadow: 0 0 3px rgba($white, 0.7);
+        border-color: $white;
+
+        svg {
+          filter: drop-shadow(0 0 7px rgba($white, 1));
+        }
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}
