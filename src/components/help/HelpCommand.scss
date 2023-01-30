@@ -1,0 +1,49 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.help-command {
+  &.open {
+    svg {
+      transform: rotate(90deg);
+    }
+  }
+
+  &-name {
+    display: flex;
+    color: $line-orange;
+    font-weight: 600;
+    margin-left: -25px;
+  }
+
+  &-description {
+    font-weight: 100;
+  }
+
+  &-usecase {
+    @include blurBackground;
+    box-sizing: border-box;
+    border-radius: 20px;
+    padding: 7px 15px;
+    font-weight: 100;
+    border: 1px solid rgba($gray, 0.4);
+    margin-top: 10px;
+  }
+
+  &:hover {
+    cursor: pointer;
+
+    svg {
+      filter: drop-shadow(0 0 7px rgba($line-orange, 1));
+      transform: rotate(90deg);
+      transition: all ease-in-out 200ms;
+    }
+
+    p {
+      text-shadow: 0 0 7px rgba($line-orange, 1);
+    }
+  }
+
+  svg {
+    transition: all ease-in-out 200ms;
+  }
+}

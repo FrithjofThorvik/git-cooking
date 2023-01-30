@@ -8,7 +8,7 @@ import fries from "assets/fries.png";
 import onions from "assets/onions.png";
 import bunTop from "assets/bun_top.png";
 import command from "assets/command.png";
-import library from "assets/library.jpeg";
+import library from "assets/library.jpg";
 import discount from "assets/discount.png";
 import bunBottom from "assets/bun_bottom.png";
 import brickWall from "assets/brick_wall.png";

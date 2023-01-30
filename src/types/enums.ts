@@ -70,3 +70,8 @@ export enum Difficulty {
   NORMAL = "normal",
   HARD = "hard",
 }
+
+export enum HelpScreenType {
+  TUTORIALS = "tutorials",
+  COMMANDS = "commands",
+}

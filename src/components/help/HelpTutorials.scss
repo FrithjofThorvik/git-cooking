@@ -1,0 +1,79 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.help-tutorials {
+  @include verticalScrollBar;
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 0 auto;
+  gap: 25px;
+  width: 80%;
+  height: 65%;
+  z-index: 1;
+  max-width: 950px;
+  margin-top: 100px;
+
+  &-card {
+    @include blurBackground(2px);
+    display: flex;
+    position: relative;
+    box-sizing: border-box;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    border: 1px solid $line-dark;
+    box-shadow: 0 4px 5px 1px rgba(black, 0.4);
+    transition: box-shadow 100ms ease-in-out, border-color 100ms ease-in-out;
+    width: 175px;
+    height: 225px;
+    padding: 20px;
+    border-radius: 10px;
+
+    &-title {
+      color: $white;
+      text-shadow: 1px 2px 1px rgba(0, 0, 0, 0.5);
+      transition: text-shadow 100ms ease-in-out;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    &-description {
+      color: $gray;
+      transition: color 200ms ease-in-out;
+      font-size: 15px;
+      margin-top: 5px;
+      font-weight: 300;
+    }
+
+    &-play {
+      display: none;
+      position: absolute;
+      color: $white;
+      text-shadow: 0 0 7px rgba($white, 1);
+      transition: display 300ms ease-in-out;
+      bottom: 10px;
+      right: 10px;
+    }
+
+    &:hover {
+      cursor: pointer;
+      border-color: $white;
+      box-shadow: 0 0 5px 3px rgba($white, 0.3);
+
+      .help-screen-tutorials-tutorial-title {
+        text-shadow: 0 0 7px rgba($white, 1);
+      }
+
+      .help-screen-tutorials-tutorial-description {
+        color: $white;
+      }
+
+      .help-screen-tutorials-tutorial-play {
+        display: block;
+      }
+    }
+  }
+}
