@@ -69,6 +69,7 @@ export interface IGitTree {
   isBranchActive: (branchName: string) => boolean;
   getActiveBranch: () => IBranch | undefined;
   getCommitFromId: (commitId: string) => ICommit | undefined;
+  getRootCommit: () => ICommit | undefined;
   getCommitHistory: () => ICommit[];
   getHeadCommit: () => ICommit | undefined;
   doesBranchNameExists: (branchName: string) => boolean;

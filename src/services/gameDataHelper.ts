@@ -267,7 +267,7 @@ export const calculateRevenueAndCost = (
           totalCost: totalSum.totalCost,
           totalRevenue: totalSum.totalRevenue,
           baseRevenue: totalSum.baseRevenue,
-          baseCost: totalSum.baseRevenue,
+          baseCost: totalSum.baseCost,
           revenueMultiplier,
           useCostReduction,
           avgPercentage: totalSum.avgPercentage,

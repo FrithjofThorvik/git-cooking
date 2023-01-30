@@ -158,6 +158,9 @@ export const defaultGitTree: IGitTree = {
   isBranchActive: function (branchName: string) {
     return this.HEAD.targetId === branchName;
   },
+  getRootCommit: function () {
+    return this.commits.find((c) => c.root);
+  },
   getActiveBranch: function () {
     return this.branches.find((b) => b.name === this.HEAD.targetId);
   },
@@ -408,9 +411,12 @@ export const defaultGitTree: IGitTree = {
     let copyGit: IGitTree = copyObjectWithoutRef(this);
     const activeCommit = this.getHeadCommit();
     if (activeCommit) {
+      const rootCommit = this.getRootCommit();
       let newBranch: IBranch = {
         name: branchName,
-        targetCommitId: remoteBranchName ? defaultCommit.id : activeCommit.id,
+        targetCommitId: remoteBranchName
+          ? rootCommit?.id || defaultCommit.id
+          : activeCommit.id,
       };
 
       if (remoteBranchName) newBranch.remoteTrackingBranch = remoteBranchName;
