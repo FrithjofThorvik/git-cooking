@@ -97,7 +97,7 @@ export const gitCommands: ICommandArg[] = [
             let copyGit = copyObjectWithoutRef(gameData.git);
             let updatedOrderService = gameData.orderService;
 
-            if (!remoteBranch && !localBranch)
+            if ((!remoteBranch && !localBranch) || !remoteBranch?.isFetched)
               return gitRes(`Error: '${branchName} does not exist'`, false);
 
             if (!localBranch && remoteBranch) {
