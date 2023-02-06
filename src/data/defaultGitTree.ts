@@ -12,20 +12,25 @@ import {
   ICommit,
   IGitTree,
   IModifiedItem,
+  IProject,
   IRemote,
   IRemoteBranch,
 } from "types/gitInterfaces";
-import { IngredientType } from "types/enums";
+import { IngredientType, RemoteType } from "types/enums";
 import { calculateRevenueAndCost } from "services/gameDataHelper";
 import { copyObjectWithoutRef, objectsEqual } from "services/helpers";
 
 const defaultRemote: IRemote = {
   branches: [],
+  isFetched: false,
   updateBranchStats: function (gameData: IGitCooking) {
     const copyRemote: IRemote = copyObjectWithoutRef(this);
     const copyGameData: IGitCooking = copyObjectWithoutRef(gameData);
 
-    const { branches } = calculateRevenueAndCost(copyGameData);
+    const { branches } = calculateRevenueAndCost(
+      copyGameData,
+      copyRemote.branches
+    );
 
     copyRemote.branches = copyRemote.branches.map((b) => {
       const copyBranch: IRemoteBranch = copyObjectWithoutRef(b);
@@ -145,9 +150,50 @@ const defaultCommit: ICommit = {
   directory: copyObjectWithoutRef(defaultDirectory),
 };
 
+const defaultProjects: IProject[] = [
+  {
+    remote: defaultRemote,
+    unlocked: true,
+    unlockDay: 0,
+    cloned: false,
+    url: "https://gitcookin.com/colonelsand",
+    type: RemoteType.BEGINNER,
+    active: true,
+    stats: {
+      cashMultiplier: 1,
+      timeReduction: 1,
+    },
+  },
+  {
+    remote: defaultRemote,
+    unlocked: false,
+    unlockDay: 3,
+    cloned: false,
+    url: "https://gitcookin.com/jamieolive",
+    type: RemoteType.INTERMEDIATE,
+    active: false,
+    stats: {
+      cashMultiplier: 2.25,
+      timeReduction: 0.75,
+    },
+  },
+  {
+    remote: defaultRemote,
+    unlocked: false,
+    cloned: false,
+    unlockDay: 6,
+    url: "https://gitcookin.com/gordonramsdale",
+    type: RemoteType.ADVANCED,
+    active: false,
+    stats: {
+      cashMultiplier: 3.5,
+      timeReduction: 0.5,
+    },
+  },
+];
+
 export const defaultGitTree: IGitTree = {
   branches: [],
-  remote: defaultRemote,
   commits: [copyObjectWithoutRef(defaultCommit)],
   HEAD: {
     targetId: defaultCommit.id,
@@ -155,8 +201,47 @@ export const defaultGitTree: IGitTree = {
   workingDirectory: copyObjectWithoutRef(defaultDirectory),
   stagedItems: [],
   modifiedItems: [],
+  projects: defaultProjects,
   isBranchActive: function (branchName: string) {
     return this.HEAD.targetId === branchName;
+  },
+  setActiveProjectRemote: function (remote: IRemote) {
+    let updatedProjects: IProject[] = copyObjectWithoutRef(this.projects);
+    const activeProjectId = this.projects.findIndex((p) => p.active);
+    if (activeProjectId !== -1)
+      updatedProjects[activeProjectId].remote = remote;
+    return updatedProjects;
+  },
+  getActiveProject: function () {
+    const activeProject = this.projects.find((p) => p.active);
+    if (!activeProject) return null;
+    return activeProject;
+  },
+  cloneProject: function (project: IProject) {
+    let copy: IGitTree = copyObjectWithoutRef(this);
+    if (project.cloned) return copy;
+
+    for (let i = 0; i < copy.projects.length; i++) {
+      if (project.type === copy.projects[i].type) {
+        copy.projects[i].cloned = true;
+        copy.projects[i].active = true;
+      } else copy.projects[i].active = false;
+    }
+
+    copy = copy.fetch().updatedGit;
+
+    return copy;
+  },
+  activateProject: function (project: IProject) {
+    let copy: IGitTree = copyObjectWithoutRef(this);
+
+    for (let i = 0; i < copy.projects.length; i++) {
+      if (project.type === copy.projects[i].type)
+        copy.projects[i].active = true;
+      else copy.projects[i].active = false;
+    }
+
+    return copy;
   },
   getRootCommit: function () {
     return this.commits.find((c) => c.root);
@@ -551,22 +636,29 @@ export const defaultGitTree: IGitTree = {
   },
   getRemoteBranch: function (remoteBranchName: string) {
     let remoteBranch: IRemoteBranch | null = null;
-    this.remote.branches.forEach((branch) => {
+    this.getActiveProject()?.remote.branches.forEach((branch) => {
       if (remoteBranchName === branch.name) remoteBranch = branch;
     });
     return remoteBranch;
   },
   fetch: function () {
     let copyGit: IGitTree = copyObjectWithoutRef(this);
+    let updatedRemote: IRemote = copyObjectWithoutRef(
+      copyGit.getActiveProject()?.remote
+    );
     let newBranches: string[] = [];
 
-    copyGit.remote.branches = copyGit.remote.branches.map((b) => {
+    const updatedBranches = updatedRemote.branches.map((b) => {
       if (!b.isFetched) {
         b.isFetched = true;
         newBranches.push(b.name);
       }
       return b;
     });
+    if (updatedBranches) {
+      updatedRemote.branches = updatedBranches;
+      copyGit.projects = copyGit.setActiveProjectRemote(updatedRemote);
+    }
 
     return { updatedGit: copyGit, newBranches: newBranches };
   },

@@ -5,6 +5,7 @@ import { copyObjectWithoutRef, objectsEqual } from "./helpers";
 import { gitCommandDoesNotExist, gitRes } from "services/git";
 import { isGitCmdPurchased } from "./gameDataHelper";
 import { defaultItemData } from "data/defaultItemData";
+import { IProject } from "types/gitInterfaces";
 
 const middleware = (
   gameData: IGitCooking,
@@ -57,7 +58,12 @@ export const gitCommands: ICommandArg[] = [
         cmd: (gameData, setGameData, input, timeLapsed) => {
           if (timeLapsed === undefined)
             return gitRes("Error: timelapsed undefined", false);
-          let updatedGameData = gameData.endDay(timeLapsed);
+
+          let updatedGameData = copyObjectWithoutRef(gameData);
+          if (updatedGameData.states.gameState === GameState.FETCH)
+            updatedGameData.states.day += 1;
+
+          updatedGameData = updatedGameData.endDay(timeLapsed);
 
           setGameData({
             ...updatedGameData,
@@ -317,9 +323,9 @@ export const gitCommands: ICommandArg[] = [
 
         const activeBranch = gameData.git.getActiveBranch();
         if (activeBranch) {
-          const activeRemoteBranch = gameData.git.remote.getRemoteBranch(
-            activeBranch.name
-          );
+          const activeRemoteBranch = gameData.git
+            .getActiveProject()
+            ?.remote.getRemoteBranch(activeBranch.name);
           const createdItems = gameData.git.getCommitFromId(
             activeBranch.targetCommitId
           )?.directory.createdItems;
@@ -523,14 +529,17 @@ export const gitCommands: ICommandArg[] = [
                 let updatedRemote = null;
 
                 if (createdItems && branch.remoteTrackingBranch)
-                  updatedRemote = updatedGameData.git.remote.pushItems(
-                    branch.remoteTrackingBranch,
-                    createdItems,
-                    updatedGameData.orderService.getAllOrders()
-                  );
+                  updatedRemote = updatedGameData.git
+                    .getActiveProject()
+                    ?.remote.pushItems(
+                      branch.remoteTrackingBranch,
+                      createdItems,
+                      updatedGameData.orderService.getAllOrders()
+                    );
 
-                if (updatedRemote !== null) {
-                  updatedGameData.git.remote = updatedRemote;
+                if (updatedRemote !== null && updatedRemote !== undefined) {
+                  updatedGameData.git.projects =
+                    updatedGameData.git.setActiveProjectRemote(updatedRemote);
                   setGameData(updatedGameData);
                   return gitRes("Pushing added changes to remote", true);
                 }
@@ -563,14 +572,17 @@ export const gitCommands: ICommandArg[] = [
 
         let updatedRemote = null;
         if (createdItems && activeBranch.remoteTrackingBranch)
-          updatedRemote = updatedGameData.git.remote.pushItems(
-            activeBranch.remoteTrackingBranch,
-            createdItems,
-            updatedGameData.orderService.getAllOrders()
-          );
+          updatedRemote = updatedGameData.git
+            .getActiveProject()
+            ?.remote.pushItems(
+              activeBranch.remoteTrackingBranch,
+              createdItems,
+              updatedGameData.orderService.getAllOrders()
+            );
 
-        if (updatedRemote !== null) {
-          updatedGameData.git.remote = updatedRemote;
+        if (updatedRemote !== null && updatedRemote !== undefined) {
+          updatedGameData.git.projects =
+            updatedGameData.git.setActiveProjectRemote(updatedRemote);
           setGameData(updatedGameData);
           return gitRes("Pushing added changes to remote", true);
         }
@@ -588,7 +600,7 @@ export const gitCommands: ICommandArg[] = [
         cmd: (gameData) => {
           return middleware(gameData, GitCommandType.BRANCH, () => {
             let message = "Remote branches:\n";
-            gameData.git.remote.branches.forEach((b) => {
+            gameData.git.getActiveProject()?.remote.branches.forEach((b) => {
               message += `\torigin/${b.name}\n`;
             });
             return gitRes(message, true);
@@ -604,6 +616,40 @@ export const gitCommands: ICommandArg[] = [
           message += `\t${isActive ? "* " : ""}${b.name}\n`;
         });
         return gitRes(message, true);
+      });
+    },
+  },
+  {
+    key: "clone",
+    args: [
+      {
+        key: "<URL>",
+        args: [],
+        isDynamic: true,
+        cmd: (gameData, setGameData, url) => {
+          return middleware(gameData, GitCommandType.CLONE, () => {
+            let project: IProject | null = null;
+            for (let i = 0; i < gameData.git.projects.length; i++) {
+              if (gameData.git.projects[i].url === url)
+                project = gameData.git.projects[i];
+            }
+
+            if (!project)
+              return gitRes("Error: Project URL does not exist", false);
+            if (project.cloned)
+              return gitRes("Error: Project has already been cloned", false);
+
+            const updatedGitTree = gameData.git.cloneProject(project);
+            setGameData({ ...gameData, git: updatedGitTree });
+
+            return gitRes("", true);
+          });
+        },
+      },
+    ],
+    cmd: (gameData) => {
+      return middleware(gameData, GitCommandType.CLONE, () => {
+        return gitRes("Error: Project URL is required for cloning", false);
       });
     },
   },

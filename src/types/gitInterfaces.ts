@@ -5,7 +5,7 @@ import {
   IOrder,
   IOrderItem,
 } from "./gameDataInterfaces";
-import { Difficulty } from "types/enums";
+import { Difficulty, RemoteType } from "types/enums";
 
 export interface IHead {
   targetId: string;
@@ -49,6 +49,7 @@ export interface IRemoteBranchStats {
 
 export interface IRemote {
   branches: IRemoteBranch[];
+  isFetched: boolean;
   updateBranchStats: (gameData: IGitCooking) => IRemote;
   pushItems: (
     branchName: string,
@@ -58,14 +59,32 @@ export interface IRemote {
   getRemoteBranch: (branchName: string) => IRemoteBranch | null;
 }
 
+export interface IProject {
+  remote: IRemote;
+  cloned: boolean;
+  unlocked: boolean;
+  unlockDay: number;
+  url: string;
+  type: RemoteType;
+  active: boolean;
+  stats: {
+    cashMultiplier: number;
+    timeReduction: number;
+  };
+}
+
 export interface IGitTree {
   HEAD: IHead;
-  remote: IRemote;
   commits: ICommit[];
   branches: IBranch[];
   stagedItems: IModifiedItem[];
   modifiedItems: IModifiedItem[];
   workingDirectory: IDirectory;
+  projects: IProject[];
+  getActiveProject: () => IProject | null;
+  setActiveProjectRemote: (remote: IRemote) => IProject[];
+  cloneProject: (project: IProject) => IGitTree;
+  activateProject: (project: IProject) => IGitTree;
   isBranchActive: (branchName: string) => boolean;
   getActiveBranch: () => IBranch | undefined;
   getCommitFromId: (commitId: string) => ICommit | undefined;
