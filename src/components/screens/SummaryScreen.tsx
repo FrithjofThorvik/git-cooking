@@ -39,7 +39,7 @@ const SummaryScreen: React.FC<ISummaryScreenProps> = ({
         />
         <div className="summary-screen-buttons">
           <div className="summary-screen-buttons-next-button">
-            <MenuButton onClick={goNext} text="Next" type="green" />
+            <MenuButton onClick={goNext} text="Next" type="right" />
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 export enum GameState {
   FETCH,
+  MERGE,
   SUMMARY,
   WORKING,
   UPGRADE,

@@ -6,7 +6,7 @@ import "./MenuButton.scss";
 export interface IMenuButtonProps {
   text: string;
   onClick: () => void;
-  type: "default" | "green";
+  type?: "left" | "right" | "default";
 }
 
 const MenuButton: React.FC<IMenuButtonProps> = ({
@@ -16,11 +16,11 @@ const MenuButton: React.FC<IMenuButtonProps> = ({
 }): JSX.Element => {
   return (
     <button className={`menu-button ${type}`} onClick={onClick}>
-      {type === "default" && (
+      {type === "left" && (
         <ChevronRightOutlinedIcon style={{ transform: "rotate(180deg)" }} />
       )}
       <div>{text}</div>
-      {type === "green" && <ChevronRightOutlinedIcon />}
+      {type === "right" && <ChevronRightOutlinedIcon />}
     </button>
   );
 };

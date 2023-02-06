@@ -43,6 +43,10 @@ export interface ISummaryBranch {
     bonusFromEndedDayTime: number;
     maxBonusFromPercentage: number;
     maxBonusFromEndedDayTime: number;
+    orderCount: number;
+    ordersCompleted: number;
+    itemCount: number;
+    itemsMadeCount: number;
   };
 }
 
