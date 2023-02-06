@@ -108,14 +108,14 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
           />
         </div>
         <div className="store-screen-bottom">
-          <MenuButton onClick={goBack} text="Results" type="default" />
+          <MenuButton onClick={goBack} text="Results" type="left" />
           <StoreNav
             cash={store.cash}
             newUnlockedItems={newUnlockedItems}
             activePurchaseType={activePurchaseType}
             setActivePurchaseType={setActivePurchaseType}
           />
-          <MenuButton onClick={goNext} text="New day" type="green" />
+          <MenuButton onClick={goNext} text="New day" type="right" />
         </div>
       </div>
     </Background>

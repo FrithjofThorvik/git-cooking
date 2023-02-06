@@ -1,0 +1,86 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.merge-screen {
+  display: flex;
+  position: relative;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+
+  &-day {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    h1 {
+      font-size: 70px;
+      margin-top: 30px;
+    }
+  }
+
+  &-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    &-middle {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      width: 225px;
+      height: 100%;
+
+      &-loading {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 65%;
+
+        img {
+          box-sizing: border-box;
+          background-color: $dark;
+          border: 3px solid $line-dark;
+          box-shadow: inset 0 0 5px 3px rgba(0, 0, 0, 0.4);
+          padding: 4px;
+          width: 50px;
+          border-radius: 100%;
+          margin-bottom: 15px;
+        }
+      }
+
+      &-text {
+        text-align: center;
+        color: $gray;
+        width: 80%;
+        min-height: 35%;
+        font-weight: 100;
+      }
+    }
+  }
+
+  &-branch {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: auto;
+    width: 80%;
+  }
+
+  &-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    width: 90%;
+    height: 100px;
+    margin-bottom: 25px;
+  }
+}

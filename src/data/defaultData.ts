@@ -45,7 +45,7 @@ export const defaultGameData: IGitCooking = {
       p.unlocked = p.unlockDay <= copy.states.day;
       return p;
     });
-    copy.states.gameState = GameState.SUMMARY;
+    copy.states.gameState = GameState.MERGE;
     copy.store = updatedStore;
     copy.states.isDayComplete = false;
     copy.states.hasStartedFetch = false;

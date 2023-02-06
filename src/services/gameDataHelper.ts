@@ -6,7 +6,7 @@ import {
   IOrderItem,
 } from "types/gameDataInterfaces";
 import { IRemoteBranch } from "types/gitInterfaces";
-import { ISummaryStats } from "types/interfaces";
+import { ISummaryBranch, ISummaryStats } from "types/interfaces";
 import { sumObjectValues } from "./helpers";
 import { GitCommandType, IngredientType } from "types/enums";
 
@@ -137,7 +137,7 @@ export const calculateRevenueAndCost = (
   const dayLength = gameData.stats.dayLength.value;
   const endedDayTime = gameData.states.endedDayTime;
 
-  const summaryBranches = branches.map((b) => {
+  const summaryBranches: ISummaryBranch[] = branches.map((b) => {
     interface IOrderStat {
       cost: number;
       price: number;
@@ -174,6 +174,7 @@ export const calculateRevenueAndCost = (
       let baseRevenue = 0;
       let baseCost = 0;
       let avgPercentage = 0;
+      let ordersCompleted = 0;
 
       let expectedCost = 0;
       let expectedRevenue = 0;
@@ -188,7 +189,10 @@ export const calculateRevenueAndCost = (
         avgPercentage += oStat.percentageCompleted / b.orders.length;
 
         // assuming you have completed something of an order
-        if (oStat.percentageCompleted > 0) baseRevenue += expectedOrderRevenue;
+        if (oStat.percentageCompleted > 0) {
+          baseRevenue += expectedOrderRevenue;
+          ordersCompleted += 1;
+        }
       };
       orderStats.forEach(addToTotal);
 
@@ -252,10 +256,11 @@ export const calculateRevenueAndCost = (
       return {
         totalSum: partSum(baseRevenue, baseCost, avgPercentage),
         maxSum: partSum(expectedRevenue, expectedCost, 100, true),
+        ordersCompleted,
       };
     };
 
-    const { totalSum, maxSum } = calculateSum(orderStats);
+    const { totalSum, maxSum, ordersCompleted } = calculateSum(orderStats);
 
     return {
       name: b.name,
@@ -275,6 +280,10 @@ export const calculateRevenueAndCost = (
         bonusFromEndedDayTime: totalSum.bonusFromEndedDayTime,
         maxBonusFromPercentage: maxSum.percentageBonus,
         maxBonusFromEndedDayTime,
+        orderCount: b.orders.length,
+        ordersCompleted,
+        itemCount: b.stats.itemCount,
+        itemsMadeCount: b.pushedItems.length,
       },
     };
   });

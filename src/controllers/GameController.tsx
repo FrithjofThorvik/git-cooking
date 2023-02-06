@@ -11,6 +11,7 @@ import WorkScreenController from "controllers/screens/WorkScreenController";
 import FetchScreenController from "./screens/FetchScreenController";
 import StoreScreenController from "controllers/screens/StoreScreenController";
 import SummaryScreenController from "controllers/screens/SummaryScreenController";
+import MergeScreenController from "./screens/MergeScreenController";
 
 const GameController: React.FC = (): JSX.Element => {
   const gameData = useGameData();
@@ -76,6 +77,8 @@ const GameController: React.FC = (): JSX.Element => {
             goBack={() => returnFromFetch()}
           />
         );
+      case GameState.MERGE:
+        return <MergeScreenController />;
       case GameState.SUMMARY:
         return (
           <SummaryScreenController
