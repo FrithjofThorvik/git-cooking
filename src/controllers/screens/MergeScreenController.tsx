@@ -14,7 +14,12 @@ const MergeScreenController: React.FC<
   const [summaryStats, setSummaryStats] = useState<ISummaryStats | null>(null);
 
   useEffect(() => {
-    const summaryStats = calculateRevenueAndCost(gameData);
+    const activeRemote = gameData.git.getActiveProject()?.remote;
+    if (!activeRemote) return;
+    const summaryStats = calculateRevenueAndCost(
+      gameData,
+      activeRemote.branches
+    );
     setSummaryStats(summaryStats);
   }, []);
 
