@@ -1,35 +1,115 @@
 import { ThemeProvider, Tooltip } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import CloudDownloadTwoToneIcon from "@mui/icons-material/CloudDownloadTwoTone";
 
 import { theme } from "styles/muiThemes";
-import { IRemote } from "types/gitInterfaces";
+import { IProject } from "types/gitInterfaces";
+import { useFirstRender } from "hooks/useFirstRender";
 import InfoText from "components/InfoText";
 import Background from "components/Background";
+import ProjectsNav from "components/fetch/ProjectsNav";
 import RemoteBranch from "components/fetch/RemoteBranch";
 
 import "./FetchScreen.scss";
+import { RotatingLines } from "react-loader-spinner";
+import HighlightText from "components/HighlightText";
 
 interface IFetchScreenProps {
-  remote: IRemote;
-  terminalController: JSX.Element;
+  project: IProject;
+  projects: IProject[];
   isFirstDay: boolean;
+  terminalController: JSX.Element;
   goBack: () => void;
+  activateProject: (project: IProject) => void;
 }
 
 const FetchScreen: React.FC<IFetchScreenProps> = ({
-  terminalController,
-  remote,
+  project,
+  projects,
   isFirstDay,
+  terminalController,
   goBack,
+  activateProject,
 }): JSX.Element => {
-  const fetchedBranches = remote.branches.filter((rb) => rb.isFetched);
+  const firstRender = useFirstRender();
+  const [isCloning, setIsCloning] = useState<boolean>(false);
+  const [cloningText, setCloningText] = useState<string>("");
+  const [textCopied, setTextCopied] = useState<boolean>(false);
+  const fetchedBranches = project
+    ? project.remote.branches.filter((rb) => rb.isFetched)
+    : [];
+
+  const copyProjectUrl = () => {
+    navigator.clipboard.writeText(project.url);
+    setTextCopied(true);
+    setTimeout(() => {
+      setTextCopied(false);
+    }, 1500);
+  };
+
+  useEffect(() => {
+    let timeId: NodeJS.Timeout | null = null;
+
+    if (project.cloned && !firstRender) {
+      setIsCloning(true);
+      timeId = setTimeout(() => {
+        setIsCloning(false);
+      }, 3000);
+    }
+
+    return () => {
+      if (timeId) clearTimeout(timeId);
+    };
+  }, [project.cloned]);
+
   return (
     <Background>
       <div className="fetch-screen">
+        <div className="fetch-screen-projects">
+          <ProjectsNav
+            project={project}
+            projects={projects}
+            activateProject={activateProject}
+          />
+        </div>
         <div className="fetch-screen-content">
-          {fetchedBranches.length > 0 ? (
+          {!project.cloned ? (
+            <div className="fetch-screen-content-info">
+              <div className="fetch-screen-content-info-content">
+                <CloudDownloadTwoToneIcon />
+                <div className="fetch-screen-content-info-content-url">
+                  <h1>Project URL</h1>
+                  <div className="fetch-screen-content-info-content-url-text">
+                    <p>{project.url}</p>
+                    <ContentCopyOutlinedIcon onClick={() => copyProjectUrl()} />
+                  </div>
+                  {textCopied && (
+                    <div className="fetch-screen-content-info-content-url-copied">
+                      Copied!
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="fetch-screen-content-info-text">
+                <InfoText text="You have not cloned this project yet. Use %git clone <PROJECT_URL>% to connect to this project" />
+              </div>
+            </div>
+          ) : isCloning ? (
+            <div className="fetch-screen-content-cloning">
+              <RotatingLines
+                strokeColor="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="96"
+                visible={true}
+              />
+              <HighlightText
+                text={`Cloning %${project.type}% project to your computer...`}
+              />
+            </div>
+          ) : !isCloning && fetchedBranches.length > 0 ? (
             <>
               <div className="fetch-screen-content-branches">
                 {fetchedBranches.map((rb, i) => (
@@ -42,9 +122,13 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
             </>
           ) : (
             <div className="fetch-screen-content-info">
-              <CloudDownloadTwoToneIcon />
-              <p>Waiting for fetch ...</p>
-              <InfoText text="A new day is about to start! Fetch today's orders with %git fetch% and get started " />
+              <div className="fetch-screen-content-info-content">
+                <CloudDownloadTwoToneIcon />
+                <p>Waiting for fetch ...</p>
+              </div>
+              <div className="fetch-screen-content-info-text">
+                <InfoText text="A new day is about to start! Fetch today's orders with %git fetch% and get started " />
+              </div>
             </div>
           )}
         </div>

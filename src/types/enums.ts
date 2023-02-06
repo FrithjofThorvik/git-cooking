@@ -44,6 +44,7 @@ export enum GitCommandType {
   ADD = "add",
   COMMIT = "commit",
   STATUS = "status",
+  CLONE = "clone",
 }
 
 export enum UpgradeType {
@@ -74,4 +75,10 @@ export enum Difficulty {
 export enum HelpScreenType {
   TUTORIALS = "tutorials",
   COMMANDS = "commands",
+}
+
+export enum RemoteType {
+  BEGINNER = "beginner",
+  INTERMEDIATE = "intermediate",
+  ADVANCED = "advanced",
 }

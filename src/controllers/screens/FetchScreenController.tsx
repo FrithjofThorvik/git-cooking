@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 
-import { setGameData, useGameData } from "hooks/useGameData";
+import { IProject } from "types/gitInterfaces";
+import { IGitCooking } from "types/gameDataInterfaces";
 import { TutorialType } from "types/enums";
+import { copyObjectWithoutRef } from "services/helpers";
+import { setGameData, useGameData } from "hooks/useGameData";
 import FetchScreen from "components/screens/FetchScreen";
 import TerminalController from "controllers/components/work/TerminalController";
-import { copyObjectWithoutRef } from "services/helpers";
-import { IGitCooking } from "types/gameDataInterfaces";
 
 interface IFetchScreenControllerProps {
   setActiveTutorialTypes: (tutorials: TutorialType[]) => void;
@@ -17,13 +18,27 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
   goBack,
 }): JSX.Element => {
   const gameData = useGameData();
+  const project = gameData.git.getActiveProject();
+
+  const activateProject = (project: IProject) => {
+    let updatedStats = gameData.stats;
+
+    const updatedGitTree = gameData.git.activateProject(project);
+    const activeProject = gameData.git.getActiveProject();
+    if (activeProject)
+      updatedStats = gameData.stats.switchProjectStats(activeProject, project);
+    console.log(updatedStats);
+    setGameData({ ...gameData, git: updatedGitTree, stats: updatedStats });
+  };
 
   useEffect(() => {
-    setActiveTutorialTypes([TutorialType.FETCH_INTRO]);
-    if (gameData.git.remote.branches.some((b) => b.isFetched)) {
-      setActiveTutorialTypes([TutorialType.FETCH_CONTENT]);
-    }
-  }, [gameData.git.remote.branches]);
+    // setActiveTutorialTypes([TutorialType.FETCH_INTRO]);
+    // if (
+    //   gameData.git.getActiveProject()?.remote.branches.some((b) => b.isFetched)
+    // ) {
+    //   setActiveTutorialTypes([TutorialType.FETCH_CONTENT]);
+    // }
+  }, [gameData.git.getActiveProject()?.remote.branches]);
 
   // Starts day when a remote branch has been checkout out
   useEffect(() => {
@@ -32,7 +47,9 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
       !updatedGameData.git.branches.some(
         (b) =>
           b.remoteTrackingBranch &&
-          updatedGameData.git.remote.getRemoteBranch(b.remoteTrackingBranch)
+          updatedGameData.git
+            .getActiveProject()
+            ?.remote.getRemoteBranch(b.remoteTrackingBranch)
       )
     )
       return;
@@ -40,12 +57,15 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
     setGameData({ ...updatedGameData });
   }, [gameData.git.branches]);
 
+  if (!project) return <></>;
   return (
     <FetchScreen
-      remote={gameData.git.remote}
+      projects={gameData.git.projects}
+      project={project}
       terminalController={<TerminalController />}
       isFirstDay={gameData.states.day === 0}
       goBack={goBack}
+      activateProject={activateProject}
     />
   );
 };

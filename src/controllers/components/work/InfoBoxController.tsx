@@ -22,11 +22,11 @@ const InfoBoxController: React.FC<
 
   useEffect(() => {
     if (!isPushed) {
-      gameData.git.remote.branches.forEach((b) => {
+      gameData.git.getActiveProject()?.remote.branches.forEach((b) => {
         if (b.pushedItems.length > 0) setIsPushed(true);
       });
     }
-  }, [gameData.git.remote.branches]);
+  }, [gameData.git.getActiveProject()?.remote.branches]);
 
   return (
     <InfoBox

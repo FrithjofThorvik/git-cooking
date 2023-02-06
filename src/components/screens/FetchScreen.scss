@@ -5,15 +5,24 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100vw;
   height: 100vh;
 
+  &-projects {
+    margin: 0 auto;
+    width: 100%;
+  }
+
   &-content {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-end;
     margin: 0 auto;
     width: 60%;
-    height: 70%;
-    margin: 15px 0;
+    height: 100%;
+    margin-bottom: 15px;
 
     &-branches {
       display: flex;
@@ -21,7 +30,7 @@
       justify-content: space-evenly;
       gap: 15px;
       width: 100%;
-      height: 90%;
+      margin-bottom: 25px;
     }
 
     &-text {
@@ -33,31 +42,109 @@
     &-info {
       display: flex;
       text-align: center;
-      flex-direction: column;
       align-items: center;
+      flex-direction: column;
       justify-content: flex-end;
       margin: 0 auto;
+      width: 100%;
       height: 100%;
+      margin-bottom: 15px;
 
-      svg {
-        color: rgba($white, 0.4);
-        font-size: 196px;
-      }
+      &-content {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
 
-      p {
-        color: rgba($white, 0.4);
-        font-weight: 300;
-        margin-bottom: 100px;
-        margin-top: -25px;
+        svg {
+          color: rgba($white, 0.4);
+          font-size: 150px;
+        }
+
+        p {
+          color: rgba($white, 0.4);
+          font-weight: 300;
+          margin-top: -15px;
+          margin-bottom: 50px;
+        }
+
+        &-url {
+          display: flex;
+          position: relative;
+          align-items: center;
+          flex-direction: column;
+          justify-content: center;
+          row-gap: 25px;
+          margin-bottom: 50px;
+
+          h1 {
+            font-size: 24px;
+          }
+
+          &-text {
+            @include toggleHighlight(text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid $gray;
+            background-color: $line-dark;
+            box-shadow: inset 0 0 5px 3px rgba(0, 0, 0, 0.8);
+            border-radius: 50px;
+
+            p {
+              color: $line-orange;
+              text-shadow: 0 0 7px $line-orange;
+              margin: 0;
+              font-weight: 400;
+              padding: 7px 10px 7px 20px;
+            }
+
+            svg {
+              margin-left: auto;
+              color: $white;
+              padding: 0 10px;
+              border-left: 1px solid $gray;
+              background-color: rgba($gray, 0.2);
+              height: 100%;
+              font-size: 20px;
+              border-top-right-radius: 50px;
+              border-bottom-right-radius: 50px;
+
+              &:hover {
+                cursor: pointer;
+                filter: drop-shadow(0 0 2px rgba($white, 0.5));
+              }
+            }
+          }
+
+          &-copied {
+            position: absolute;
+            bottom: -30px;
+            color: $gray;
+          }
+        }
       }
+    }
+
+    &-cloning {
+      display: flex;
+      text-align: center;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      width: 200px;
+      row-gap: 15px;
     }
   }
 
   &-terminal {
     margin: 0 auto;
     width: 60%;
-    height: 30%;
+    min-height: 20vh;
     margin-bottom: 25px;
+    margin-top: auto;
   }
 
   &-return {

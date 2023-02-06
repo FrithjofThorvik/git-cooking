@@ -28,16 +28,27 @@ export const defaultGameData: IGitCooking = {
     copy.states.endedDayTime =
       timeLapsed && !copy.states.isDayComplete ? timeLapsed : dayLength;
 
-    const { totalProfit } = calculateRevenueAndCost(copy);
     let updatedStore: IStore = copy.store.unlockStoreItemsByDay(
       copy.states.day
     );
-    updatedStore.cash += totalProfit;
 
+    const activeRemote = copy.git.getActiveProject()?.remote;
+    if (activeRemote) {
+      const { totalProfit } = calculateRevenueAndCost(
+        copy,
+        activeRemote.branches
+      );
+      updatedStore.cash += totalProfit;
+    }
+
+    copy.git.projects = copy.git.projects.map((p) => {
+      p.unlocked = p.unlockDay <= copy.states.day;
+      return p;
+    });
     copy.states.gameState = GameState.SUMMARY;
     copy.store = updatedStore;
     copy.states.isDayComplete = false;
-    copy.states.hasFetched = false;
+    copy.states.hasStartedFetch = false;
 
     return copy;
   },
@@ -50,7 +61,7 @@ export const defaultGameData: IGitCooking = {
   },
   startFetch: function () {
     let copy: IGitCooking = copyObjectWithoutRef(this);
-    if (this.states.hasFetched) {
+    if (this.states.hasStartedFetch) {
       copy.states.gameState = GameState.FETCH;
       return copy;
     }
@@ -60,6 +71,7 @@ export const defaultGameData: IGitCooking = {
       copyObjectWithoutRef(defaultItemData);
     const gitUpdated: IGitTree = {
       ...gitReset,
+      projects: copy.git.projects,
       workingDirectory: { ...gitReset.workingDirectory },
     };
 
@@ -67,17 +79,15 @@ export const defaultGameData: IGitCooking = {
     copy.git = gitUpdated;
     copy.itemInterface = itemInterfaceReset;
 
-    copy.git.remote.branches = [];
-
-    const nrOfBranches = 3;
-    const branches = orderGenerator.generateSetOfBranches(copy, nrOfBranches);
-
-    branches.forEach((b) => {
-      copy.git.remote.branches.push(b);
+    copy.git.projects = copy.git.projects.map((p) => {
+      const nrOfBranches = 3;
+      const branches = orderGenerator.generateSetOfBranches(copy, nrOfBranches);
+      p.remote.branches = branches;
+      p.remote = p.remote.updateBranchStats(copy);
+      return p;
     });
 
-    copy.git.remote = copy.git.remote.updateBranchStats(copy);
-    copy.states.hasFetched = true;
+    copy.states.hasStartedFetch = true;
     copy.states.gameState = GameState.FETCH;
 
     return copy;

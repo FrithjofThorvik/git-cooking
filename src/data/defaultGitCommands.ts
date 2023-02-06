@@ -9,6 +9,24 @@ export const defaultGitCommands: IGitCommand[] = [
     id: v4(),
     image: imgCommand,
     name: function () {
+      return "git clone";
+    },
+    description: function () {
+      return "Clones project to your computer";
+    },
+    cost: function (discountMultiplier: number) {
+      return Math.round(3250 * discountMultiplier);
+    },
+    useCase: "",
+    unlocked: true,
+    unlockDay: 0,
+    purchased: true,
+    gitCommandType: GitCommandType.CLONE,
+  },
+  {
+    id: v4(),
+    image: imgCommand,
+    name: function () {
       return "git fetch";
     },
     description: function () {

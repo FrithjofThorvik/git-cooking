@@ -1,5 +1,5 @@
 import { IFood } from "./foodInterfaces";
-import { IGitTree } from "./gitInterfaces";
+import { IGitTree, IProject } from "./gitInterfaces";
 import {
   GameState,
   GitCommandType,
@@ -114,6 +114,7 @@ export interface IStats {
   costReductionMultiplier: IStat;
   revenueMultiplier: IStat;
   spawnTime: IStat;
+  switchProjectStats: (prevProject: IProject, newProject: IProject) => IStats;
 }
 
 export interface ITutorialScreen {
@@ -152,7 +153,7 @@ export interface IStates {
   day: number;
   gameState: GameState;
   isDayComplete: boolean;
-  hasFetched: boolean;
+  hasStartedFetch: boolean;
   endedDayTime: number;
   setGameState: (state: GameState) => IStates;
 }
