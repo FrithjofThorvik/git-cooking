@@ -38,6 +38,7 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
   const firstRender = useFirstRender();
   const [isCloning, setIsCloning] = useState<boolean>(false);
   const [textCopied, setTextCopied] = useState<boolean>(false);
+  const [prevProject, setPrevProject] = useState<string>(project.type);
 
   const copyProjectUrl = () => {
     navigator.clipboard.writeText(project.url);
@@ -48,9 +49,13 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
   };
 
   useEffect(() => {
+    if (project.type !== prevProject) setPrevProject(project.type);
+  }, [project.type]);
+
+  useEffect(() => {
     let timeId: NodeJS.Timeout | null = null;
 
-    if (project.cloned && !firstRender) {
+    if (project.cloned && !firstRender && project.type === prevProject) {
       setIsCloning(true);
       timeId = setTimeout(() => {
         setIsCloning(false);
