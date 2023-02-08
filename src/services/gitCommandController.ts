@@ -133,8 +133,7 @@ export const gitCommands: ICommandArg[] = [
                 .getActiveProject()
                 ?.remote.getCommitHistory(remoteBranch.targetCommitId)
                 .forEach((c) => {
-                  if (copyGit.commits.filter((c1) => c1.id === c.id).length > 0)
-                    return;
+                  if (copyGit.commits.some((c1) => c1.id === c.id)) return;
                   copyGit.commits.push(c);
                 });
 

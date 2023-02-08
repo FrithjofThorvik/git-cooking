@@ -411,7 +411,7 @@ export const defaultGitTree: IGitTree = {
     project.remote
       .getCommitHistory(remoteMainBranch.targetCommitId)
       .forEach((c) => {
-        if (copy.commits.includes(c)) return;
+        if (copy.commits.some((c1) => c1.id === c.id)) return;
         copy.commits.push(c);
       });
     return copy;
