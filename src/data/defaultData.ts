@@ -21,12 +21,9 @@ export const defaultGameData: IGitCooking = {
   help: copyObjectWithoutRef(defaultHelp),
   orderService: copyObjectWithoutRef(defaultOrderService),
   commandHistory: [],
-  endDay: function (timeLapsed) {
+  completeDay: function () {
     let copy: IGitCooking = copyObjectWithoutRef(this);
-
-    const dayLength = copy.stats.dayLength.value;
-    copy.states.endedDayTime =
-      timeLapsed && !copy.states.isDayComplete ? timeLapsed : dayLength;
+    if (copy.states.isDayComplete) return copy;
 
     let updatedStore: IStore = copy.store.unlockStoreItemsByDay(
       copy.states.day
@@ -45,10 +42,20 @@ export const defaultGameData: IGitCooking = {
       p.unlocked = p.unlockDay <= copy.states.day;
       return p;
     });
-    copy.states.gameState = GameState.MERGE;
-    copy.store = updatedStore;
+    copy.states.gameState = GameState.SUMMARY;
     copy.states.isDayComplete = false;
+    copy.states.doneMerging = false;
     copy.states.hasStartedFetch = false;
+    copy.store = updatedStore;
+    return copy;
+  },
+  endDay: function (timeLapsed) {
+    let copy: IGitCooking = copyObjectWithoutRef(this);
+
+    const dayLength = copy.stats.dayLength.value;
+    copy.states.endedDayTime =
+      timeLapsed && !copy.states.isDayComplete ? timeLapsed : dayLength;
+    copy.states.gameState = GameState.MERGE;
 
     return copy;
   },
@@ -61,7 +68,7 @@ export const defaultGameData: IGitCooking = {
   },
   startFetch: function () {
     let copy: IGitCooking = copyObjectWithoutRef(this);
-    if (this.states.hasStartedFetch) {
+    if (copy.states.hasStartedFetch) {
       copy.states.gameState = GameState.FETCH;
       return copy;
     }

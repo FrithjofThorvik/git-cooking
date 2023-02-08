@@ -20,9 +20,215 @@ import { IngredientType, RemoteType } from "types/enums";
 import { calculateRevenueAndCost } from "services/gameDataHelper";
 import { copyObjectWithoutRef, objectsEqual } from "services/helpers";
 
+const createCommitHistory = (startCommit: ICommit, commits: ICommit[]) => {
+  // Implements Breadth First Search
+  let queue = [];
+  let visited: ICommit[] = [];
+
+  queue.push(startCommit);
+  visited.push(startCommit);
+
+  while (queue.length > 0) {
+    let visit = queue.shift();
+    visit?.parents.forEach((parent) => {
+      const currentCommit = commits.find((c) => c.id === parent);
+      if (currentCommit != undefined && !visited.includes(currentCommit)) {
+        queue.push(currentCommit);
+        visited.push(currentCommit);
+      }
+    });
+  }
+
+  return visited.reverse();
+};
+
+export const defaultDirectory: IDirectory = {
+  createdItems: [],
+  addOrderItem: function (orderItem: IOrderItem) {
+    let copy = this;
+    copy.createdItems.push(orderItem);
+    return copy;
+  },
+  deleteOrderItem: function (orderItem: IOrderItem) {
+    let copy: IDirectory = copyObjectWithoutRef(this);
+    copy.createdItems = copy.createdItems.filter(
+      (i) => i.path !== orderItem.path
+    );
+    return copy;
+  },
+  modifyOrderItem: function (
+    orderItem: IOrderItem,
+    data: {
+      type?: IngredientType;
+      addIngredient?: IIngredient;
+      removeIngredientAtIndex?: number;
+    },
+    modify: (orderItem: IOrderItem) => void
+  ) {
+    let copy: IDirectory = copyObjectWithoutRef(this);
+    copy.createdItems.forEach((i) => {
+      if (orderItem.path === i.path) {
+        if (data.type) {
+          i.type = data.type;
+          i.ingredients = [];
+        } else if (data.addIngredient) {
+          if (
+            (data.addIngredient.isSingle &&
+              orderItem.ingredients.length === 0) ||
+            !data.addIngredient.isSingle
+          )
+            i.ingredients.push(data.addIngredient);
+        } else if (data.removeIngredientAtIndex !== undefined) {
+          i.ingredients.splice(data.removeIngredientAtIndex, 1);
+        }
+        modify(i);
+      }
+    });
+    return copy;
+  },
+};
+
+export const defaultCommit: ICommit = {
+  id: v4(),
+  root: true,
+  parents: [],
+  message: "root commit",
+  directory: copyObjectWithoutRef(defaultDirectory),
+};
+
 const defaultRemote: IRemote = {
   branches: [],
+  commits: [defaultCommit],
   isFetched: false,
+  mergeBranches: function (
+    currentBranch: IRemoteBranch,
+    targetBranch: IRemoteBranch,
+    gameData: IGitCooking
+  ) {
+    let updatedRemote: IRemote = copyObjectWithoutRef(this);
+    let updatedCurrentBranch: IRemoteBranch =
+      copyObjectWithoutRef(currentBranch);
+    let updatedTargetBranch: IRemoteBranch = copyObjectWithoutRef(targetBranch);
+
+    const currentCommits = updatedRemote.getCommitHistory(
+      updatedCurrentBranch.targetCommitId
+    );
+    const targetCommits = updatedRemote.getCommitHistory(
+      updatedTargetBranch.targetCommitId
+    );
+
+    const noChanges = targetCommits.every(
+      (val) => currentCommits.indexOf(val) >= 0
+    );
+    const canFastForward = currentCommits.every(
+      (val) => targetCommits.indexOf(val) >= 0
+    );
+
+    if (noChanges) {
+      //do nothing
+    } else if (canFastForward) {
+      updatedCurrentBranch.targetCommitId = updatedTargetBranch.targetCommitId;
+    } else {
+      const currentCommit = updatedRemote.getBranchCommit(
+        updatedCurrentBranch.name
+      );
+      const targetCommit = updatedRemote.getBranchCommit(
+        updatedTargetBranch.name
+      );
+      let baseCommit = currentCommits.find((c, index) => {
+        const nextCommit = currentCommits.at(index + 1);
+        return nextCommit && !targetCommits.includes(nextCommit);
+      });
+      if (currentCommit && targetCommit && baseCommit !== undefined) {
+        let newDirectory: IDirectory = copyObjectWithoutRef(
+          baseCommit.directory
+        );
+        interface IDiff {
+          itemsToAdd: IOrderItem[];
+          itemsToModify: IOrderItem[];
+        }
+        let currentDiff: IDiff = { itemsToAdd: [], itemsToModify: [] };
+        let targetDiff: IDiff = { itemsToAdd: [], itemsToModify: [] };
+        const addTodiff = (orderItem: IOrderItem, diff: IDiff) => {
+          const itemInBaseIndex = baseCommit?.directory.createdItems.findIndex(
+            (c) => c.path === orderItem.path
+          );
+          if (itemInBaseIndex === -1 || itemInBaseIndex === undefined) {
+            // add item
+            diff.itemsToAdd.push(orderItem);
+          } else {
+            // modify item
+            diff.itemsToModify.push(orderItem);
+          }
+        };
+        currentCommit.directory.createdItems.forEach((orderItem) =>
+          addTodiff(orderItem, currentDiff)
+        );
+        targetCommit.directory.createdItems.forEach((orderItem) =>
+          addTodiff(orderItem, targetDiff)
+        );
+
+        const addItem = (i: IOrderItem) => {
+          newDirectory.createdItems.push(i);
+        };
+        currentDiff.itemsToAdd.forEach(addItem);
+        targetDiff.itemsToAdd.forEach(addItem);
+
+        const modifyItem = (i: IOrderItem) => {
+          const itemInBaseIndex = newDirectory.createdItems.findIndex(
+            (c) => c.path === i.path
+          );
+          if (itemInBaseIndex !== -1) {
+            // modify item
+            newDirectory.createdItems[itemInBaseIndex] = i;
+          }
+        };
+        currentDiff.itemsToModify.forEach(modifyItem);
+        targetDiff.itemsToModify.forEach(modifyItem);
+
+        let newCommit: ICommit = {
+          id: v4(),
+          message: `Merge branch ${updatedTargetBranch.name} into ${updatedCurrentBranch.name} `,
+          parents: [currentCommit.id, targetCommit.id],
+          directory: newDirectory,
+        };
+        updatedRemote.commits.push(newCommit);
+
+        updatedCurrentBranch.targetCommitId = newCommit.id;
+      }
+    }
+    const currentBranchIndex = updatedRemote.branches.findIndex(
+      (b) => b.name === currentBranch.name
+    );
+    const targetBranchIndex = updatedRemote.branches.findIndex(
+      (b) => b.name === targetBranch.name
+    );
+
+    updatedTargetBranch.orders.forEach((tO) => {
+      if (updatedCurrentBranch.orders.some((cO) => cO.id === tO.id)) return;
+      updatedCurrentBranch.orders.push(tO);
+    });
+    updatedRemote.branches[currentBranchIndex] = updatedCurrentBranch;
+    updatedRemote.branches[targetBranchIndex] = updatedTargetBranch;
+    updatedRemote = updatedRemote.updateBranchStats(gameData);
+
+    return updatedRemote;
+  },
+  getBranchCommit: function (branchName: string) {
+    let copy: IRemote = copyObjectWithoutRef(this);
+    const branchTargetCommitId = copy.branches.find(
+      (b) => b.name === branchName
+    )?.targetCommitId;
+    const commit = copy.commits.find((c) => c.id === branchTargetCommitId);
+    if (!commit) return null;
+    return commit;
+  },
+  getPushedItems: function (branchName: string) {
+    const commit = this.getBranchCommit(branchName);
+    if (!commit) return [];
+
+    return commit.directory.createdItems;
+  },
   updateBranchStats: function (gameData: IGitCooking) {
     const copyRemote: IRemote = copyObjectWithoutRef(this);
     const copyGameData: IGitCooking = copyObjectWithoutRef(gameData);
@@ -72,21 +278,32 @@ const defaultRemote: IRemote = {
     });
     return copyRemote;
   },
-  pushItems: function (branchName, items, orders) {
+  pushItems: function (branchName, commitHistory, orders) {
     let copy: IRemote = copyObjectWithoutRef(this);
-
+    const latestCommit = commitHistory.at(-1);
     const branchIndex = this.branches.findIndex((b) => b.name === branchName);
-    if (objectsEqual(items, copy.branches[branchIndex].pushedItems))
-      return null;
 
-    if (branchIndex !== -1) {
-      copy.branches[branchIndex].pushedItems = items;
-      copy.branches[branchIndex].orders = orders;
-    }
+    if (!latestCommit) return null;
+    if (branchIndex === -1) return null;
+
+    const isNewChanges = !objectsEqual(
+      latestCommit.directory.createdItems,
+      copy.getPushedItems(branchName)
+    );
+    if (!isNewChanges) return null;
+
+    copy.branches[branchIndex].targetCommitId = latestCommit.id;
+    copy.branches[branchIndex].orders = orders;
+
+    // add commits to remote if not already in remote
+    commitHistory.forEach((c) => {
+      if (copy.commits.map((c) => c.id).includes(c.id)) return;
+      copy.commits.push(c);
+    });
 
     return copy;
   },
-  getRemoteBranch: function (branchName) {
+  getBranch: function (branchName) {
     let copy: IRemote = copyObjectWithoutRef(this);
 
     for (let i = 0; i < copy.branches.length; i++) {
@@ -94,60 +311,12 @@ const defaultRemote: IRemote = {
     }
     return null;
   },
-};
+  getCommitHistory(startCommitId) {
+    const startCommit = this.commits.find((c) => c.id === startCommitId);
 
-export const defaultDirectory: IDirectory = {
-  createdItems: [],
-  addOrderItem: function (orderItem: IOrderItem) {
-    let copy = this;
-    copy.createdItems.push(orderItem);
-    return copy;
+    if (startCommit === undefined) return [];
+    return createCommitHistory(startCommit, this.commits);
   },
-  deleteOrderItem: function (orderItem: IOrderItem) {
-    let copy: IDirectory = copyObjectWithoutRef(this);
-    copy.createdItems = copy.createdItems.filter(
-      (i) => i.path !== orderItem.path
-    );
-    return copy;
-  },
-  modifyOrderItem: function (
-    orderItem: IOrderItem,
-    data: {
-      type?: IngredientType;
-      addIngredient?: IIngredient;
-      removeIngredientAtIndex?: number;
-    },
-    modify: (orderItem: IOrderItem) => void
-  ) {
-    let copy: IDirectory = copyObjectWithoutRef(this);
-    copy.createdItems.forEach((i) => {
-      if (orderItem.path === i.path) {
-        if (data.type) {
-          i.type = data.type;
-          i.ingredients = [];
-        } else if (data.addIngredient) {
-          if (
-            (data.addIngredient.isSingle &&
-              orderItem.ingredients.length === 0) ||
-            !data.addIngredient.isSingle
-          )
-            i.ingredients.push(data.addIngredient);
-        } else if (data.removeIngredientAtIndex !== undefined) {
-          i.ingredients.splice(data.removeIngredientAtIndex, 1);
-        }
-        modify(i);
-      }
-    });
-    return copy;
-  },
-};
-
-const defaultCommit: ICommit = {
-  id: v4(),
-  root: true,
-  parents: [],
-  message: "root commit",
-  directory: copyObjectWithoutRef(defaultDirectory),
 };
 
 const defaultProjects: IProject[] = [
@@ -194,9 +363,9 @@ const defaultProjects: IProject[] = [
 
 export const defaultGitTree: IGitTree = {
   branches: [],
-  commits: [copyObjectWithoutRef(defaultCommit)],
+  commits: [],
   HEAD: {
-    targetId: defaultCommit.id,
+    targetId: "",
   },
   workingDirectory: copyObjectWithoutRef(defaultDirectory),
   stagedItems: [],
@@ -230,6 +399,21 @@ export const defaultGitTree: IGitTree = {
 
     copy = copy.fetch().updatedGit;
 
+    // checkout main branch
+    const mainBranchName = "main";
+    const remoteMainBranch = project.remote.branches.find((b) => b.isMain);
+    if (!remoteMainBranch) return copy;
+
+    // create new branch that tracks remote
+    copy = copy.addNewBranch(mainBranchName, remoteMainBranch.name);
+    copy = copy.switchBranch(mainBranchName);
+    // update commits
+    project.remote
+      .getCommitHistory(remoteMainBranch.targetCommitId)
+      .forEach((c) => {
+        if (copy.commits.includes(c)) return;
+        copy.commits.push(c);
+      });
     return copy;
   },
   activateProject: function (project: IProject) {
@@ -253,28 +437,10 @@ export const defaultGitTree: IGitTree = {
     return this.commits.find((c) => c.id === commitId);
   },
   getCommitHistory: function () {
-    // Implements Breadth First Search
-    let queue = [];
-    let visited: ICommit[] = [];
-
     const startCommit = this.getHeadCommit();
 
     if (startCommit === undefined) return [];
-    queue.push(startCommit);
-    visited.push(startCommit);
-
-    while (queue.length > 0) {
-      let visit = queue.shift();
-      visit?.parents.forEach((parent) => {
-        const currentCommit = this.getCommitFromId(parent);
-        if (currentCommit != undefined && !visited.includes(currentCommit)) {
-          queue.push(currentCommit);
-          visited.push(currentCommit);
-        }
-      });
-    }
-
-    return visited.reverse();
+    return createCommitHistory(startCommit, this.commits);
   },
   getHeadCommit: function () {
     const activeBranch = this.getBranch(this.HEAD.targetId);
@@ -495,20 +661,22 @@ export const defaultGitTree: IGitTree = {
   addNewBranch: function (branchName: string, remoteBranchName?: string) {
     let copyGit: IGitTree = copyObjectWithoutRef(this);
     const activeCommit = this.getHeadCommit();
-    if (activeCommit) {
-      const rootCommit = this.getRootCommit();
-      let newBranch: IBranch = {
-        name: branchName,
-        targetCommitId: remoteBranchName
-          ? rootCommit?.id || defaultCommit.id
-          : activeCommit.id,
-      };
+    let newBranch: IBranch = {
+      name: branchName,
+      targetCommitId: "",
+    };
 
-      if (remoteBranchName) newBranch.remoteTrackingBranch = remoteBranchName;
+    if (activeCommit) newBranch.targetCommitId = activeCommit.id;
 
-      // add new branch to gitTree
-      copyGit.branches.push(newBranch);
+    const remoteCommit =
+      remoteBranchName &&
+      copyGit.getActiveProject()?.remote.getBranchCommit(remoteBranchName);
+    if (remoteCommit) {
+      newBranch.targetCommitId = remoteCommit.id;
+      newBranch.remoteTrackingBranch = remoteBranchName;
     }
+    // add new branch to gitTree
+    copyGit.branches.push(newBranch);
     return copyGit;
   },
   stageItem: function (itemToStage: IModifiedItem) {
@@ -649,7 +817,7 @@ export const defaultGitTree: IGitTree = {
     let newBranches: string[] = [];
 
     const updatedBranches = updatedRemote.branches.map((b) => {
-      if (!b.isFetched) {
+      if (!b.isFetched && copyGit.getActiveProject()?.cloned) {
         b.isFetched = true;
         newBranches.push(b.name);
       }

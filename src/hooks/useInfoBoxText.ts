@@ -7,8 +7,14 @@ export const useInfoBoxText = (gameData: IGitCooking, isPushed: boolean) => {
 
   useEffect(() => {
     const git = gameData.git;
-    // State 1: No commits have been made
-    if (git.commits.length === 1) {
+    // State 1: No orders available
+    if (gameData.orderService.getAllOrders().length === 0) {
+      setInfoText(
+        `There are %no orders% to be fullfilled in this branch. Please use %git checkout <branch_name>% to access another branch.`
+      );
+    }
+    // State 2: No commits have been made
+    else if (git.commits.length === 1) {
       // No actions have been made
       if (git.modifiedItems.length === 0 && git.stagedItems.length === 0)
         setInfoText(
@@ -28,7 +34,7 @@ export const useInfoBoxText = (gameData: IGitCooking, isPushed: boolean) => {
         );
       else setInfoText("...");
     }
-    // State 2: Committed for the first time
+    // State 3: Committed for the first time
     else if (
       git.commits.length > 1 &&
       !gameData.states.isDayComplete &&
@@ -46,11 +52,11 @@ export const useInfoBoxText = (gameData: IGitCooking, isPushed: boolean) => {
         );
       } else setInfoText("...");
     }
-    // State 3: Day is completed
+    // State 4: Day is completed
     else if (gameData.states.isDayComplete && !isPushed) {
       setInfoText(`Finish up, and %git push% to the branch you pulled from`);
     }
-    // State 4: Pushed items for the first time
+    // State 5: Pushed items for the first time
     else if (isPushed) {
       setInfoText(
         `You can %git checkout% other branches to make more progress, or %end the day% right away`

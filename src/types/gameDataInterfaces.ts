@@ -154,6 +154,7 @@ export interface IStates {
   gameState: GameState;
   isDayComplete: boolean;
   hasStartedFetch: boolean;
+  doneMerging: boolean;
   endedDayTime: number;
   setGameState: (state: GameState) => IStates;
 }
@@ -167,6 +168,7 @@ export interface IGitCooking {
   orderService: IOrderService;
   commandHistory: string[];
   itemInterface: IItemInterface;
+  completeDay: () => IGitCooking;
   endDay: (timeLapsed: number) => IGitCooking;
   startDay: () => IGitCooking;
   startFetch: () => IGitCooking;

@@ -5,6 +5,7 @@ export const defaultStates: IStates = {
   day: 0,
   isDayComplete: false,
   hasStartedFetch: false,
+  doneMerging: false,
   endedDayTime: 0,
   gameState: GameState.LOADING,
   setGameState: function (state) {

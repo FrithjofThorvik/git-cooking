@@ -1,23 +1,24 @@
 import React from "react";
 
-import { IMasterBranch } from "components/screens/MergeScreen";
 import { ISummaryBranch, ISummaryStats } from "types/interfaces";
 import MergeStat from "./MergeStat";
 
 import "./MergeBranch.scss";
 
 interface IMergeBranchProps {
-  branch: IMasterBranch | ISummaryBranch | null;
+  branch: ISummaryBranch | null;
   summaryStats: ISummaryStats;
+  isMerging?: boolean;
 }
 
 const MergeBranch: React.FC<IMergeBranchProps> = ({
   branch,
   summaryStats,
+  isMerging = false,
 }): JSX.Element => {
   return (
     <div className="merge-branch">
-      {branch ? (
+      {branch && isMerging ? (
         <>
           <div className="merge-branch-name">{branch.name}</div>
           <MergeStat
@@ -38,12 +39,19 @@ const MergeBranch: React.FC<IMergeBranchProps> = ({
         </>
       ) : (
         <div className="merge-branch-pending">
-          <div className="merge-branch-pending-title">Awaiting merge...</div>
-          {summaryStats.branches.map((b, i) => (
-            <div className="merge-branch-pending-branch" key={i}>
-              {b.name}
-            </div>
-          ))}
+          <div className="merge-branch-pending-title">
+            {branch?.isMain ? "Receving Branch" : "Target Branches"}
+          </div>
+          {summaryStats.branches
+            .filter((b) => {
+              if (branch?.isMain) return b.isMain;
+              return !b.isMain;
+            })
+            .map((b, i) => (
+              <div className="merge-branch-pending-branch" key={i}>
+                {b.name}
+              </div>
+            ))}
         </div>
       )}
     </div>

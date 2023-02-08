@@ -31,6 +31,7 @@ const StoreScreenController: React.FC<IStoreScreenControllerProps> = ({
   return (
     <StoreScreen
       day={gameData.states.day}
+      hasStartedFetch={gameData.states.hasStartedFetch}
       store={copyObjectWithoutRef(gameData.store)}
       stats={gameData.stats}
       help={gameData.help}

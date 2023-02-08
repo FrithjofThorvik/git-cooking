@@ -21,6 +21,7 @@ export interface IStoreScreenProps {
   help: IHelp;
   store: IStore;
   stats: IStats;
+  hasStartedFetch: boolean;
   goNext: () => void;
   goBack: () => void;
   purchase: (purchasable: StoreItem) => void;
@@ -32,6 +33,7 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
   help,
   store,
   stats,
+  hasStartedFetch,
   goNext,
   goBack,
   purchase,
@@ -108,14 +110,20 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
           />
         </div>
         <div className="store-screen-bottom">
-          <MenuButton onClick={goBack} text="Results" type="left" />
+          {!hasStartedFetch && (
+            <MenuButton onClick={goBack} text="Results" type="left" />
+          )}
           <StoreNav
             cash={store.cash}
             newUnlockedItems={newUnlockedItems}
             activePurchaseType={activePurchaseType}
             setActivePurchaseType={setActivePurchaseType}
           />
-          <MenuButton onClick={goNext} text="New day" type="right" />
+          <MenuButton
+            onClick={goNext}
+            text={`${hasStartedFetch ? "Continue" : "New day"}`}
+            type="right"
+          />
         </div>
       </div>
     </Background>
