@@ -150,12 +150,15 @@ export const calculateRevenueAndCost = (
 
       // Calculate order cost from ingredients used to make order
       let cost = 0;
-      b.pushedItems.forEach((item) => {
-        if (item.orderId === order.id)
-          item.ingredients.forEach(
-            (ingredient) => (cost += ingredient.useCost)
-          );
-      });
+      gameData.git
+        .getActiveProject()
+        ?.remote.getPushedItems(b.name)
+        .forEach((item) => {
+          if (item.orderId === order.id)
+            item.ingredients.forEach(
+              (ingredient) => (cost += ingredient.useCost)
+            );
+        });
 
       // Calculate order price from ingredients in order
       let price = 0;
@@ -201,17 +204,21 @@ export const calculateRevenueAndCost = (
         revenue: number,
         cost: number,
         percentage: number,
-        max?: boolean
+        max: boolean,
+        isMain: boolean
       ) => {
         const calculateBonuses = (
           revenue: number,
           percentage: number,
-          max?: boolean
+          max: boolean,
+          isMain: boolean
         ) => {
-          let bonusFromEndedDayTime = max
-            ? maxBonusFromEndedDayTime
-            : avgPercentage > 0
-            ? (1 - endedDayTime / dayLength) * baseEarlyFinishEarning
+          let bonusFromEndedDayTime = isMain
+            ? max
+              ? maxBonusFromEndedDayTime
+              : avgPercentage > 0
+              ? (1 - endedDayTime / dayLength) * baseEarlyFinishEarning
+              : 0
             : 0;
 
           const percentageBonus =
@@ -231,7 +238,7 @@ export const calculateRevenueAndCost = (
           };
         };
 
-        const bonuses = calculateBonuses(revenue, percentage, max);
+        const bonuses = calculateBonuses(revenue, percentage, max, isMain);
         const reductions = calculateReductions(cost);
 
         const totalRevenue = revenue + sumObjectValues(bonuses);
@@ -254,8 +261,20 @@ export const calculateRevenueAndCost = (
       };
 
       return {
-        totalSum: partSum(baseRevenue, baseCost, avgPercentage),
-        maxSum: partSum(expectedRevenue, expectedCost, 100, true),
+        totalSum: partSum(
+          baseRevenue,
+          baseCost,
+          avgPercentage,
+          false,
+          b.isMain || false
+        ),
+        maxSum: partSum(
+          expectedRevenue,
+          expectedCost,
+          100,
+          true,
+          b.isMain || false
+        ),
         ordersCompleted,
       };
     };
@@ -264,6 +283,7 @@ export const calculateRevenueAndCost = (
 
     return {
       name: b.name,
+      isMain: b.isMain,
       stats: {
         maxProfit: maxSum.profit,
         profit: totalSum.profit,
@@ -283,17 +303,18 @@ export const calculateRevenueAndCost = (
         orderCount: b.orders.length,
         ordersCompleted,
         itemCount: b.stats.itemCount,
-        itemsMadeCount: b.pushedItems.length,
+        itemsMadeCount:
+          gameData.git.getActiveProject()?.remote.getPushedItems(b.name)
+            .length || 0,
       },
     };
   });
 
   return {
     branches: summaryBranches,
-    totalProfit: summaryBranches.reduce(
-      (totalProfit, b) => totalProfit + b.stats.profit,
-      0
-    ),
+    totalProfit: summaryBranches
+      .filter((b) => b.isMain)
+      .reduce((totalProfit, b) => totalProfit + b.stats.profit, 0),
   };
 };
 

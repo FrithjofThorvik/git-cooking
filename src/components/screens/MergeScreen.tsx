@@ -1,5 +1,8 @@
-import { Dna } from "react-loader-spinner";
-import React, { useState } from "react";
+import {
+  Dna,
+  TailSpin,
+} from "react-loader-spinner";
+import React, { useEffect, useState } from "react";
 
 import { imgChef } from "assets";
 import { ISummaryBranch, ISummaryStats } from "types/interfaces";
@@ -9,83 +12,102 @@ import MergeBranch from "components/merge/MergeBranch";
 import HighlightText from "components/HighlightText";
 
 import "./MergeScreen.scss";
-
-export interface IMasterBranch {
-  name: string;
-  stats: {
-    profit: number;
-    maxProfit: number;
-    itemsMadeCount: number;
-    itemCount: number;
-    ordersCompleted: number;
-    orderCount: number;
-  };
-}
-
-const defaultMasterBranch: IMasterBranch = {
-  name: "master",
-  stats: {
-    profit: 0,
-    maxProfit: 0,
-    itemsMadeCount: 0,
-    itemCount: 0,
-    ordersCompleted: 0,
-    orderCount: 0,
-  },
-};
+import { useInterval } from "hooks/useInterval";
 
 interface IMergeScreenProps {
   summaryStats: ISummaryStats;
+  doneMerging: boolean;
+  merge: (mainBranch: string, branch: string) => void;
+  goNext: () => void;
+  completeMerge: () => void;
 }
 
 const MergeScreen: React.FC<IMergeScreenProps> = ({
   summaryStats,
+  doneMerging,
+  merge,
+  goNext,
+  completeMerge,
 }): JSX.Element => {
   const [isMerging, setIsMerging] = useState<boolean>(false);
+  const [branchIdx, setBranchIdx] = useState<number>(0);
+  const [isComplete, setIsComplete] = useState<boolean>(false);
   const [activeBranch, setActiveBranch] = useState<ISummaryBranch | null>(null);
-  const [masterBranch, setMasterBranch] =
-    useState<IMasterBranch>(defaultMasterBranch);
+  const [mainBranch, setMainBranch] = useState<ISummaryBranch | null>(
+    summaryStats.branches.find((b) => b.isMain) || null
+  );
   const [text, setText] = useState<string>("Awaiting merge...");
-
-  const updateMasterBranch = (
-    masterBranch: IMasterBranch,
-    branch: ISummaryBranch
-  ) => {
-    let mBranch = masterBranch;
-    mBranch.stats.profit += branch.stats.profit;
-    mBranch.stats.maxProfit += branch.stats.maxProfit;
-    mBranch.stats.itemsMadeCount += branch.stats.itemsMadeCount;
-    mBranch.stats.itemCount += branch.stats.itemCount;
-    mBranch.stats.ordersCompleted += branch.stats.ordersCompleted;
-    mBranch.stats.orderCount += branch.stats.orderCount;
-    return mBranch;
-  };
-
-  const startMerge = () => {
-    let branchIdx = 0;
-    let mBranch = defaultMasterBranch;
-    setMasterBranch(mBranch);
-    setIsMerging(true);
-    setText("Preparing to merge...");
-
-    const interval = setInterval(() => {
-      if (branchIdx === summaryStats.branches.length) {
-        setActiveBranch(null);
+  useInterval(() => {
+    if (isMerging) {
+      let mBranch = summaryStats.branches.find((b) => b.isMain) || null;
+      setMainBranch(mBranch);
+      setText("Preparing to merge...");
+      const branchesToMerge = summaryStats.branches.filter((b) => !b.isMain);
+      if (branchIdx === branchesToMerge.length) {
+        setIsComplete(true);
         setIsMerging(false);
-        setText("");
-        clearInterval(interval);
+        setText("%DONE!%");
       } else {
-        const branch = summaryStats.branches[branchIdx];
+        const branch = branchesToMerge[branchIdx];
         setActiveBranch(branch);
-        mBranch = updateMasterBranch(mBranch, branch);
-        setMasterBranch(mBranch);
-        setText(
-          `Merging %${branch?.name}% branch into %${mBranch.name}% branch`
-        );
-        branchIdx += 1;
+        mBranch && merge(mBranch.name, branch.name);
+        mBranch &&
+          setText(
+            `Merging %${branch?.name}% branch into %${mBranch.name}% branch`
+          );
+        setBranchIdx((prev) => prev + 1);
       }
-    }, 3000);
-  };
+    }
+  }, 2000);
+
+  useEffect(() => {
+    let timeId: NodeJS.Timeout | null = null;
+
+    if (isComplete) {
+      timeId = setTimeout(() => {
+        completeMerge();
+      }, 3000);
+    }
+
+    return () => {
+      if (timeId) clearTimeout(timeId);
+    };
+  }, [isComplete]);
+
+  useEffect(() => {
+    let timeId: NodeJS.Timeout | null = null;
+
+    if (doneMerging) {
+      timeId = setTimeout(() => {
+        goNext();
+      }, 3000);
+    }
+
+    return () => {
+      if (timeId) clearTimeout(timeId);
+    };
+  }, [doneMerging]);
+
+  if (doneMerging)
+    return (
+      <Background>
+        <div className="merge-screen">
+          <div className="merge-screen-to-summary">
+            <TailSpin
+              height="80"
+              width="80"
+              color="#4fa94d"
+              ariaLabel="tail-spin-loading"
+              radius="1"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+            <HighlightText text={`Creating %summary%, please wait...`} />
+          </div>
+        </div>
+      </Background>
+    );
 
   return (
     <Background>
@@ -95,7 +117,11 @@ const MergeScreen: React.FC<IMergeScreenProps> = ({
         </div>
         <div className="merge-screen-modal">
           <div className="merge-screen-modal-left">
-            <MergeBranch branch={activeBranch} summaryStats={summaryStats} />
+            <MergeBranch
+              branch={activeBranch}
+              summaryStats={summaryStats}
+              isMerging={isMerging || isComplete}
+            />
           </div>
           <div className="merge-screen-modal-middle">
             <div className="merge-screen-modal-middle-loading">
@@ -116,14 +142,17 @@ const MergeScreen: React.FC<IMergeScreenProps> = ({
             </div>
           </div>
           <div className="merge-screen-modal-right">
-            <MergeBranch branch={masterBranch} summaryStats={summaryStats} />
+            <MergeBranch
+              branch={mainBranch}
+              summaryStats={summaryStats}
+              isMerging={isMerging || isComplete}
+            />
           </div>
         </div>
-
         <div className="merge-screen-buttons">
-          {!isMerging && (
+          {!isMerging && !isComplete && (
             <div className="merge-screen-buttons-next-button">
-              <MenuButton onClick={() => startMerge()} text="Merge" />
+              <MenuButton onClick={() => setIsMerging(true)} text="Merge" />
             </div>
           )}
         </div>

@@ -5,7 +5,7 @@ import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import CloudDownloadTwoToneIcon from "@mui/icons-material/CloudDownloadTwoTone";
 
 import { theme } from "styles/muiThemes";
-import { IProject } from "types/gitInterfaces";
+import { IProject, IRemoteBranch } from "types/gitInterfaces";
 import { useFirstRender } from "hooks/useFirstRender";
 import InfoText from "components/InfoText";
 import Background from "components/Background";
@@ -19,6 +19,7 @@ import HighlightText from "components/HighlightText";
 interface IFetchScreenProps {
   project: IProject;
   projects: IProject[];
+  displayBranches: IRemoteBranch[];
   isFirstDay: boolean;
   terminalController: JSX.Element;
   goBack: () => void;
@@ -28,6 +29,7 @@ interface IFetchScreenProps {
 const FetchScreen: React.FC<IFetchScreenProps> = ({
   project,
   projects,
+  displayBranches,
   isFirstDay,
   terminalController,
   goBack,
@@ -35,11 +37,7 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
 }): JSX.Element => {
   const firstRender = useFirstRender();
   const [isCloning, setIsCloning] = useState<boolean>(false);
-  const [cloningText, setCloningText] = useState<string>("");
   const [textCopied, setTextCopied] = useState<boolean>(false);
-  const fetchedBranches = project
-    ? project.remote.branches.filter((rb) => rb.isFetched)
-    : [];
 
   const copyProjectUrl = () => {
     navigator.clipboard.writeText(project.url);
@@ -109,10 +107,10 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
                 text={`Cloning %${project.type}% project to your computer...`}
               />
             </div>
-          ) : !isCloning && fetchedBranches.length > 0 ? (
+          ) : !isCloning && displayBranches.length > 0 ? (
             <>
               <div className="fetch-screen-content-branches">
-                {fetchedBranches.map((rb, i) => (
+                {displayBranches.map((rb, i) => (
                   <RemoteBranch key={i} branch={rb} />
                 ))}
               </div>

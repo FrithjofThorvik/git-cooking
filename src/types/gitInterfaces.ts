@@ -34,9 +34,10 @@ export interface IModifiedItem {
 export interface IRemoteBranch {
   name: string;
   orders: IOrder[];
-  pushedItems: IOrderItem[];
+  targetCommitId: string;
   isFetched: boolean;
   stats: IRemoteBranchStats;
+  isMain?: boolean;
 }
 
 export interface IRemoteBranchStats {
@@ -49,14 +50,23 @@ export interface IRemoteBranchStats {
 
 export interface IRemote {
   branches: IRemoteBranch[];
+  commits: ICommit[];
   isFetched: boolean;
+  getCommitHistory: (startCommit: string) => ICommit[];
+  mergeBranches: (
+    currentBranch: IRemoteBranch,
+    targetBranch: IRemoteBranch,
+    gameData: IGitCooking
+  ) => IRemote;
+  getBranchCommit: (branchName: string) => ICommit | null;
+  getPushedItems: (branchName: string) => IOrderItem[];
   updateBranchStats: (gameData: IGitCooking) => IRemote;
   pushItems: (
-    branchName: string,
-    items: IOrderItem[],
+    remoteBranchName: string,
+    commitHistory: ICommit[],
     orders: IOrder[]
   ) => IRemote | null;
-  getRemoteBranch: (branchName: string) => IRemoteBranch | null;
+  getBranch: (branchName: string) => IRemoteBranch | null;
 }
 
 export interface IProject {

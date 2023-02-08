@@ -61,6 +61,11 @@ const GameController: React.FC = (): JSX.Element => {
   const pauseGameTime = (isPaused: boolean) =>
     setGameTime(timeLapsed, isPaused);
 
+  const completeDay = () => {
+    let updatedGameData = gameData.completeDay();
+    setGameData({ ...updatedGameData });
+  };
+
   const gameStateMachine = () => {
     switch (gameData.states.gameState) {
       case GameState.WORKING:
@@ -78,7 +83,7 @@ const GameController: React.FC = (): JSX.Element => {
           />
         );
       case GameState.MERGE:
-        return <MergeScreenController />;
+        return <MergeScreenController goNext={completeDay} />;
       case GameState.SUMMARY:
         return (
           <SummaryScreenController

@@ -7,6 +7,7 @@ import { femaleNames, maleNames } from "data/names";
 import { femaleImages, maleImages } from "assets/avatars";
 import { IGitCooking, IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { copyObjectWithoutRef, randomIntFromInterval } from "./helpers";
+import { defaultCommit } from "data/defaultGitTree";
 
 class OrderGenerator {
   private getNumberOfItems = (difficulty: Difficulty) => {
@@ -177,7 +178,6 @@ class OrderGenerator {
     const orderSet = this.generateSetOfNewOrders(gameData, nrSets);
     const defaultProps = {
       isFetched: false,
-      pushedItems: [],
       stats: {
         missingIngredients: [],
         maxProfit: 0,
@@ -187,9 +187,12 @@ class OrderGenerator {
       },
     };
 
-    return orderSet.map((orders, i) => {
-      return {
+    let branches: IRemoteBranch[] = orderSet.map((orders, i) => {
+      const branch: IRemoteBranch = {
         orders: orders,
+        targetCommitId:
+          gameData.git.getActiveProject()?.remote.commits[0].id ||
+          defaultCommit.id,
         name: i === 0 ? "GitWay" : i === 1 ? "GitBite" : "GitDonald",
         ...defaultProps,
         stats: {
@@ -202,7 +205,22 @@ class OrderGenerator {
               : Difficulty.NORMAL,
         },
       };
+      return branch;
     });
+
+    const mainBranch: IRemoteBranch = {
+      orders: [],
+      targetCommitId:
+        gameData.git.getActiveProject()?.remote.commits[0].id ||
+        defaultCommit.id,
+      name: "main",
+      isMain: true,
+      ...defaultProps,
+    };
+
+    branches.push(mainBranch);
+
+    return branches;
   };
 
   private spaceOrdersEvenly = (endTime: number, orders: IOrder[]): IOrder[] => {

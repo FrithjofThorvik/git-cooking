@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import { IProject } from "types/gitInterfaces";
+import { IProject, IRemoteBranch } from "types/gitInterfaces";
 import { IGitCooking } from "types/gameDataInterfaces";
 import { TutorialType } from "types/enums";
 import { copyObjectWithoutRef } from "services/helpers";
@@ -19,6 +19,11 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
 }): JSX.Element => {
   const gameData = useGameData();
   const project = gameData.git.getActiveProject();
+  const [displayBranches, setDisplayBranches] = useState<IRemoteBranch[]>(
+    project
+      ? project.remote.branches.filter((rb) => rb.isFetched && !rb.isMain)
+      : []
+  );
 
   const activateProject = (project: IProject) => {
     let updatedStats = gameData.stats;
@@ -44,24 +49,34 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
   useEffect(() => {
     let updatedGameData: IGitCooking = copyObjectWithoutRef(gameData);
     if (
-      !updatedGameData.git.branches.some(
-        (b) =>
-          b.remoteTrackingBranch &&
-          updatedGameData.git
-            .getActiveProject()
-            ?.remote.getRemoteBranch(b.remoteTrackingBranch)
-      )
+      !updatedGameData.git.branches.some((b) => {
+        let remoteBranch = null;
+        if (b.remoteTrackingBranch)
+          remoteBranch = updatedGameData.git.getRemoteBranch(
+            b.remoteTrackingBranch
+          );
+        return remoteBranch && !remoteBranch.isMain;
+      })
     )
       return;
     updatedGameData = updatedGameData.startDay();
     setGameData({ ...updatedGameData });
   }, [gameData.git.branches]);
 
+  useEffect(() => {
+    setDisplayBranches(
+      project
+        ? project.remote.branches.filter((rb) => rb.isFetched && !rb.isMain)
+        : []
+    );
+  }, [project]);
+
   if (!project) return <></>;
   return (
     <FetchScreen
       projects={gameData.git.projects}
       project={project}
+      displayBranches={displayBranches}
       terminalController={<TerminalController />}
       isFirstDay={gameData.states.day === 0}
       goBack={goBack}
