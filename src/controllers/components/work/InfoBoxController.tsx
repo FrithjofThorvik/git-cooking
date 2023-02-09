@@ -4,6 +4,7 @@ import { setGameData, useGameData } from "hooks/useGameData";
 import { useGameTime } from "hooks/useGameTime";
 import { useInfoBoxText } from "hooks/useInfoBoxText";
 import InfoBox from "components/work/InfoBox";
+import { objectsEqual } from "services/helpers";
 
 interface IInfoBoxControllerProps {}
 
@@ -13,11 +14,34 @@ const InfoBoxController: React.FC<
   const gameData = useGameData();
   const { timeLapsed } = useGameTime();
   const [isPushed, setIsPushed] = useState<boolean>(false);
+  const [showWarning, setShowWarning] = useState<boolean>(false);
   const infoText = useInfoBoxText(gameData, isPushed);
 
-  const endDay = () => {
-    let updatedGameData = gameData.endDay(timeLapsed);
-    setGameData({ ...updatedGameData });
+  const checkForUnsyncedChanges = (): boolean => {
+    const activeBranch = gameData.git.getActiveBranch();
+    if (!activeBranch) return false;
+
+    const pushedItems = gameData.git
+      .getActiveProject()
+      ?.remote.getPushedItems(activeBranch.name);
+    const createdItems = gameData.git.getCommitFromId(
+      activeBranch.targetCommitId
+    )?.directory.createdItems;
+    if (!(createdItems && activeBranch.remoteTrackingBranch && pushedItems))
+      return false;
+    return !objectsEqual(pushedItems, createdItems);
+  };
+
+  const endDay = (confirm?: boolean, decline?: boolean) => {
+    const hasUnsyncedChanges = checkForUnsyncedChanges();
+
+    if (hasUnsyncedChanges) {
+      setShowWarning(!decline);
+    }
+    if (!hasUnsyncedChanges || confirm) {
+      let updatedGameData = gameData.endDay(timeLapsed);
+      setGameData({ ...updatedGameData });
+    }
   };
 
   useEffect(() => {
@@ -42,6 +66,7 @@ const InfoBoxController: React.FC<
       day={gameData.states.day}
       dayIsCompleted={gameData.states.isDayComplete}
       itemsHaveBeenPushed={isPushed}
+      showWarning={showWarning}
       endDay={endDay}
     />
   );
