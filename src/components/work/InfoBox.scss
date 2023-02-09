@@ -10,6 +10,62 @@
   height: 150px;
   border-radius: 15px;
 
+  &-warning{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+    color: $white;
+    width: 100%;
+
+    &-text {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      color: $white;
+      width: 70%;
+      padding: 0 10px;
+    }
+    
+    &-buttons {      
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 70%;
+
+      &-goback {
+        @include blurBackground;
+        display: flex;
+        border: 3px solid $line-green;
+        background-color: $green;
+        transition: scale 200ms ease-in-out;
+        padding: 2px 10px;
+        border-radius: 10px;
+    
+        &:hover {
+          cursor: pointer;
+          animation-play-state: paused;
+          transform: scale(0.98);
+        }
+      }
+  
+      &-end {
+        @include blurBackground;
+        display: flex;
+        border: 3px solid $line-dark;
+        transition: scale 200ms ease-in-out;
+        padding: 2px 10px;
+        border-radius: 10px;
+    
+        &:hover {
+          cursor: pointer;
+          animation-play-state: paused;
+          transform: scale(0.98);
+        }
+      }
+    }
+  }
+
   &-clock {
     display: flex;
     flex-direction: column;
