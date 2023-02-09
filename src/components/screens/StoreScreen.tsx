@@ -110,9 +110,12 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
           />
         </div>
         <div className="store-screen-bottom">
-          {!hasStartedFetch && (
-            <MenuButton onClick={goBack} text="Results" type="left" />
-          )}
+          <MenuButton
+            onClick={goBack}
+            text="Results"
+            type="left"
+            hide={hasStartedFetch}
+          />
           <StoreNav
             cash={store.cash}
             newUnlockedItems={newUnlockedItems}

@@ -19,6 +19,7 @@ const Terminal: React.FC<ITerminalProps> = ({
   const [terminalDisplay, setTerminalDisplay] = useState<string>("");
   const [commandHistoryIndex, setCommandHistoryIndex] = useState<number>(-1);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const traverseHistory = (step: number) => {
     let newIndex = commandHistoryIndex + step;
@@ -62,13 +63,19 @@ const Terminal: React.FC<ITerminalProps> = ({
     }
   };
 
+  const focus = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   useEffect(() => {
     // scroll to bottom every time history change
     bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
   }, [terminalDisplay]);
 
   return (
-    <div className="terminal">
+    <div className="terminal" onClick={() => focus()}>
       <div className="terminal-content">
         <div className="terminal-content-history">
           <p>{terminalDisplay}</p>
@@ -78,6 +85,7 @@ const Terminal: React.FC<ITerminalProps> = ({
           <span>{">"}</span>
           <input
             type="text"
+            ref={inputRef}
             value={value}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
