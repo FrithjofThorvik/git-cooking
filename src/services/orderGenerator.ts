@@ -2,7 +2,7 @@ import { v4 } from "uuid";
 
 import { IFood } from "types/foodInterfaces";
 import { Difficulty } from "types/enums";
-import { IRemoteBranch } from "types/gitInterfaces";
+import { IProject, IRemoteBranch } from "types/gitInterfaces";
 import { femaleNames, maleNames } from "data/names";
 import { femaleImages, maleImages } from "assets/avatars";
 import { IGitCooking, IOrder, IOrderItem } from "types/gameDataInterfaces";
@@ -173,7 +173,8 @@ class OrderGenerator {
 
   public generateSetOfBranches = (
     gameData: IGitCooking,
-    nrSets: number
+    nrSets: number,
+    p: IProject
   ): IRemoteBranch[] => {
     const orderSet = this.generateSetOfNewOrders(gameData, nrSets);
     const defaultProps = {
@@ -190,15 +191,13 @@ class OrderGenerator {
     let branches: IRemoteBranch[] = orderSet.map((orders, i) => {
       const branch: IRemoteBranch = {
         orders: orders,
-        targetCommitId:
-          gameData.git.getActiveProject()?.remote.commits[0].id ||
-          defaultCommit.id,
+        targetCommitId: p.remote.commits[0].id || defaultCommit.id,
         name: i === 0 ? "GitWay" : i === 1 ? "GitBite" : "GitDonald",
         ...defaultProps,
         stats: {
           ...defaultProps.stats,
           difficulty:
-            i === 0
+            i === 0 
               ? Difficulty.EASY
               : i === nrSets - 1
               ? Difficulty.HARD
@@ -207,18 +206,6 @@ class OrderGenerator {
       };
       return branch;
     });
-
-    const mainBranch: IRemoteBranch = {
-      orders: [],
-      targetCommitId:
-        gameData.git.getActiveProject()?.remote.commits[0].id ||
-        defaultCommit.id,
-      name: "main",
-      isMain: true,
-      ...defaultProps,
-    };
-
-    branches.push(mainBranch);
 
     return branches;
   };

@@ -192,6 +192,17 @@ export const gitCommands: ICommandArg[] = [
 
                 let copyGit = gameData.git.addNewBranch(branchName);
 
+                let copy: IGitCooking = copyObjectWithoutRef(gameData);
+                // update orders
+                copy.orderService = copy.orderService.setNewOrders(
+                  [],
+                  branchName
+                );
+                // switch branch for orders
+                copy.orderService = copy.orderService.switchBranch(
+                  branchName,
+                  branchName
+                );
                 // switch branch
                 copyGit = copyGit.switchBranch(branchName);
 
@@ -646,9 +657,26 @@ export const gitCommands: ICommandArg[] = [
               return gitRes("Error: Project URL does not exist", false);
             if (project.cloned)
               return gitRes("Error: Project has already been cloned", false);
+            const copy: IGitCooking = copyObjectWithoutRef(gameData);
+            const updatedGitTree = copy.git.cloneProject(project);
 
-            const updatedGitTree = gameData.git.cloneProject(project);
-            setGameData({ ...gameData, git: updatedGitTree });
+            const activeBranch = updatedGitTree.getActiveBranch();
+            const activeRemoteBranch =
+              activeBranch && updatedGitTree.getRemoteBranch(activeBranch.name);
+            if (activeRemoteBranch) {
+              // update orders
+              copy.orderService = copy.orderService.setNewOrders(
+                activeRemoteBranch.orders,
+                activeRemoteBranch.name
+              );
+              // switch branch for orders
+              copy.orderService = copy.orderService.switchBranch(
+                activeRemoteBranch.name,
+                activeRemoteBranch.name
+              );
+            }
+
+            setGameData({ ...copy, git: updatedGitTree });
 
             return gitRes("", true);
           });
