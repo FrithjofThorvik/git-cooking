@@ -66,7 +66,7 @@ const MergeScreenController: React.FC<IMergeScreenControllerProps> = ({
   return (
     <MergeScreen
       summaryStats={summaryStats}
-      doneMerging={gameData.states.doneMerging}
+      states={gameData.states}
       merge={merge}
       goNext={goNext}
       completeMerge={completeMerge}

@@ -69,6 +69,7 @@ const Store: React.FC<IStoreProps> = ({
     <div className="store">
       {activeFoodType && (
         <StoreFoodSelector
+          fixed
           activeType={activeFoodType}
           setType={(type: IngredientType) => setActiveFoodType(type)}
         />

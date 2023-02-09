@@ -1,10 +1,9 @@
-import {
-  Dna,
-  TailSpin,
-} from "react-loader-spinner";
+import { Dna, TailSpin } from "react-loader-spinner";
 import React, { useEffect, useState } from "react";
 
 import { imgChef } from "assets";
+import { IStates } from "types/gameDataInterfaces";
+import { useInterval } from "hooks/useInterval";
 import { ISummaryBranch, ISummaryStats } from "types/interfaces";
 import MenuButton from "components/MenuButton";
 import Background from "components/Background";
@@ -12,11 +11,10 @@ import MergeBranch from "components/merge/MergeBranch";
 import HighlightText from "components/HighlightText";
 
 import "./MergeScreen.scss";
-import { useInterval } from "hooks/useInterval";
 
 interface IMergeScreenProps {
   summaryStats: ISummaryStats;
-  doneMerging: boolean;
+  states: IStates;
   merge: (mainBranch: string, branch: string) => void;
   goNext: () => void;
   completeMerge: () => void;
@@ -24,7 +22,7 @@ interface IMergeScreenProps {
 
 const MergeScreen: React.FC<IMergeScreenProps> = ({
   summaryStats,
-  doneMerging,
+  states,
   merge,
   goNext,
   completeMerge,
@@ -77,7 +75,7 @@ const MergeScreen: React.FC<IMergeScreenProps> = ({
   useEffect(() => {
     let timeId: NodeJS.Timeout | null = null;
 
-    if (doneMerging) {
+    if (states.doneMerging) {
       timeId = setTimeout(() => {
         goNext();
       }, 3000);
@@ -86,9 +84,9 @@ const MergeScreen: React.FC<IMergeScreenProps> = ({
     return () => {
       if (timeId) clearTimeout(timeId);
     };
-  }, [doneMerging]);
+  }, [states.doneMerging]);
 
-  if (doneMerging)
+  if (states.doneMerging)
     return (
       <Background>
         <div className="merge-screen">
@@ -113,7 +111,7 @@ const MergeScreen: React.FC<IMergeScreenProps> = ({
     <Background>
       <div className="merge-screen">
         <div className="merge-screen-day">
-          <h1>{`Day 1`}</h1>
+          <h1>{`Day ${states.day}`}</h1>
         </div>
         <div className="merge-screen-modal">
           <div className="merge-screen-modal-left">

@@ -1,8 +1,8 @@
 import React from "react";
 import { Tooltip } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import LunchDiningIcon from "@mui/icons-material/LunchDining";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
+import RestaurantOutlinedIcon from "@mui/icons-material/RestaurantOutlined";
 
 import { IngredientType } from "types/enums";
 
@@ -10,11 +10,13 @@ import "./StoreFoodSelector.scss";
 
 interface IStoreFoodSelectorProps {
   activeType: IngredientType;
+  fixed?: boolean;
   setType: (type: IngredientType) => void;
 }
 
 const StoreFoodSelector: React.FC<IStoreFoodSelectorProps> = ({
   activeType,
+  fixed,
   setType,
 }): JSX.Element => {
   const iconSwitch = (type: IngredientType) => {
@@ -22,14 +24,20 @@ const StoreFoodSelector: React.FC<IStoreFoodSelectorProps> = ({
       case IngredientType.BURGER:
         return <LunchDiningIcon />;
       case IngredientType.EXTRA:
-        return <AddIcon />;
+        return <RestaurantOutlinedIcon />;
       default:
         return <QuestionMarkIcon />;
     }
   };
 
   return (
-    <div className="store-food-selector">
+    <div
+      className="store-food-selector"
+      style={{
+        position: fixed ? "absolute" : "static",
+        top: fixed ? "30px" : "",
+      }}
+    >
       <div className="store-food-selector-content">
         {Object.values(IngredientType).map((type) => {
           return (
