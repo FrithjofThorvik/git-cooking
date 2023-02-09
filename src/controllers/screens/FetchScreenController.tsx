@@ -32,7 +32,6 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
     const activeProject = gameData.git.getActiveProject();
     if (activeProject)
       updatedStats = gameData.stats.switchProjectStats(activeProject, project);
-    console.log(updatedStats);
     setGameData({ ...gameData, git: updatedGitTree, stats: updatedStats });
   };
 
