@@ -28,7 +28,6 @@ export const defaultGameData: IGitCooking = {
   commandHistory: [],
   completeDay: function () {
     let copy: IGitCooking = copyObjectWithoutRef(this);
-    if (copy.states.isDayComplete) return copy;
 
     let updatedStore: IStore = copy.store.unlockStoreItemsByDay(
       copy.states.day
