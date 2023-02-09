@@ -20,14 +20,11 @@ export const defaultTutorials: ITutorial[] = [
     description: "",
     screens: [
       {
-        title: "Introduction",
+        title: "Fetch Introduction",
         prompts: [
-          "Hello! Welcome to your first day as a %work from home% chef!",
-          "I will skip the formalities and jump %straight to the point...% I have created a system for managing multiple %digital restaurants% only by using your computer.",
-          "This system uses %git%, and I need you to learn how to use it to help me fulfill orders and manage these restaurants.",
-          "The better and more efficient you become at using %git%, the more %profit% you will make, and the more items you are able to buy to grow our restaurants.",
-          "Don't worry, I will introduce you little by little to what you need to do!",
-          "Let's begin by using the terminal at the bottom and %fetch% all the information we need for today by using %git fetch%.",
+          "Before a %new day% starts, I have %deleted% all the %branches% from the previous day both on your %local computer% and in the %remote repository%.",
+          "This means that each day you start completely %fresh%! However, this also means that you need to learn how to %fetch% updated information from the %remote repository%",
+          "This is done by....",
         ],
       },
     ],
@@ -44,11 +41,42 @@ export const defaultTutorials: ITutorial[] = [
           "Nice work! By using %git fetch% you fetch and update your computer with updated information from our remote system named %origin%.",
         ],
       },
+    ],
+    completed: false,
+  },
+  {
+    type: TutorialType.CLONE_INTRO,
+    description: "",
+    screens: [
       {
-        title: "Fetch Branches",
+        title: "Introduction",
+        prompts: [
+          "Hello! Welcome to your first day as a %work from home% chef!",
+          "I will skip the formalities and jump %straight to the point...% I have created a system for managing multiple %digital restaurants% only by using your computer.",
+          "This system uses %git%, and I need you to learn how to use it to help me fulfill orders and manage these restaurants.",
+          "The better and more efficient you become at using %git%, the more %profit% you will make, and the more items you are able to buy to grow our restaurants.",
+          "Don't worry, I will introduce you little by little to what you need to do!",
+          "Let's begin by using the terminal at the bottom and %clone% a project for today by using %git clone%.",
+        ],
+      },
+    ],
+    completed: false,
+  },
+  {
+    type: TutorialType.CLONE_CONTENT,
+    description: "",
+    screens: [
+      {
+        title: "Clone Terminal",
+        prompts: [
+          "Nice work! By using %git clone% you create a copy of an existing remote repository. Git fetches and updates your computer with the information from our remote system named %origin%.",
+        ],
+      },
+      {
+        title: "Branches",
         img: imgGitFetchBranches,
         prompts: [
-          "This includes some useful information on all the restaurants that I own, which we will be calling %branches%.",
+          "After cloning a project, you wil have access to all the restaurants that I own, which we will be calling %branches%.",
           "To make changes to these %branches%, I will need you to learn some essential %git commands% in order for you to use the system.",
           "A %branch% can be accessed by using the command %git checkout [branch_name]% where you enter the name of the branch you want to start working on.",
         ],
@@ -174,6 +202,20 @@ export const defaultTutorials: ITutorial[] = [
           "If you have more time on the clock, feel free to %git checkout% the other branches and do more work to earn more money.",
           "When the time is up, you cannot modify items anymore, but you are free to finish things up with %git commands%, try adding and committing any changes you missed!",
           "Now, use %git push% to register your changes in the remote system for this branch. Use %git push origin [branch_name]% if you want to push progress on another branch than you are currently on.",
+        ],
+      },
+    ],
+    completed: false,
+  },
+  {
+    type: TutorialType.MERGE,
+    description: "",
+    screens: [
+      {
+        title: "MERGE!",
+        prompts: [
+          "For you to get %profit% from the changes you have made at the %restaurant(s)% they must be integrated to the %main hub%.",
+          "To do so you will have to merge your changes into the %main branch%",
         ],
       },
     ],

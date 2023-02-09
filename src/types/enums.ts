@@ -57,14 +57,17 @@ export enum UpgradeType {
 }
 
 export enum TutorialType {
-  FETCH_INTRO = "Welcome to GitCookin",
-  FETCH_CONTENT = "Learn to fetch from origin",
+  CLONE_INTRO = "Welcome to GitCookin",
+  CLONE_CONTENT = "Learn to clone a repository",
+  FETCH_INTRO = "A new day!",
+  FETCH_CONTENT = "Learn to fetch new branches",
   WORK_FOLDERS = "Order Folders",
   WORK_ITEMS = "Order Items",
   WORK_SCREEN = "Get familiar with the Work Screen",
   WORK_TERMINAL = "How to use the terminal",
   WORK_ORDERS = "Orders",
   WORK_PUSH = "End day",
+  MERGE = "Integrate your work",
 }
 
 export enum Difficulty {

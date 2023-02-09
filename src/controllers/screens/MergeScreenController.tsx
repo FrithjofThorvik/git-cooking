@@ -6,16 +6,23 @@ import { ISummaryStats } from "types/interfaces";
 import { calculateRevenueAndCost } from "services/gameDataHelper";
 import { copyObjectWithoutRef } from "services/helpers";
 import { IGitCooking } from "types/gameDataInterfaces";
+import { TutorialType } from "types/enums";
 
 interface IMergeScreenControllerProps {
   goNext: () => void;
+  setActiveTutorialTypes: (tutorials: TutorialType[]) => void;
 }
 
 const MergeScreenController: React.FC<IMergeScreenControllerProps> = ({
   goNext,
+  setActiveTutorialTypes,
 }): JSX.Element => {
   const gameData = useGameData();
   const [summaryStats, setSummaryStats] = useState<ISummaryStats | null>(null);
+
+  useEffect(() => {
+    setActiveTutorialTypes([TutorialType.MERGE]);
+  }, []);
 
   useEffect(() => {
     const activeRemote = gameData.git.getActiveProject()?.remote;
