@@ -83,7 +83,12 @@ const GameController: React.FC = (): JSX.Element => {
           />
         );
       case GameState.MERGE:
-        return <MergeScreenController goNext={completeDay} />;
+        return (
+          <MergeScreenController
+            goNext={completeDay}
+            setActiveTutorialTypes={setActiveTutorialTypes}
+          />
+        );
       case GameState.SUMMARY:
         return (
           <SummaryScreenController

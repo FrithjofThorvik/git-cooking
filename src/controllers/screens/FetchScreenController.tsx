@@ -19,6 +19,12 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
 }): JSX.Element => {
   const gameData = useGameData();
   const project = gameData.git.getActiveProject();
+  const cloneTutorial = gameData.help.tutorials.find(
+    (t) => t.type === TutorialType.CLONE_CONTENT
+  );
+  const [tutorialCompleted, setTutorialCompleted] = useState<boolean>(
+    cloneTutorial ? cloneTutorial.completed : false
+  );
   const [displayBranches, setDisplayBranches] = useState<IRemoteBranch[]>(
     project
       ? project.remote.branches.filter((rb) => rb.isFetched && !rb.isMain)
@@ -36,13 +42,28 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
   };
 
   useEffect(() => {
-    // setActiveTutorialTypes([TutorialType.FETCH_INTRO]);
-    // if (
-    //   gameData.git.getActiveProject()?.remote.branches.some((b) => b.isFetched)
-    // ) {
-    //   setActiveTutorialTypes([TutorialType.FETCH_CONTENT]);
-    // }
-  }, [gameData.git.getActiveProject()?.remote.branches]);
+    setActiveTutorialTypes([TutorialType.CLONE_INTRO]);
+    if (gameData.git.projects.some((p) => p.cloned)) {
+      setActiveTutorialTypes([TutorialType.CLONE_CONTENT]);
+    }
+  }, [gameData.git.projects]);
+
+  useEffect(() => {
+    if (
+      gameData.states.day === 1 &&
+      gameData.git.projects.some((p) => p.cloned)
+    ) {
+      setActiveTutorialTypes([TutorialType.FETCH_INTRO]);
+      if (
+        gameData.git
+          .getActiveProject()
+          ?.remote.branches.filter((b) => !b.isMain)
+          .some((b) => b.isFetched)
+      ) {
+        setActiveTutorialTypes([TutorialType.FETCH_CONTENT]);
+      }
+    }
+  }, [gameData.git.getActiveProject()?.remote.branches, gameData.git.projects]);
 
   // Starts day when a remote branch has been checkout out
   useEffect(() => {
@@ -70,10 +91,18 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
     );
   }, [project]);
 
+  useEffect(() => {
+    const cloneTutorial = gameData.help.tutorials.find(
+      (t) => t.type === TutorialType.CLONE_CONTENT
+    );
+    if (cloneTutorial?.completed) setTutorialCompleted(true);
+  }, [gameData.help.tutorials]);
+
   if (!project) return <></>;
   return (
     <FetchScreen
       projects={gameData.git.projects}
+      tutorialCompleted={tutorialCompleted}
       project={project}
       displayBranches={displayBranches}
       terminalController={<TerminalController />}
