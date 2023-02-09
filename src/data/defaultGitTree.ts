@@ -96,7 +96,7 @@ export const defaultCommit: ICommit = {
   directory: copyObjectWithoutRef(defaultDirectory),
 };
 
-const defaultRemote: IRemote = {
+export const defaultRemote: IRemote = {
   branches: [],
   commits: [defaultCommit],
   isFetched: false,

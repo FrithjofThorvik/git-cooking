@@ -25,11 +25,18 @@ export const defaultOrderService: IOrderService = {
     let copy: IOrderService = copyObjectWithoutRef(this);
     copy._orders = copyObjectWithoutRef(orders);
 
-    if (branchName)
+    if (!branchName) return copy;
+    const branchIndex = copy.branches.findIndex((b) => b.name === branchName);
+    if (branchIndex === -1) {
+      //add branch
       copy.branches.push({
         name: branchName,
         orders: copyObjectWithoutRef(orders),
       });
+    } else {
+      // update orders of branch
+      copy.branches[branchIndex].orders === orders;
+    }
     return copy;
   },
   getAvailableOrders: function () {
