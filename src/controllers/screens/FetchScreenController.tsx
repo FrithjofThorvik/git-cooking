@@ -7,6 +7,7 @@ import { copyObjectWithoutRef } from "services/helpers";
 import { setGameData, useGameData } from "hooks/useGameData";
 import FetchScreen from "components/screens/FetchScreen";
 import TerminalController from "controllers/components/work/TerminalController";
+import { UpdateDisabled } from "@mui/icons-material";
 
 interface IFetchScreenControllerProps {
   setActiveTutorialTypes: (tutorials: TutorialType[]) => void;
@@ -32,13 +33,30 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
   );
 
   const activateProject = (project: IProject) => {
-    let updatedStats = gameData.stats;
+    let updatedGameData: IGitCooking = copyObjectWithoutRef(gameData);
+    let updatedStats = updatedGameData.stats;
 
-    const updatedGitTree = gameData.git.activateProject(project);
-    const activeProject = gameData.git.getActiveProject();
+    const activeProject = updatedGameData.git.getActiveProject();
+    const updatedGitTree = updatedGameData.git.activateProject(project);
     if (activeProject)
-      updatedStats = gameData.stats.switchProjectStats(activeProject, project);
-    setGameData({ ...gameData, git: updatedGitTree, stats: updatedStats });
+      updatedStats = updatedGameData.stats.switchProjectStats(
+        activeProject,
+        project
+      );
+
+    const activeProjectIndex = updatedGitTree.projects.findIndex(
+      (p) => p.type === project.type
+    );
+    if (activeProjectIndex !== -1) {
+      updatedGameData.git = updatedGitTree;
+      updatedGameData.stats = updatedStats;
+      updatedGameData.git.projects[activeProjectIndex].remote =
+        gameData.git.projects[activeProjectIndex].remote.updateBranchStats(
+          updatedGameData
+        );
+    }
+
+    setGameData({ ...updatedGameData });
   };
 
   useEffect(() => {
