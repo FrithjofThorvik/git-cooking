@@ -2,14 +2,15 @@
 @import "styles/imports/mixins";
 
 .merge-screen {
+  @include scale(1);
   display: flex;
-  position: relative;
   align-items: center;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
+  gap: 5%;
 
   &-day {
     display: flex;
@@ -74,15 +75,6 @@
         font-weight: 100;
       }
     }
-  }
-
-  &-branch {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    justify-content: center;
-    margin-right: auto;
-    width: 80%;
   }
 
   &-buttons {

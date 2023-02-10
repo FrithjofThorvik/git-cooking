@@ -3,12 +3,12 @@
 
 .help-nav {
   display: flex;
-  position: fixed;
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  margin-top: 50px;
-  bottom: 20px;
+  height: 20%;
+  margin-top: auto;
+  margin-bottom: 25px;
 
   &-filters {
     display: flex;
