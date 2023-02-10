@@ -4,6 +4,7 @@
 .store {
   display: flex;
   align-items: center;
+  position: relative;
   box-sizing: border-box;
   flex-direction: column;
   justify-content: flex-end;
@@ -12,6 +13,7 @@
   width: 90%;
   height: 100%;
   padding: 40px 0;
+  max-width: 1400px;
 
   &-info {
     margin-top: 15px;
@@ -24,7 +26,7 @@
     justify-content: flex-start;
     scroll-snap-type: x mandatory;
     gap: 50px;
-    width: 80%;
+    width: 90%;
     padding: 10px 0;
     margin: 0 auto;
     margin-top: 50px;

@@ -35,7 +35,7 @@ const StoreFoodSelector: React.FC<IStoreFoodSelectorProps> = ({
       className="store-food-selector"
       style={{
         position: fixed ? "absolute" : "static",
-        top: fixed ? "30px" : "",
+        top: fixed ? "-20px" : "",
       }}
     >
       <div className="store-food-selector-content">

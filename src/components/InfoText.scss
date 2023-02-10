@@ -1,6 +1,8 @@
 @import "styles/imports/colors";
+@import "styles/imports/mixins";
 
 .info-text {
+  @include scale(1);
   display: flex;
   text-align: start;
   align-items: center;
