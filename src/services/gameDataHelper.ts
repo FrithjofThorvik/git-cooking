@@ -192,22 +192,11 @@ export const calculateRevenueAndCost = (
           const orderPercentageBonus =
             ((orderRevenue * orderPercentageCompleted) / 100) *
             accuracyMultiplier;
-          const orderBonusFromEndedDayTime =
-            (isMain
-              ? max
-                ? maxBonusFromEndedDayTime
-                : avgPercentage > 0
-                ? (1 - endedDayTime / dayLength) * baseEarlyFinishEarning
-                : 0
-              : 0) / orders.length;
           const orderMultiplierBonus =
             orderRevenue * revenueMultiplier - orderRevenue;
           const orderCostReduction = orderCost - orderCost * useCostReduction;
           const orderTotalRevenue =
-            orderRevenue +
-            orderPercentageBonus +
-            orderMultiplierBonus +
-            orderBonusFromEndedDayTime;
+            orderRevenue + orderPercentageBonus + orderMultiplierBonus;
           const orderTotalCost = orderCost - orderCostReduction;
 
           avgPercentage += orderPercentageCompleted / orders.length;
@@ -215,12 +204,21 @@ export const calculateRevenueAndCost = (
           baseCost += orderCost;
           percentageBonus += orderPercentageBonus;
           multiplierBonus += orderMultiplierBonus;
-          bonusFromEndedDayTime += orderBonusFromEndedDayTime;
           costReduction += orderCostReduction;
           totalRevenue += orderTotalRevenue;
           totalCost += orderTotalCost;
           profit += orderTotalRevenue - orderTotalCost;
         });
+
+        if (avgPercentage > 0) {
+          bonusFromEndedDayTime = isMain
+            ? max
+              ? maxBonusFromEndedDayTime
+              : (1 - endedDayTime / dayLength) * baseEarlyFinishEarning
+            : 0;
+          profit += bonusFromEndedDayTime;
+          totalRevenue += bonusFromEndedDayTime;
+        }
 
         return {
           baseRevenue,
@@ -262,7 +260,7 @@ export const calculateRevenueAndCost = (
         bonusFromPercentage: totalSum.percentageBonus,
         bonusFromEndedDayTime: totalSum.bonusFromEndedDayTime,
         maxBonusFromPercentage: maxSum.percentageBonus,
-        maxBonusFromEndedDayTime,
+        maxBonusFromEndedDayTime: maxSum.bonusFromEndedDayTime,
         orderCount: b.orders.length,
         ordersCompleted,
         itemCount: b.stats.itemCount,
@@ -301,4 +299,3 @@ export const isGitCmdPurchased = (
     .forEach((c) => (isPurchased = c.purchased));
   return isPurchased;
 };
-
