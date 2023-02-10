@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
 
 import { IFood } from "types/foodInterfaces";
-import { Difficulty } from "types/enums";
+import { Difficulty, RemoteType } from "types/enums";
 import { IProject, IRemoteBranch } from "types/gitInterfaces";
 import { femaleNames, maleNames } from "data/names";
 import { femaleImages, maleImages } from "assets/avatars";
@@ -189,15 +189,21 @@ class OrderGenerator {
     };
 
     let branches: IRemoteBranch[] = orderSet.map((orders, i) => {
+      let name = i === 0 ? "GitWay" : i === 1 ? "GitBite" : "GitDonald";
+      if (p.type === RemoteType.INTERMEDIATE)
+        name = i === 0 ? "GitzzaHut" : i === 1 ? "GiterKing" : "GitoBell";
+      if (p.type === RemoteType.ADVANCED)
+        name = i === 0 ? "GitarBucks" : i === 1 ? "GFC" : "Gitinos";
+
       const branch: IRemoteBranch = {
         orders: orders,
         targetCommitId: p.remote.commits[0].id || defaultCommit.id,
-        name: i === 0 ? "GitWay" : i === 1 ? "GitBite" : "GitDonald",
+        name: name,
         ...defaultProps,
         stats: {
           ...defaultProps.stats,
           difficulty:
-            i === 0 
+            i === 0
               ? Difficulty.EASY
               : i === nrSets - 1
               ? Difficulty.HARD
