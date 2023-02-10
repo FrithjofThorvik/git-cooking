@@ -559,8 +559,13 @@ export const defaultGitTree: IGitTree = {
       newCommitDirectory.createdItems.forEach((i, itemIndex) => {
         if (i.path === item.path) {
           existsInItems = true;
-          // update the item
-          newCommitDirectory.createdItems[itemIndex] = item;
+          if (stagedItem.deleted) {
+            // delete item in new directory
+            newCommitDirectory.createdItems.splice(itemIndex, 1);
+          } else {
+            // update the item
+            newCommitDirectory.createdItems[itemIndex] = item;
+          }
         }
       });
 
