@@ -9,6 +9,7 @@ import {
   imgGitStagingArea,
   imgGitWorkScreen,
   imgGitWorkingDir,
+  imgHelp,
   imgMatchOrders,
   imgOrderArriving,
   imgTerminal,
@@ -216,6 +217,21 @@ export const defaultTutorials: ITutorial[] = [
         prompts: [
           "For you to get %profit% from the changes you have made at the %restaurant(s)% they must be integrated to the %main hub%.",
           "To do so you will have to merge your changes into the %main branch%",
+        ],
+      },
+    ],
+    completed: false,
+  },
+  {
+    type: TutorialType.HELP,
+    description: "",
+    screens: [
+      {
+        title: "Help!",
+        img: imgHelp,
+        prompts: [
+          "You have completed all tutorials. If you need more %help% you can always view the tutorials again.",
+          "Just look for the help button in %the bottom left% of the screen.",
         ],
       },
     ],
