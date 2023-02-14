@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import PsychologyIcon from "@mui/icons-material/Psychology";
 import CodeTwoToneIcon from "@mui/icons-material/CodeTwoTone";
 import SchoolTwoToneIcon from "@mui/icons-material/SchoolTwoTone";
 
@@ -30,6 +31,11 @@ const HelpNav: React.FC<IHelpNavProps> = ({
           "This is a list of all the %git commands% that can be used in the game"
         );
         break;
+      case HelpScreenType.CONCEPTS:
+        setActiveText(
+          "This is a list of all the %git concepts% that are used in the game"
+        );
+        break;
       default:
         break;
     }
@@ -54,6 +60,14 @@ const HelpNav: React.FC<IHelpNavProps> = ({
           onClick={() => setActiveHelpScreen(HelpScreenType.COMMANDS)}
         >
           <CodeTwoToneIcon /> <p>Command List</p>
+        </div>
+        <div
+          className={`help-nav-filters-filter ${
+            activeHelpScreen === HelpScreenType.CONCEPTS ? "selected" : ""
+          }`}
+          onClick={() => setActiveHelpScreen(HelpScreenType.CONCEPTS)}
+        >
+          <PsychologyIcon /> <p>Git Concepts</p>
         </div>
       </div>
     </div>

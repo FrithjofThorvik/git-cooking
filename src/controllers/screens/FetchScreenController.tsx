@@ -7,7 +7,6 @@ import { copyObjectWithoutRef } from "services/helpers";
 import { setGameData, useGameData } from "hooks/useGameData";
 import FetchScreen from "components/screens/FetchScreen";
 import TerminalController from "controllers/components/work/TerminalController";
-import { UpdateDisabled } from "@mui/icons-material";
 
 interface IFetchScreenControllerProps {
   setActiveTutorialTypes: (tutorials: TutorialType[]) => void;
