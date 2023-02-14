@@ -79,6 +79,7 @@ export enum Difficulty {
 export enum HelpScreenType {
   TUTORIALS = "tutorials",
   COMMANDS = "commands",
+  CONCEPTS = "concepts",
 }
 
 export enum RemoteType {

@@ -9,6 +9,7 @@ import Tutorials from "components/Tutorials";
 import HelpButton from "components/HelpButton";
 import Background from "components/Background";
 import CommandList from "components/help/HelpCommands";
+import HelpConcepts from "components/help/HelpConcepts";
 import HelpTutorials from "components/help/HelpTutorials";
 
 import "./HelpScreen.scss";
@@ -31,17 +32,28 @@ const HelpScreen: React.FC<IHelpScreenProps> = ({
     () => activeTutorials.length === 0 && closeHelpScreen()
   );
 
-  return (
-    <Background img={imgLibrary} blur={8} opacity={0.75}>
-      <div className="help-screen">
-        {activeHelpScreen === HelpScreenType.TUTORIALS ? (
+  const getActiveHelpScreen = () => {
+    switch (activeHelpScreen) {
+      case HelpScreenType.TUTORIALS:
+        return (
           <HelpTutorials
             tutorials={help.tutorials}
             setActiveTutorials={(t: ITutorial[]) => setActiveTutorials(t)}
           />
-        ) : (
-          activeHelpScreen === HelpScreenType.COMMANDS && <CommandList />
-        )}
+        );
+      case HelpScreenType.COMMANDS:
+        return <CommandList />;
+      case HelpScreenType.CONCEPTS:
+        return <HelpConcepts />;
+      default:
+        return <></>;
+    }
+  };
+
+  return (
+    <Background img={imgLibrary} blur={8} opacity={0.75}>
+      <div className="help-screen">
+        {getActiveHelpScreen()}
         <HelpNav
           activeHelpScreen={activeHelpScreen}
           setActiveHelpScreen={(hs: HelpScreenType) => setActiveHelpScreen(hs)}
