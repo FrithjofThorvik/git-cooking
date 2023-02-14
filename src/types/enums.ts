@@ -68,6 +68,7 @@ export enum TutorialType {
   WORK_ORDERS = "Orders",
   WORK_PUSH = "End day",
   MERGE = "Integrate your work",
+  HELP = "Need more help?",
 }
 
 export enum Difficulty {
