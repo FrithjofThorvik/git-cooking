@@ -58,6 +58,10 @@ export interface ISummaryStats {
 
 export interface INewUnlockedItems {
   upgrades: number;
-  ingredients: number;
+  ingredients: {
+    total: number;
+    burger: number;
+    extra: number;
+  };
   gitCommands: number;
 }

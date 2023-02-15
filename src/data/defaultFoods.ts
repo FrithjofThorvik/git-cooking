@@ -1,17 +1,21 @@
 import { v4 } from "uuid";
 
 import {
+  imgBacon,
   imgBunBottom,
   imgBunTop,
   imgCheeseFries,
   imgFries,
+  imgNachos,
+  imgOnionRings,
   imgOnions,
   imgPaddy,
   imgSalad,
-} from "assets";
+  imgTomato,
+} from "assets/foods";
 import { foodBuilder } from "services/foodBuilders";
 import { IngredientType } from "types/enums";
-import { IBurger, IFood, IFries } from "types/foodInterfaces";
+import { IBurger, IFood, IExtra } from "types/foodInterfaces";
 
 export const defaultFoods: IFood[] = [
   {
@@ -55,6 +59,17 @@ export const defaultFoods: IFood[] = [
         type: IngredientType.BURGER,
         useCost: 5,
       },
+      bacon: {
+        id: v4(),
+        name: "bacon",
+        image: imgBacon,
+        cost: 250,
+        purchased: false,
+        unlocked: false,
+        unlockDay: 5,
+        type: IngredientType.BURGER,
+        useCost: 12,
+      },
       onions: {
         id: v4(),
         name: "onions",
@@ -65,6 +80,17 @@ export const defaultFoods: IFood[] = [
         unlockDay: 3,
         type: IngredientType.BURGER,
         useCost: 5,
+      },
+      tomato: {
+        id: v4(),
+        name: "tomato",
+        image: imgTomato,
+        cost: 120,
+        purchased: false,
+        unlocked: false,
+        unlockDay: 4,
+        type: IngredientType.BURGER,
+        useCost: 15,
       },
       bunBottom: {
         id: v4(),
@@ -85,11 +111,11 @@ export const defaultFoods: IFood[] = [
   },
   {
     id: "2",
-    name: "Fries",
+    name: "Extra",
     unlocked: true,
     type: IngredientType.EXTRA,
     ingredients: {
-      cheese: {
+      cheese_fries: {
         id: v4(),
         name: "cheese fries",
         image: imgCheeseFries,
@@ -101,7 +127,7 @@ export const defaultFoods: IFood[] = [
         useCost: 15,
         isSingle: true,
       },
-      normal: {
+      normal_fries: {
         id: v4(),
         name: "fries",
         image: imgFries,
@@ -114,9 +140,33 @@ export const defaultFoods: IFood[] = [
         useCost: 10,
         isSingle: true,
       },
+      onion_rings: {
+        id: v4(),
+        name: "onion rings",
+        image: imgOnionRings,
+        cost: 200,
+        purchased: false,
+        unlocked: false,
+        unlockDay: 2,
+        type: IngredientType.EXTRA,
+        useCost: 25,
+        isSingle: true,
+      },
+      nachos: {
+        id: v4(),
+        name: "nachos",
+        image: imgNachos,
+        cost: 500,
+        purchased: false,
+        unlocked: false,
+        unlockDay: 6,
+        type: IngredientType.EXTRA,
+        useCost: 25,
+        isSingle: true,
+      },
     },
     builder: function (difficulty) {
-      return foodBuilder.buildFries(this.ingredients as IFries, difficulty);
+      return foodBuilder.buildExtra(this.ingredients as IExtra, difficulty);
     },
   },
 ];

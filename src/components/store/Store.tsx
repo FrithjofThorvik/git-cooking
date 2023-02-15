@@ -9,12 +9,14 @@ import StoreFoodSelector from "./StoreFoodSelector";
 
 import "./Store.scss";
 import InfoText from "components/InfoText";
+import { INewUnlockedItems } from "types/interfaces";
 
 interface IStoreProps {
   day: number;
   availableCash: number;
   activeStoreItems: StoreItem[];
   stats: IStats;
+  newUnlockedItems: INewUnlockedItems;
   purchase: (purchasable: StoreItem) => void;
 }
 
@@ -22,6 +24,7 @@ const Store: React.FC<IStoreProps> = ({
   day,
   stats,
   availableCash,
+  newUnlockedItems,
   activeStoreItems,
   purchase,
 }): JSX.Element => {
@@ -72,6 +75,7 @@ const Store: React.FC<IStoreProps> = ({
           fixed
           activeType={activeFoodType}
           setType={(type: IngredientType) => setActiveFoodType(type)}
+          newUnlockedItems={newUnlockedItems}
         />
       )}
       <div
