@@ -1,6 +1,6 @@
 import { Difficulty } from "types/enums";
 import { IIngredient } from "types/gameDataInterfaces";
-import { IBurger, IFries } from "types/foodInterfaces";
+import { IBurger, IExtra } from "types/foodInterfaces";
 import { randomIntFromInterval } from "./helpers";
 
 class FoodBuilder {
@@ -44,11 +44,11 @@ class FoodBuilder {
     return chosenItems;
   };
 
-  public buildFries = (
-    fries: IFries,
+  public buildExtra = (
+    extra: IExtra,
     difficulty: Difficulty
   ): IIngredient[] => {
-    let availableItems = Object.values(fries);
+    let availableItems = Object.values(extra);
 
     switch (difficulty) {
       case Difficulty.EASY:
@@ -72,7 +72,7 @@ class FoodBuilder {
     const choosenItem = availableItems.at(choosenItemIndex);
     if (choosenItem) return [choosenItem];
 
-    return [fries.normal];
+    return [extra.normal_fries];
   };
 }
 

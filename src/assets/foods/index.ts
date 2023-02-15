@@ -1,0 +1,23 @@
+import paddy from "./paddy.png";
+import salad from "./salad.png";
+import bacon from "./bacon.png";
+import fries from "./fries.png";
+import tomato from "./tomato.png";
+import nachos from "./nachos.png";
+import onions from "./onions.png";
+import bunTop from "./bun_top.png";
+import bunBottom from "./bun_bottom.png";
+import onionRings from "./onion_rings.png";
+import cheeseFries from "./cheese_fries.png";
+
+export const imgPaddy = paddy;
+export const imgSalad = salad;
+export const imgBacon = bacon;
+export const imgFries = fries;
+export const imgBunTop = bunTop;
+export const imgTomato = tomato;
+export const imgNachos = nachos;
+export const imgOnions = onions;
+export const imgBunBottom = bunBottom;
+export const imgOnionRings = onionRings;
+export const imgCheeseFries = cheeseFries;

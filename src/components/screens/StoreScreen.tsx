@@ -7,7 +7,7 @@ import {
   IStore,
   StoreItem,
 } from "types/gameDataInterfaces";
-import { PurchaseType, TutorialType } from "types/enums";
+import { IngredientType, PurchaseType, TutorialType } from "types/enums";
 import Store from "components/store/Store";
 import StoreNav from "components/store/StoreNav";
 import MenuButton from "components/MenuButton";
@@ -48,7 +48,11 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
   const [newUnlockedItems, setNewUnlockedItems] = useState<INewUnlockedItems>({
     upgrades: 0,
     gitCommands: 0,
-    ingredients: 0,
+    ingredients: {
+      total: 0,
+      burger: 0,
+      extra: 0,
+    },
   });
 
   useEffect(() => {
@@ -74,12 +78,23 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
   }, [activePurchaseType, store, help]);
 
   useEffect(() => {
-    let newUnlockedIngredients = 0;
+    let newUnlockedIngredients = {
+      total: 0,
+      extra: 0,
+      burger: 0,
+    };
     let newUnlockedGitCommands = 0;
     let newUnlockedUpgrades = 0;
     store.foods.forEach((f) =>
       Object.values(f.ingredients).forEach((i) => {
-        if (i.unlockDay === day && !i.purchased) newUnlockedIngredients += 1;
+        if (i.unlockDay === day && !i.purchased) {
+          if (i.type === IngredientType.BURGER)
+            newUnlockedIngredients.burger += 1;
+          if (i.type === IngredientType.EXTRA)
+            newUnlockedIngredients.extra += 1;
+
+          newUnlockedIngredients.total += 1;
+        }
       })
     );
     store.upgrades.forEach((u) => {
@@ -107,6 +122,7 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
             )}
             stats={stats}
             purchase={purchase}
+            newUnlockedItems={newUnlockedItems}
           />
         </div>
         <div className="store-screen-bottom">
