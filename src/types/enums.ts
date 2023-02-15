@@ -67,6 +67,7 @@ export enum TutorialType {
   WORK_TERMINAL = "How to use the terminal",
   WORK_ORDERS = "Orders",
   WORK_PUSH = "End day",
+  WORK_CHECKOUT = "Checkout other restaurants!",
   MERGE = "Integrate your work",
   HELP = "Need more help?",
 }
