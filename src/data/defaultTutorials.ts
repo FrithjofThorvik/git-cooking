@@ -13,6 +13,7 @@ import {
   imgMatchOrders,
   imgOrderArriving,
   imgTerminal,
+  imgEndDayButton,
 } from "assets/tutorials";
 
 export const defaultTutorials: ITutorial[] = [
@@ -203,6 +204,21 @@ export const defaultTutorials: ITutorial[] = [
           "If you have more time on the clock, feel free to %git checkout% the other branches and do more work to earn more money.",
           "When the time is up, you cannot modify items anymore, but you are free to finish things up with %git commands%, try adding and committing any changes you missed!",
           "Now, use %git push% to register your changes in the remote system for this branch. Use %git push origin [branch_name]% if you want to push progress on another branch than you are currently on.",
+        ],
+      },
+    ],
+    completed: false,
+  },
+  {
+    type: TutorialType.WORK_CHECKOUT,
+    description: "%Tutorial x%: How to checkout other restaurants?",
+    screens: [
+      {
+        title: "Checkout",
+        img: imgEndDayButton,
+        prompts: [
+          "You are now ready to %end the day% and get %rewarded% for your hard work. This is done by pressing the %end day% button!",
+          "However, if you have more time on the clock, feel free to %git checkout [branch name]% the other branches and do more work to earn more money. Rememeber to %push% your changes in these branches as well!",
         ],
       },
     ],

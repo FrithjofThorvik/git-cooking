@@ -66,6 +66,24 @@ const WorkScreenController: React.FC<IWorkScreenControllerProps> = ({
     ) {
       setActiveTutorialTypes([TutorialType.WORK_PUSH]);
     }
+    const activeBranch = gameData.git.getActiveBranch();
+    if (activeBranch) {
+      const pushedItems = gameData.git
+        .getActiveProject()
+        ?.remote.getPushedItems(activeBranch.name);
+
+      const pushTutorial = gameData.help.getTutorialsByTypes([
+        TutorialType.WORK_PUSH,
+      ]);
+
+      if (
+        pushTutorial.every((t) => t.completed) &&
+        pushedItems &&
+        pushedItems.length > 0
+      ) {
+        setActiveTutorialTypes([TutorialType.WORK_CHECKOUT]);
+      }
+    }
   }, [timeLapsed]);
 
   return (
