@@ -1,5 +1,5 @@
-import React from "react";
 import { Tooltip } from "@mui/material";
+import React from "react";
 import LunchDiningIcon from "@mui/icons-material/LunchDining";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import RestaurantOutlinedIcon from "@mui/icons-material/RestaurantOutlined";
@@ -12,6 +12,7 @@ import "./StoreFoodSelector.scss";
 interface IStoreFoodSelectorProps {
   activeType: IngredientType;
   fixed?: boolean;
+  showName?: boolean;
   newUnlockedItems?: INewUnlockedItems;
   setType: (type: IngredientType) => void;
 }
@@ -19,6 +20,7 @@ interface IStoreFoodSelectorProps {
 const StoreFoodSelector: React.FC<IStoreFoodSelectorProps> = ({
   activeType,
   fixed,
+  showName = true,
   newUnlockedItems,
   setType,
 }): JSX.Element => {
@@ -75,7 +77,7 @@ const StoreFoodSelector: React.FC<IStoreFoodSelectorProps> = ({
           );
         })}
       </div>
-      <div className="store-food-selector-name">{activeType}</div>
+      {showName && <div className="store-food-selector-name">{activeType}</div>}
     </div>
   );
 };

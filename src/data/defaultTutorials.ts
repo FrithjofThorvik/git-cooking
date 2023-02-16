@@ -3,6 +3,7 @@ import { TutorialType } from "types/enums";
 import {
   imgAddFolderItem,
   imgAddFolders,
+  imgEndDayButton,
   imgGitFetchBranches,
   imgGitFetchTerminal,
   imgGitRepo,
@@ -13,7 +14,6 @@ import {
   imgMatchOrders,
   imgOrderArriving,
   imgTerminal,
-  imgEndDayButton,
 } from "assets/tutorials";
 
 export const defaultTutorials: ITutorial[] = [
