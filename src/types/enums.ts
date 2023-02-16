@@ -57,18 +57,22 @@ export enum UpgradeType {
 }
 
 export enum TutorialType {
-  CLONE_INTRO = "Welcome to GitCookin",
-  CLONE_CONTENT = "Learn to clone a repository",
-  FETCH_INTRO = "A new day!",
-  FETCH_CONTENT = "Learn to fetch new branches",
+  GAME_INTRO = "Welcome to GitCooking!",
+  TERMINAL = "What is a Terminal?",
+  CLONE = "Learn to clone a repository",
+  FETCH = "Learn to fetch new branches",
+  ORIGIN = "What is origin?",
   WORK_FOLDERS = "Order Folders",
   WORK_ITEMS = "Order Items",
-  WORK_SCREEN = "Get familiar with the Work Screen",
-  WORK_TERMINAL = "How to use the terminal",
+  WORK_SCREEN = "The Work Screen!",
+  WORK_ADD_FILES = "How to add files",
+  WORK_COMMIT = "How to commit",
   WORK_ORDERS = "Orders",
   WORK_PUSH = "End day",
-  WORK_CHECKOUT = "Checkout other restaurants!",
   MERGE = "Integrate your work",
+  NEW_DAY = "A new day!",
+  WORK_CHECKOUT = "Checkout other restaurants!",
+  TIMES_UP = "Time's up!",
   HELP = "Need more help?",
 }
 
