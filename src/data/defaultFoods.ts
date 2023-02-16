@@ -15,7 +15,7 @@ import {
 } from "assets/foods";
 import { foodBuilder } from "services/foodBuilders";
 import { IngredientType } from "types/enums";
-import { IBurger, IFood, IExtra } from "types/foodInterfaces";
+import { IBurger, IExtra, IFood } from "types/foodInterfaces";
 
 export const defaultFoods: IFood[] = [
   {
