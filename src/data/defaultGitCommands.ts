@@ -12,12 +12,13 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git clone";
     },
     description: function () {
-      return "Clones project to your computer";
+      return "Copy and download an remote repository to your local machine.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
     },
-    useCase: "",
+    useCase:
+      "Use %git clone% to set up a local copy of a remote repository. This allows you to have a local copy of a remote repository so you can work on it and make changes without affecting the original repository.",
     unlocked: true,
     unlockDay: 0,
     purchased: true,
@@ -30,13 +31,13 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git fetch";
     },
     description: function () {
-      return "Fetch down branches from the remote.";
+      return "Downloads changes in branches from the remote.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
     },
     useCase:
-      "The %git fetch% command fetches all changes made online from others in the same git project as you.",
+      "Use %git fetch% command to retrieve the latest changes made by other contributors in the shared remote repository.",
     unlocked: true,
     unlockDay: 0,
     purchased: true,
@@ -49,13 +50,13 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git checkout";
     },
     description: function () {
-      return "Switch to another branch and check it out into your working directory";
+      return "Switch to another branch and check it out into your working directory.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
     },
     useCase:
-      "%git checkout <BRANCH>% moves you to the respective branch you provide, so you can work in that environment.",
+      "Use %git checkout <BRANCH>% to switch to a specific branch in your local repository. Changes made in one branch does not affect other branches, meaning that you can work on new features in isolation.\n\n Use %git checkout -b <BRANCH>%  to create a new branch based on the current branch.",
     unlocked: true,
     unlockDay: 0,
     purchased: true,
@@ -74,7 +75,7 @@ export const defaultGitCommands: IGitCommand[] = [
       return Math.round(3250 * discountMultiplier);
     },
     useCase:
-      "Use %git add <FILE_PATH>% to add and prepare a changed file to be commited later, or %git add .% to add all changed files.",
+      "Use %git add <FILE_PATH>% to add and prepare a modified file to be committed later.\n\n Use %git add .% to add all modified files.",
     unlocked: true,
     unlockDay: 0,
     purchased: true,
@@ -87,12 +88,13 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git commit";
     },
     description: function () {
-      return "Commit your staged items, and deliver them the customer.";
+      return "Saves a snapshot of the staged changes in the local repository, creating a new commit in the project's history.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
     },
-    useCase: "",
+    useCase:
+      "Use %git commit -m <message>% to capture and preserve the changes made to the files in the repository. This creates a new commit in the commit history, allowing you to keep track of the evolution of the codebase and easily revert to previous versions if necessary.",
     unlocked: true,
     unlockDay: 0,
     purchased: true,
@@ -105,13 +107,13 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git push";
     },
     description: function () {
-      return "Push local branch commits to the remote repository branch";
+      return "Transfer committed changes from the local repository to the remote repository.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
     },
     useCase:
-      "%git push% or %git push origin <BRANCH>% saves all the changes that has been commited. If no branch name is provided in the command, the branch you are currently in will be used.",
+      "Use %git push% or %git push origin <BRANCH>% to transfer your local changes in a branch to a branch in the remote repository. This allows for other people to work with and see the changes you have made. If no branch name is provided in the command, the branch you are currently in will be used.",
     unlocked: true,
     unlockDay: 0,
     purchased: true,
@@ -124,12 +126,13 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git status";
     },
     description: function () {
-      return "Show modified items in working directory, and staged items for your next commit";
+      return "Shows modified items in working directory, and staged items in the staging area.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(3250 * discountMultiplier);
     },
-    useCase: "",
+    useCase:
+      "Use %git status% to display the current state of the working directory and the staging area, indicating which files have been modified, staged for commit, or remain unmodified.",
     unlocked: true,
     unlockDay: 0,
     purchased: true,
@@ -142,12 +145,13 @@ export const defaultGitCommands: IGitCommand[] = [
       return "git branch";
     },
     description: function () {
-      return "Use 'git branch' to list up local branches.";
+      return "List up existing branches.";
     },
     cost: function (discountMultiplier: number) {
       return Math.round(2250 * discountMultiplier);
     },
-    useCase: "",
+    useCase:
+      "Use %git branch% to list existing branches; the current branch will be marked with an asterisk.",
     unlocked: false,
     unlockDay: 2,
     purchased: false,
@@ -165,7 +169,8 @@ export const defaultGitCommands: IGitCommand[] = [
     cost: function (discountMultiplier: number) {
       return Math.round(1250 * discountMultiplier);
     },
-    useCase: "",
+    useCase:
+      "Use %git restore <FILE_PATH>% to recover changes in the working directory to their previous state, or recover files that were deleted from the repository. Use %git restore .% to restore all files. \n\n Use %git restore —staged <FILE_PATH>% to unstage changes in the staging area. Use %git restore —staged .% to unstage all changes in the staging area.",
     unlocked: false,
     unlockDay: 4,
     purchased: false,
