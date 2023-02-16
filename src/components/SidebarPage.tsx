@@ -61,7 +61,6 @@ const SidebarPage: FC<ISidebarPage> = ({ items }) => {
       behavior: "smooth",
       block: "center",
     });
-    setActiveIndex(index);
   };
 
   if (!items) return <></>;

@@ -36,8 +36,9 @@ const GameController: React.FC = (): JSX.Element => {
       (t) => !t.completed
     );
     if (
-      remainingTutorials.length === 1 &&
-      remainingTutorials[0].type === TutorialType.HELP
+      (remainingTutorials.length === 1 &&
+        remainingTutorials[0].type === TutorialType.HELP) ||
+      gameData.states.day === 3
     )
       setActiveTutorialTypes([TutorialType.HELP]);
   }, gameData.help.tutorials);

@@ -20,7 +20,7 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
   const gameData = useGameData();
   const project = gameData.git.getActiveProject();
   const cloneTutorial = gameData.help.tutorials.find(
-    (t) => t.type === TutorialType.CLONE_CONTENT
+    (t) => t.type === TutorialType.CLONE
   );
   const [tutorialCompleted, setTutorialCompleted] = useState<boolean>(
     cloneTutorial ? cloneTutorial.completed : false
@@ -59,9 +59,9 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
   };
 
   useEffect(() => {
-    setActiveTutorialTypes([TutorialType.CLONE_INTRO]);
+    setActiveTutorialTypes([TutorialType.GAME_INTRO, TutorialType.TERMINAL]);
     if (gameData.git.projects.some((p) => p.cloned)) {
-      setActiveTutorialTypes([TutorialType.CLONE_CONTENT]);
+      setActiveTutorialTypes([TutorialType.CLONE]);
     }
   }, [gameData.git.projects]);
 
@@ -70,14 +70,14 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
       gameData.states.day === 1 &&
       gameData.git.projects.some((p) => p.cloned)
     ) {
-      setActiveTutorialTypes([TutorialType.FETCH_INTRO]);
+      setActiveTutorialTypes([TutorialType.FETCH]);
       if (
         gameData.git
           .getActiveProject()
           ?.remote.branches.filter((b) => !b.isMain)
           .some((b) => b.isFetched)
       ) {
-        setActiveTutorialTypes([TutorialType.FETCH_CONTENT]);
+        setActiveTutorialTypes([TutorialType.FETCH]);
       }
     }
   }, [gameData.git.getActiveProject()?.remote.branches, gameData.git.projects]);
@@ -110,7 +110,7 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
 
   useEffect(() => {
     const cloneTutorial = gameData.help.tutorials.find(
-      (t) => t.type === TutorialType.CLONE_CONTENT
+      (t) => t.type === TutorialType.CLONE
     );
     if (cloneTutorial?.completed) setTutorialCompleted(true);
   }, [gameData.help.tutorials]);
