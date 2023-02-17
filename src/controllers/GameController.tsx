@@ -38,7 +38,8 @@ const GameController: React.FC = (): JSX.Element => {
     if (
       (remainingTutorials.length === 1 &&
         remainingTutorials[0].type === TutorialType.HELP) ||
-      gameData.states.day === 3
+      (gameData.states.day === 3 &&
+        remainingTutorials.some((t) => t.type === TutorialType.HELP))
     )
       setActiveTutorialTypes([TutorialType.HELP]);
   }, gameData.help.tutorials);

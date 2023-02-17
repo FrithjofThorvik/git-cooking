@@ -74,6 +74,7 @@ export enum TutorialType {
   WORK_CHECKOUT = "Checkout other restaurants!",
   TIMES_UP = "Time's up!",
   HELP = "Need more help?",
+  PROJECT = "More remote repositories!",
 }
 
 export enum Difficulty {
