@@ -183,7 +183,10 @@ export const calculateRevenueAndCost = (
           let orderRevenue = 0;
           // assuming you have completed something of an order
           if (orderPercentageCompleted > 0 && !max) {
-            orderRevenue = expectedOrderRevenue;
+            if (0 < orderCost && orderCost < orderPrice)
+              // If you sell an incomplete item -> only get money calculated with the cost of the item made
+              orderRevenue = orderCost * profitMarginMultiplier;
+            else orderRevenue = expectedOrderRevenue; // Receive full profit for item
             ordersCompleted += 1;
           }
           orderCost = max ? orderPrice : orderCost;
