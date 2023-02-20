@@ -42,8 +42,13 @@ export const defaultOrderService: IOrderService = {
   getAvailableOrders: function () {
     return this._orders.filter((o) => o.isAvailable);
   },
-  getAllOrders: function () {
-    return this._orders;
+  getAllOrders: function (branchName?: string) {
+    if (!branchName) return this._orders;
+    const branch: { orders: IOrder[]; name: string } = copyObjectWithoutRef(
+      this.branches.find((b) => b.name === branchName)
+    );
+    if (!branch) return this._orders;
+    return branch.orders;
   },
   switchBranch: function (fromBranchName: string, toBranchName: string) {
     let copy: IOrderService = copyObjectWithoutRef(this);

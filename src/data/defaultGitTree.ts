@@ -436,11 +436,18 @@ export const defaultGitTree: IGitTree = {
   getCommitFromId: function (commitId: string) {
     return this.commits.find((c) => c.id === commitId);
   },
-  getCommitHistory: function () {
-    const startCommit = this.getHeadCommit();
+  getCommitHistory: function (startCommitId?: string) {
+    if (startCommitId) {
+      const startCommit = this.commits.find((c) => c.id === startCommitId);
 
-    if (startCommit === undefined) return [];
-    return createCommitHistory(startCommit, this.commits);
+      if (startCommit === undefined) return [];
+      return createCommitHistory(startCommit, this.commits);
+    } else {
+      const startCommit = this.getHeadCommit();
+
+      if (startCommit === undefined) return [];
+      return createCommitHistory(startCommit, this.commits);
+    }
   },
   getHeadCommit: function () {
     const activeBranch = this.getBranch(this.HEAD.targetId);
