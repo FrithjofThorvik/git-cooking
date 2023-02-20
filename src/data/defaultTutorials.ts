@@ -16,6 +16,7 @@ import {
   imgTerminal,
   imgTerminalCommands,
   imgTerminalCommandsClone,
+  imgProject,
 } from "assets/tutorials";
 
 export const defaultTutorials: ITutorial[] = [
@@ -312,6 +313,22 @@ export const defaultTutorials: ITutorial[] = [
         prompts: [
           "If you need more %help% you can always view the tutorials again, in addition to an overview of %git commands% and important %git concepts%.",
           "Just look for the help button in %the bottom left% of the screen.",
+        ],
+      },
+    ],
+    completed: false,
+  },
+  {
+    type: TutorialType.PROJECT,
+    description: "What are projects?",
+    screens: [
+      {
+        title: "New project unlocked!",
+        img: imgProject,
+        prompts: [
+          "You have just unlocked a %new project%! A project is essentially a %new remote repository% for you to %clone% and work with.",
+          "This new project will give a %cash multiplier%, with the disadvantge of %shorter day length%.",
+          "Give it a try if you feel %brave% enough!",
         ],
       },
     ],

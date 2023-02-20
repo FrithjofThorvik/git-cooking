@@ -63,6 +63,9 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
     if (gameData.git.projects.some((p) => p.cloned)) {
       setActiveTutorialTypes([TutorialType.CLONE]);
     }
+    if (gameData.git.projects.filter((p) => p.unlocked).length >= 2) {
+      setActiveTutorialTypes([TutorialType.PROJECT]);
+    }
   }, [gameData.git.projects]);
 
   useEffect(() => {
