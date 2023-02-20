@@ -142,7 +142,7 @@ export interface IOrderService {
   _orders: IOrder[];
   branches: { orders: IOrder[]; name: string }[];
   getAvailableOrders: () => IOrder[];
-  getAllOrders: () => IOrder[];
+  getAllOrders: (branchName?: string) => IOrder[];
   createOrderFolder: (order: IOrder) => IOrderService;
   updatePercentageCompleted: (createdItems: IOrderItem[]) => IOrderService;
   setNewOrders: (orders: IOrder[], branchName?: string) => IOrderService;

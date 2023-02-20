@@ -555,8 +555,10 @@ export const gitCommands: ICommandArg[] = [
                     .getActiveProject()
                     ?.remote.pushItems(
                       branch.remoteTrackingBranch,
-                      updatedGameData.git.getCommitHistory(),
-                      updatedGameData.orderService.getAllOrders()
+                      updatedGameData.git.getCommitHistory(
+                        branch.targetCommitId
+                      ),
+                      updatedGameData.orderService.getAllOrders(branchName)
                     );
 
                 if (updatedRemote !== null && updatedRemote !== undefined) {

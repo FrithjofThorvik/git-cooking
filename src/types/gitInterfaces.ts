@@ -99,7 +99,7 @@ export interface IGitTree {
   getActiveBranch: () => IBranch | undefined;
   getCommitFromId: (commitId: string) => ICommit | undefined;
   getRootCommit: () => ICommit | undefined;
-  getCommitHistory: () => ICommit[];
+  getCommitHistory: (startCommitId?: string) => ICommit[];
   getHeadCommit: () => ICommit | undefined;
   doesBranchNameExists: (branchName: string) => boolean;
   getBranch: (branchName: string) => IBranch | null;
