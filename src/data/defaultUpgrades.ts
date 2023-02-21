@@ -135,9 +135,7 @@ export const defaultUpgrades: IUpgrade[] = [
     },
     apply: function (stats: IStats) {
       let copyStats: IStats = copyObjectWithoutRef(stats);
-      copyStats.revenueMultiplier.value =
-        copyStats.revenueMultiplier.base * this.effect().current;
-
+      copyStats.revenueMultiplier.value *= this.effect().current;
       return copyStats;
     },
     cost: function (discountMultiplier: number) {
