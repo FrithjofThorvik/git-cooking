@@ -132,7 +132,7 @@ export const calculateRevenueAndCost = (
   const accuracyMultiplier = 0.25;
   const baseEarlyFinishEarning = 100;
   const revenueMultiplier = gameData.stats.revenueMultiplier.value;
-  const useCostReduction = gameData.stats.costReductionMultiplier.value;
+  const useCostReduction = gameData.stats.useCostReductionMultiplier.value;
   const dayLength = gameData.stats.dayLength.value;
   const endedDayTime = gameData.states.endedDayTime;
 

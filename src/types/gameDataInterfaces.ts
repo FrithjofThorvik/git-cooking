@@ -111,7 +111,7 @@ export interface IStat {
 export interface IStats {
   discountMultiplier: IStat;
   dayLength: IStat;
-  costReductionMultiplier: IStat;
+  useCostReductionMultiplier: IStat;
   revenueMultiplier: IStat;
   spawnTime: IStat;
   switchProjectStats: (prevProject: IProject, newProject: IProject) => IStats;
