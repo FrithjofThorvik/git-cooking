@@ -33,8 +33,8 @@ export const defaultStore: IStore = {
         ) {
           if (u.level === u.maxLevel) u.purchased = true;
           copyStore.cash -= u.cost(discountMultiplier);
+          u.level += 1; // NB! Level up after money is subtracted, but before the stat is applied!
           copyStats = u.apply(copyStats);
-          u.level += 1;
         }
       });
     }
