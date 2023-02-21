@@ -15,30 +15,38 @@ const InfoBoxController: React.FC<
   const { timeLapsed } = useGameTime();
   const [isPushed, setIsPushed] = useState<boolean>(false);
   const [showWarning, setShowWarning] = useState<boolean>(false);
-  const infoText = useInfoBoxText(gameData, isPushed);
+  const [unsyncedBranches, setUnsyncedBranches] = useState<string[]>([]);
+  const [declinedEndDay, setDeclinedEndDay] = useState<boolean>(false);
+  const infoText = useInfoBoxText(gameData, isPushed, declinedEndDay);
 
-  const checkForUnsyncedChanges = (): boolean => {
-    const activeBranch = gameData.git.getActiveBranch();
-    if (!activeBranch) return false;
-
-    const pushedItems = gameData.git
-      .getActiveProject()
-      ?.remote.getPushedItems(activeBranch.name);
-    const createdItems = gameData.git.getCommitFromId(
-      activeBranch.targetCommitId
-    )?.directory.createdItems;
-    if (!(createdItems && activeBranch.remoteTrackingBranch && pushedItems))
-      return false;
-    return !objectsEqual(pushedItems, createdItems);
+  const getBranchSyncStatus = () => {
+    return gameData.git.branches.map((b) => {
+      let unsynced = false;
+      const pushedItems = gameData.git
+        .getActiveProject()
+        ?.remote.getPushedItems(b.name);
+      const createdItems = gameData.git.getCommitFromId(b.targetCommitId)
+        ?.directory.createdItems;
+      if (createdItems && b.remoteTrackingBranch && pushedItems)
+        unsynced = !objectsEqual(pushedItems, createdItems);
+      return { name: b.name, isUnsynced: unsynced };
+    });
   };
 
   const endDay = (confirm?: boolean, decline?: boolean) => {
-    const hasUnsyncedChanges = checkForUnsyncedChanges();
+    const branchSyncStatus = getBranchSyncStatus();
+    const hasUnsyncedChanges = branchSyncStatus.some((b) => b.isUnsynced);
 
     if (hasUnsyncedChanges) {
       setShowWarning(!decline);
+      setUnsyncedBranches(
+        branchSyncStatus.filter((b) => b.isUnsynced).map((b) => b.name)
+      );
+      decline !== undefined && setDeclinedEndDay(decline);
     }
     if (!hasUnsyncedChanges || confirm) {
+      setDeclinedEndDay(false);
+      setShowWarning(false);
       let updatedGameData = gameData.endDay(timeLapsed);
       setGameData({ ...updatedGameData });
     }
@@ -63,6 +71,7 @@ const InfoBoxController: React.FC<
       dayLengthModifier={
         gameData.stats.dayLength.value / gameData.stats.dayLength.base
       }
+      unsyncedBranches={unsyncedBranches}
       day={gameData.states.day}
       dayIsCompleted={gameData.states.isDayComplete}
       itemsHaveBeenPushed={isPushed}

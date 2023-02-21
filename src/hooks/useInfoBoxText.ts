@@ -3,7 +3,11 @@ import { TutorialType } from "types/enums";
 
 import { IGitCooking } from "types/gameDataInterfaces";
 
-export const useInfoBoxText = (gameData: IGitCooking, isPushed: boolean) => {
+export const useInfoBoxText = (
+  gameData: IGitCooking,
+  isPushed: boolean,
+  declinedEndDay: boolean
+) => {
   const [infoText, setInfoText] = useState<string>("");
 
   useEffect(() => {
@@ -67,11 +71,16 @@ export const useInfoBoxText = (gameData: IGitCooking, isPushed: boolean) => {
     }
     // State 5: Pushed items for the first time
     else if (isPushed) {
-      setInfoText(
-        `You can %git checkout% other branches to make more progress, or %end the day% right away`
-      );
+      if (declinedEndDay)
+        setInfoText(
+          `Use %git push origin <branch_name>% to push changes from a specific branch.`
+        );
+      else
+        setInfoText(
+          `You can %git checkout% other branches to make more progress, or %end the day% right away.`
+        );
     } else setInfoText("...");
-  }, [gameData, isPushed]);
+  }, [gameData, isPushed, declinedEndDay]);
 
   return infoText;
 };
