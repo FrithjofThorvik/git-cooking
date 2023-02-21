@@ -13,10 +13,10 @@ import {
   imgHelp,
   imgMatchOrders,
   imgOrderArriving,
+  imgProject,
   imgTerminal,
   imgTerminalCommands,
   imgTerminalCommandsClone,
-  imgProject,
 } from "assets/tutorials";
 
 export const defaultTutorials: ITutorial[] = [

@@ -32,9 +32,12 @@ export const formatClock = (
       .padStart(2, "0")}`;
   };
 
+  const additionalTimeFactor = 180;
+
   const startTimeInMinutes = toMinutesFromHoursAndMinutes(13, 0);
   let endTimeInMinutes =
-    toMinutesFromHoursAndMinutes(21, 0) + 60 * (dayLengthModifier - 1);
+    toMinutesFromHoursAndMinutes(21, 0) +
+    additionalTimeFactor * (dayLengthModifier - 1);
   if (endTimeInMinutes >= 1440) endTimeInMinutes = 1439;
 
   // Converts from timelapsed in ms to minutes on the clock

@@ -9,13 +9,14 @@ import {
 import { IStats, IUpgrade } from "types/gameDataInterfaces";
 import { UpgradeType } from "types/enums";
 import { copyObjectWithoutRef } from "services/helpers";
+import { upgradeBalancing } from "./balancing";
 
 export const defaultUpgrades: IUpgrade[] = [
   {
     id: v4(),
     image: imgClock,
     unlocked: false,
-    unlockDay: 1,
+    unlockDay: upgradeBalancing.dayLength.unlockDay,
     purchased: false,
     type: UpgradeType.DAY_LENGTH,
     level: 1,
@@ -27,9 +28,8 @@ export const defaultUpgrades: IUpgrade[] = [
       return `Increases Day Length by x${this.effect().next.toFixed(2)}`;
     },
     effect: function () {
-      const base = 1.39;
-      const current = Math.pow(base, this.level - 1);
-      const next = Math.pow(base, this.level);
+      const current = upgradeBalancing.dayLength.effect(this.level);
+      const next = upgradeBalancing.dayLength.effect(this.level + 1);
       return { current, next };
     },
     apply: function (stats: IStats) {
@@ -40,8 +40,9 @@ export const defaultUpgrades: IUpgrade[] = [
       return copyStats;
     },
     cost: function (discountMultiplier: number) {
-      const base = 50;
-      return Math.round(this.level * base * discountMultiplier);
+      return Math.round(
+        upgradeBalancing.dayLength.cost(this.level) * discountMultiplier
+      );
     },
   },
   {
@@ -51,18 +52,17 @@ export const defaultUpgrades: IUpgrade[] = [
       return `Discount`;
     },
     description: function () {
-      return `Reduces upgrade cost by x${this.effect().next.toFixed(2)}`;
+      return `Multiplies upgrade cost by x${this.effect().next.toFixed(2)}`;
     },
     unlocked: false,
-    unlockDay: 3,
+    unlockDay: upgradeBalancing.discount.unlockDay,
     purchased: false,
     type: UpgradeType.DISCOUNT,
     level: 1,
     maxLevel: 5,
     effect: function () {
-      const base = 0.85;
-      const current = Math.pow(base, this.level - 1);
-      const next = Math.pow(base, this.level);
+      const current = upgradeBalancing.discount.effect(this.level);
+      const next = upgradeBalancing.discount.effect(this.level + 1);
       return { current: current, next: next };
     },
     apply: function (stats: IStats) {
@@ -73,48 +73,51 @@ export const defaultUpgrades: IUpgrade[] = [
       return copyStats;
     },
     cost: function (discountMultiplier: number) {
-      const base = 100;
-      return this.level * base * discountMultiplier;
+      return Math.round(
+        upgradeBalancing.discount.cost(this.level) * discountMultiplier
+      );
     },
   },
   {
     id: v4(),
     image: imgCostReduction,
     unlocked: false,
-    unlockDay: 5,
+    unlockDay: upgradeBalancing.costReduction.unlockDay,
     purchased: false,
     type: UpgradeType.COST_REDUCTION,
     level: 1,
     maxLevel: 5,
     name: function () {
-      return `Reduce cost`;
+      return `Reduce use cost`;
     },
     description: function () {
-      return `Reduces ingredient cost by x${this.effect().next.toFixed(2)}`;
+      return `Multiplies ingredient use cost by x${this.effect().next.toFixed(
+        2
+      )}`;
     },
     effect: function () {
-      const base = 0.9;
-      const current = Math.pow(base, this.level - 1);
-      const next = Math.pow(base, this.level);
+      const current = upgradeBalancing.costReduction.effect(this.level);
+      const next = upgradeBalancing.costReduction.effect(this.level + 1);
       return { current: current, next: next };
     },
     apply: function (stats: IStats) {
       let copyStats: IStats = copyObjectWithoutRef(stats);
-      copyStats.costReductionMultiplier.value =
-        copyStats.costReductionMultiplier.base * this.effect().current;
+      copyStats.useCostReductionMultiplier.value =
+        copyStats.useCostReductionMultiplier.base * this.effect().current;
 
       return copyStats;
     },
     cost: function (discountMultiplier: number) {
-      const base = 250;
-      return this.level * base * discountMultiplier;
+      return Math.round(
+        upgradeBalancing.costReduction.cost(this.level) * discountMultiplier
+      );
     },
   },
   {
     id: v4(),
     image: imgRevenueMultiplier,
     unlocked: false,
-    unlockDay: 6,
+    unlockDay: upgradeBalancing.revenueMultiplier.unlockDay,
     purchased: false,
     type: UpgradeType.REVENUE_MULTIPLIER,
     level: 1,
@@ -126,9 +129,8 @@ export const defaultUpgrades: IUpgrade[] = [
       return `Increase revenue by x${this.effect().next.toFixed(2)}`;
     },
     effect: function () {
-      const base = 1.7;
-      const current = Math.pow(base, this.level - 1);
-      const next = Math.pow(base, this.level);
+      const current = upgradeBalancing.revenueMultiplier.effect(this.level);
+      const next = upgradeBalancing.revenueMultiplier.effect(this.level + 1);
       return { current: current, next: next };
     },
     apply: function (stats: IStats) {
@@ -139,29 +141,31 @@ export const defaultUpgrades: IUpgrade[] = [
       return copyStats;
     },
     cost: function (discountMultiplier: number) {
-      const base = 500;
-      return this.level * base * discountMultiplier;
+      return Math.round(
+        upgradeBalancing.revenueMultiplier.cost(this.level) * discountMultiplier
+      );
     },
   },
   {
     id: v4(),
     image: imgRevenueMultiplier,
     unlocked: false,
-    unlockDay: 1,
+    unlockDay: upgradeBalancing.spawnTime.unlockDay,
     purchased: false,
     type: UpgradeType.SPAWN_TIME,
     level: 1,
     maxLevel: 5,
     name: function () {
-      return `Reduce spawn time`;
+      return `Reduce order arrive time`;
     },
     description: function () {
-      return `Reduces order spawn time by x${this.effect().next.toFixed(2)}`;
+      return `Multiplies order arrive time by x${this.effect().next.toFixed(
+        2
+      )}`;
     },
     effect: function () {
-      const base = 0.85;
-      const current = Math.pow(base, this.level - 1);
-      const next = Math.pow(base, this.level);
+      const current = upgradeBalancing.spawnTime.effect(this.level);
+      const next = upgradeBalancing.spawnTime.effect(this.level + 1);
       return { current: current, next: next };
     },
     apply: function (stats: IStats) {
@@ -172,8 +176,9 @@ export const defaultUpgrades: IUpgrade[] = [
       return copyStats;
     },
     cost: function (discountMultiplier: number) {
-      const base = 500;
-      return this.level * base * discountMultiplier;
+      return Math.round(
+        upgradeBalancing.spawnTime.cost(this.level) * discountMultiplier
+      );
     },
   },
 ];
