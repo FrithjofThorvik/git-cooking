@@ -14,6 +14,7 @@ interface IInfoBoxProps {
   showWarning: boolean;
   baseDayLength: number;
   dayIsCompleted: boolean;
+  unsyncedBranches: string[];
   dayLengthModifier: number;
   itemsHaveBeenPushed: boolean;
   endDay: (confirm?: boolean, decline?: boolean) => void;
@@ -26,6 +27,7 @@ const InfoBox: React.FC<IInfoBoxProps> = ({
   showWarning,
   baseDayLength,
   dayIsCompleted,
+  unsyncedBranches,
   dayLengthModifier,
   itemsHaveBeenPushed,
   endDay,
@@ -46,9 +48,9 @@ const InfoBox: React.FC<IInfoBoxProps> = ({
         <div className="info-box-warning">
           <div className="info-box-warning-text">
             <HighlightText
-              text={
-                "You have %not pushed% all your changes. Do you still wish to %end day%?"
-              }
+              text={`Unsynced changes in ${unsyncedBranches.map(
+                (b) => ` ${b}`
+              )}. Do you still wish to %end day%?`}
             />
           </div>
           <div className="info-box-warning-buttons">
