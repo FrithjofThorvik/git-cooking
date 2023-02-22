@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import {
+  IGitCommand,
   IHelp,
   IIngredient,
   IStats,
@@ -15,12 +16,14 @@ import Background from "components/Background";
 
 import "./StoreScreen.scss";
 import { INewUnlockedItems } from "types/interfaces";
+import CommandPopup from "components/store/CommandPopup";
 
 export interface IStoreScreenProps {
   day: number;
   help: IHelp;
   store: IStore;
   stats: IStats;
+  purchasedGitCommand: IGitCommand | undefined;
   hasStartedFetch: boolean;
   goNext: () => void;
   goBack: () => void;
@@ -33,6 +36,7 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
   help,
   store,
   stats,
+  purchasedGitCommand,
   hasStartedFetch,
   goNext,
   goBack,
@@ -144,6 +148,9 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
             type="right"
           />
         </div>
+        {purchasedGitCommand && (
+          <CommandPopup purchasedGitCommand={purchasedGitCommand} />
+        )}
       </div>
     </Background>
   );

@@ -152,7 +152,7 @@ export const defaultGitCommands: IGitCommand[] = [
       return Math.round(gitCommandBalancing.branch.cost * discountMultiplier);
     },
     useCase:
-      "Use %git branch% to list existing branches; the current branch will be marked with an asterisk.",
+      "Use %git branch% to list existing branches; the current branch will be marked with an asterisk.\n\n Use %git branch --r% to show remote branches.",
     unlocked: false,
     unlockDay: gitCommandBalancing.branch.unlockDay,
     purchased: false,
