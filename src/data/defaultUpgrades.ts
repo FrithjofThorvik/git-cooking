@@ -25,7 +25,9 @@ export const defaultUpgrades: IUpgrade[] = [
       return `Day Length`;
     },
     description: function () {
-      return `Increases Day Length by x${this.effect().next.toFixed(2)}`;
+      return `Increase Day Length by ${((this.effect().next - 1) * 100).toFixed(
+        1
+      )}%`;
     },
     effect: function () {
       const current = upgradeBalancing.dayLength.effect(this.level);
@@ -52,7 +54,9 @@ export const defaultUpgrades: IUpgrade[] = [
       return `Discount`;
     },
     description: function () {
-      return `Multiplies upgrade cost by x${this.effect().next.toFixed(2)}`;
+      return `Reduce upgrade cost by ${((1 - this.effect().next) * 100).toFixed(
+        1
+      )}%`;
     },
     unlocked: false,
     unlockDay: upgradeBalancing.discount.unlockDay,
@@ -91,9 +95,10 @@ export const defaultUpgrades: IUpgrade[] = [
       return `Reduce use cost`;
     },
     description: function () {
-      return `Multiplies ingredient use cost by x${this.effect().next.toFixed(
-        2
-      )}`;
+      return `Reduce ingredient use cost by ${(
+        (1 - this.effect().next) *
+        100
+      ).toFixed(1)}%`;
     },
     effect: function () {
       const current = upgradeBalancing.costReduction.effect(this.level);
@@ -126,7 +131,9 @@ export const defaultUpgrades: IUpgrade[] = [
       return `Increase revenue`;
     },
     description: function () {
-      return `Increase revenue by x${this.effect().next.toFixed(2)}`;
+      return `Increase revenue by ${((this.effect().next - 1) * 100).toFixed(
+        1
+      )}%`;
     },
     effect: function () {
       const current = upgradeBalancing.revenueMultiplier.effect(this.level);
@@ -157,9 +164,10 @@ export const defaultUpgrades: IUpgrade[] = [
       return `Reduce order arrive time`;
     },
     description: function () {
-      return `Multiplies order arrive time by x${this.effect().next.toFixed(
-        2
-      )}`;
+      return `Reduce order arrive time by ${(
+        (1 - this.effect().next) *
+        100
+      ).toFixed(1)}%`;
     },
     effect: function () {
       const current = upgradeBalancing.spawnTime.effect(this.level);

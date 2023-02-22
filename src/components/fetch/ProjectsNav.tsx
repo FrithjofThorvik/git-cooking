@@ -41,10 +41,10 @@ const ProjectsNav: React.FC<IProjectsNavProps> = ({
       </div>
       <div className="projects-nav-stats">
         <div className="projects-nav-stats-stat">
-          Cash: x{project.stats.cashMultiplier}
+          Cash: + {((project.stats.cashMultiplier - 1) * 100).toFixed(1)}%
         </div>
         <div className="projects-nav-stats-stat">
-          Time: x{project.stats.timeReduction}
+          Time: - {((1 - project.stats.timeReduction) * 100).toFixed(1)}%
         </div>
       </div>
     </div>

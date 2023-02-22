@@ -30,7 +30,7 @@ export const upgradeBalancing = {
     },
   },
   spawnTime: {
-    unlockDay: 1,
+    unlockDay: 2,
     baseCost: 100,
     effect: function (level: number) {
       return Math.exp(-(level - 1) / 2);
@@ -73,7 +73,7 @@ export const foodBalancing = {
     cost: 0,
   },
   salad: {
-    unlockDay: 1,
+    unlockDay: 2,
     useCost: 12,
     cost: 100,
   },
@@ -87,13 +87,13 @@ export const foodBalancing = {
     useCost: 12,
     cost: 100,
   },
-  tomato: {
+  onionRings: {
     unlockDay: 5,
     useCost: 12,
     cost: 100,
   },
-  onionRings: {
-    unlockDay: 8,
+  tomato: {
+    unlockDay: 6,
     useCost: 12,
     cost: 100,
   },
@@ -103,7 +103,7 @@ export const foodBalancing = {
     cost: 100,
   },
   nachos: {
-    unlockDay: 9,
+    unlockDay: 8,
     useCost: 12,
     cost: 100,
   },
