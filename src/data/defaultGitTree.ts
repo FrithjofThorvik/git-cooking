@@ -389,40 +389,46 @@ export const defaultGitTree: IGitTree = {
   cloneProject: function (project: IProject) {
     let copy: IGitTree = copyObjectWithoutRef(this);
     if (project.cloned) return copy;
+    const projectIndex = copy.projects.findIndex(
+      (p) => p.type === project.type
+    );
+    if (projectIndex === -1) return copy;
 
-    for (let i = 0; i < copy.projects.length; i++) {
-      if (project.type === copy.projects[i].type) {
-        copy.projects[i].cloned = true;
-        copy.projects[i].active = true;
-      } else copy.projects[i].active = false;
-    }
-
+    copy.projects[projectIndex].cloned = true;
     copy = copy.fetch().updatedGit;
-
-    // checkout main branch
-    const mainBranchName = "main";
-    const remoteMainBranch = project.remote.branches.find((b) => b.isMain);
-    if (!remoteMainBranch) return copy;
-
-    // create new branch that tracks remote
-    copy = copy.addNewBranch(mainBranchName, remoteMainBranch.name);
-    copy = copy.switchBranch(mainBranchName);
-    // update commits
-    project.remote
-      .getCommitHistory(remoteMainBranch.targetCommitId)
-      .forEach((c) => {
-        if (copy.commits.some((c1) => c1.id === c.id)) return;
-        copy.commits.push(c);
-      });
+    copy = copy.activateProject(copy.projects[projectIndex]);
     return copy;
   },
   activateProject: function (project: IProject) {
     let copy: IGitTree = copyObjectWithoutRef(this);
 
     for (let i = 0; i < copy.projects.length; i++) {
-      if (project.type === copy.projects[i].type)
+      if (project.type === copy.projects[i].type) {
         copy.projects[i].active = true;
-      else copy.projects[i].active = false;
+      } else copy.projects[i].active = false;
+    }
+
+    // remove old branches and commits
+    copy.commits = [];
+    copy.branches = [];
+    copy.HEAD.targetId = "";
+
+    // if cloned checkout main branch
+    if (project.cloned) {
+      const mainBranchName = "main";
+      const remoteMainBranch = project.remote.branches.find((b) => b.isMain);
+      if (!remoteMainBranch) return copy;
+
+      // create new main branch that tracks remote main
+      copy = copy.addNewBranch(mainBranchName, remoteMainBranch.name);
+      copy = copy.switchBranch(mainBranchName);
+      // update commits
+      project.remote
+        .getCommitHistory(remoteMainBranch.targetCommitId)
+        .forEach((c) => {
+          if (copy.commits.some((c1) => c1.id === c.id)) return;
+          copy.commits.push(c);
+        });
     }
 
     return copy;

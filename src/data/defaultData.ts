@@ -131,21 +131,13 @@ export const defaultGameData: IGitCooking = {
     });
     copy.git.projects = newProjects;
 
-    // switch to main branch on cloned projects
+    // set orders and git repo to active project
     copy.git.projects.forEach((p) => {
-      if (!p.cloned) return;
+      if (!p.cloned && !p.active) return;
       const remoteMainBranch = p.remote.getBranch(mainBranchName);
       if (!remoteMainBranch) return;
-      // create new branch that tracks remote
-      copy.git = copy.git.addNewBranch(mainBranchName, remoteMainBranch.name);
-      copy.git = copy.git.switchBranch(mainBranchName);
-      // update commits
-      p.remote
-        .getCommitHistory(remoteMainBranch?.targetCommitId)
-        .forEach((c) => {
-          if (copy.git.commits.some((c1) => c1.id === c.id)) return;
-          copy.git.commits.push(c);
-        });
+      //activate project
+      copy.git = copy.git.activateProject(p);
       // update orders
       copy.orderService = copy.orderService.setNewOrders(
         remoteMainBranch.orders,

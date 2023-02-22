@@ -621,9 +621,12 @@ export const gitCommands: ICommandArg[] = [
         cmd: (gameData) => {
           return middleware(gameData, GitCommandType.BRANCH, () => {
             let message = "Remote branches:\n";
-            gameData.git.getActiveProject()?.remote.branches.forEach((b) => {
-              message += `\torigin/${b.name}\n`;
-            });
+            const activeProject = gameData.git.getActiveProject();
+            if (activeProject?.cloned) {
+              activeProject.remote.branches.forEach((b) => {
+                message += `\torigin/${b.name}\n`;
+              });
+            }
             return gitRes(message, true);
           });
         },
