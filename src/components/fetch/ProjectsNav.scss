@@ -92,6 +92,14 @@
       font-weight: 500;
       padding: 3px 10px;
       border-radius: 50px;
+
+      &:first-child {
+        color: $line-green;
+      }
+
+      &:last-child {
+        color: $line-red;
+      }
     }
   }
 }
