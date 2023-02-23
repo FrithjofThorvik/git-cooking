@@ -14,7 +14,6 @@ const CommitHistoryController: React.FC<
 
   const handleClickOnCommit = (commit: ICommit) => {
     alert(`${commit.id}: ${commit.message}`);
-    console.log(JSON.stringify(commit.directory));
   };
 
   useEffect(() => {

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { IDirectory, IGitCooking } from "types/gameDataInterfaces";
+import { GameState } from "types/enums";
 import { singletonHook } from "react-singleton-hook";
 import { defaultGameData } from "data/defaultData";
-import { copyObjectWithoutRef } from "services/helpers";
 import { defaultDirectory } from "data/defaultGitTree";
-import { GameState } from "types/enums";
+import { copyObjectWithoutRef } from "services/helpers";
+import { IDirectory, IGitCooking } from "types/gameDataInterfaces";
 
 var _ = require("lodash");
 

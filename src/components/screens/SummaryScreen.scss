@@ -1,13 +1,16 @@
 @import "styles/imports/colors";
+@import "styles/imports/mixins";
+
 .summary-screen {
+  @include scale(0.9);
   display: flex;
-  position: relative;
   align-items: center;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
+  gap: 3%;
 
   &-day {
     display: flex;
@@ -16,7 +19,7 @@
     justify-content: center;
 
     h1 {
-      font-size: 70px;
+      font-size: 50px;
       margin-top: 30px;
     }
   }
@@ -25,15 +28,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 40px;
     width: 100%;
   }
 
   &-buttons {
     display: flex;
     justify-content: center;
-    gap: 25px;
     width: 90%;
-    margin-bottom: 25px;
   }
 }

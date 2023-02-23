@@ -1,5 +1,5 @@
 import { IFood } from "./foodInterfaces";
-import { IGitTree } from "./gitInterfaces";
+import { IGitTree, IProject } from "./gitInterfaces";
 import {
   GameState,
   GitCommandType,
@@ -70,6 +70,7 @@ export interface IIngredient extends IPurchasable {
   type: IngredientType;
   useCost: number;
   default?: boolean;
+  isSingle?: boolean;
   name: string;
   cost: number;
 }
@@ -89,6 +90,7 @@ export interface IUpgrade extends IPurchasable {
 export interface IGitCommand extends IPurchasable {
   unlocked: boolean;
   gitCommandType: GitCommandType;
+  useCase: string;
   name: () => string;
   cost: (discountMultiplier: number) => number;
   description: () => string;
@@ -109,9 +111,10 @@ export interface IStat {
 export interface IStats {
   discountMultiplier: IStat;
   dayLength: IStat;
-  costReductionMultiplier: IStat;
+  useCostReductionMultiplier: IStat;
   revenueMultiplier: IStat;
   spawnTime: IStat;
+  switchProjectStats: (prevProject: IProject, newProject: IProject) => IStats;
 }
 
 export interface ITutorialScreen {
@@ -139,7 +142,7 @@ export interface IOrderService {
   _orders: IOrder[];
   branches: { orders: IOrder[]; name: string }[];
   getAvailableOrders: () => IOrder[];
-  getAllOrders: () => IOrder[];
+  getAllOrders: (branchName?: string) => IOrder[];
   createOrderFolder: (order: IOrder) => IOrderService;
   updatePercentageCompleted: (createdItems: IOrderItem[]) => IOrderService;
   setNewOrders: (orders: IOrder[], branchName?: string) => IOrderService;
@@ -150,6 +153,8 @@ export interface IStates {
   day: number;
   gameState: GameState;
   isDayComplete: boolean;
+  hasStartedFetch: boolean;
+  doneMerging: boolean;
   endedDayTime: number;
   setGameState: (state: GameState) => IStates;
 }
@@ -163,7 +168,8 @@ export interface IGitCooking {
   orderService: IOrderService;
   commandHistory: string[];
   itemInterface: IItemInterface;
-  endDay: (timeLapsed?: number) => IGitCooking;
+  completeDay: () => IGitCooking;
+  endDay: (timeLapsed: number) => IGitCooking;
   startDay: () => IGitCooking;
   startFetch: () => IGitCooking;
 }

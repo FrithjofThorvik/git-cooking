@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 
-import { IHelp, ITutorial } from "types/gameDataInterfaces";
 import { imgLibrary } from "assets";
+import { useKeyPress } from "hooks/useKeyPress";
+import { HelpScreenType } from "types/enums";
+import { IHelp, ITutorial } from "types/gameDataInterfaces";
+import HelpNav from "components/help/HelpNav";
 import Tutorials from "components/Tutorials";
 import HelpButton from "components/HelpButton";
 import Background from "components/Background";
+import CommandList from "components/help/HelpCommands";
+import HelpConcepts from "components/help/HelpConcepts";
+import HelpTutorials from "components/help/HelpTutorials";
 
 import "./HelpScreen.scss";
-import { useKeyPress } from "hooks/useKeyPress";
 
 interface IHelpScreenProps {
   help: IHelp;
@@ -19,31 +24,40 @@ const HelpScreen: React.FC<IHelpScreenProps> = ({
   closeHelpScreen,
 }): JSX.Element => {
   const [activeTutorials, setActiveTutorials] = useState<ITutorial[]>([]);
+  const [activeHelpScreen, setActiveHelpScreen] = useState<HelpScreenType>(
+    HelpScreenType.TUTORIALS
+  );
   useKeyPress(
     "Escape",
     () => activeTutorials.length === 0 && closeHelpScreen()
   );
 
+  const getActiveHelpScreen = () => {
+    switch (activeHelpScreen) {
+      case HelpScreenType.TUTORIALS:
+        return (
+          <HelpTutorials
+            tutorials={help.tutorials}
+            setActiveTutorials={(t: ITutorial[]) => setActiveTutorials(t)}
+          />
+        );
+      case HelpScreenType.COMMANDS:
+        return <CommandList />;
+      case HelpScreenType.CONCEPTS:
+        return <HelpConcepts />;
+      default:
+        return <></>;
+    }
+  };
+
   return (
-    <Background img={imgLibrary} blur={10} opacity={0.8}>
+    <Background img={imgLibrary} blur={8} opacity={0.75}>
       <div className="help-screen">
-        <div className="help-screen-tutorials">
-          {help.tutorials.map((t, i) => (
-            <div
-              key={i}
-              className="help-screen-tutorials-tutorial"
-              onClick={() => setActiveTutorials([t])}
-            >
-              <div className="help-screen-tutorials-tutorial-title">
-                {t.type}
-              </div>
-              <div className="help-screen-tutorials-tutorial-description">
-                {t.description}
-              </div>
-              <div className="help-screen-tutorials-tutorial-play">→</div>
-            </div>
-          ))}
-        </div>
+        {getActiveHelpScreen()}
+        <HelpNav
+          activeHelpScreen={activeHelpScreen}
+          setActiveHelpScreen={(hs: HelpScreenType) => setActiveHelpScreen(hs)}
+        />
         <Tutorials
           tutorials={activeTutorials}
           hideOnLastTutorial

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 import {
+  IGitCommand,
   IHelp,
   IIngredient,
   IStats,
   IStore,
   StoreItem,
 } from "types/gameDataInterfaces";
-import { PurchaseType, TutorialType } from "types/enums";
+import { IngredientType, PurchaseType, TutorialType } from "types/enums";
 import Store from "components/store/Store";
 import StoreNav from "components/store/StoreNav";
 import MenuButton from "components/MenuButton";
@@ -15,15 +16,18 @@ import Background from "components/Background";
 
 import "./StoreScreen.scss";
 import { INewUnlockedItems } from "types/interfaces";
+import CommandPopup from "components/store/CommandPopup";
 
 export interface IStoreScreenProps {
   day: number;
   help: IHelp;
   store: IStore;
   stats: IStats;
+  purchasedGitCommand: IGitCommand | undefined;
+  hasStartedFetch: boolean;
   goNext: () => void;
   goBack: () => void;
-  purchase: (purchasable: StoreItem, _stats: IStats) => void;
+  purchase: (purchasable: StoreItem) => void;
   setActiveTutorialTypes: (tutorials: TutorialType[]) => void;
 }
 
@@ -32,6 +36,8 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
   help,
   store,
   stats,
+  purchasedGitCommand,
+  hasStartedFetch,
   goNext,
   goBack,
   purchase,
@@ -46,7 +52,11 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
   const [newUnlockedItems, setNewUnlockedItems] = useState<INewUnlockedItems>({
     upgrades: 0,
     gitCommands: 0,
-    ingredients: 0,
+    ingredients: {
+      total: 0,
+      burger: 0,
+      extra: 0,
+    },
   });
 
   useEffect(() => {
@@ -72,12 +82,23 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
   }, [activePurchaseType, store, help]);
 
   useEffect(() => {
-    let newUnlockedIngredients = 0;
+    let newUnlockedIngredients = {
+      total: 0,
+      extra: 0,
+      burger: 0,
+    };
     let newUnlockedGitCommands = 0;
     let newUnlockedUpgrades = 0;
     store.foods.forEach((f) =>
       Object.values(f.ingredients).forEach((i) => {
-        if (i.unlockDay === day && !i.purchased) newUnlockedIngredients += 1;
+        if (i.unlockDay === day && !i.purchased) {
+          if (i.type === IngredientType.BURGER)
+            newUnlockedIngredients.burger += 1;
+          if (i.type === IngredientType.EXTRA)
+            newUnlockedIngredients.extra += 1;
+
+          newUnlockedIngredients.total += 1;
+        }
       })
     );
     store.upgrades.forEach((u) => {
@@ -105,18 +126,31 @@ const StoreScreen: React.FC<IStoreScreenProps> = ({
             )}
             stats={stats}
             purchase={purchase}
+            newUnlockedItems={newUnlockedItems}
           />
         </div>
         <div className="store-screen-bottom">
-          <MenuButton onClick={goBack} text="Results" type="default" />
+          <MenuButton
+            onClick={goBack}
+            text="Results"
+            type="left"
+            hide={hasStartedFetch}
+          />
           <StoreNav
             cash={store.cash}
             newUnlockedItems={newUnlockedItems}
             activePurchaseType={activePurchaseType}
             setActivePurchaseType={setActivePurchaseType}
           />
-          <MenuButton onClick={goNext} text="New day" type="green" />
+          <MenuButton
+            onClick={goNext}
+            text={`${hasStartedFetch ? "Continue" : "New day"}`}
+            type="right"
+          />
         </div>
+        {purchasedGitCommand && (
+          <CommandPopup purchasedGitCommand={purchasedGitCommand} />
+        )}
       </div>
     </Background>
   );

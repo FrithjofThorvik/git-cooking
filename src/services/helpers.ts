@@ -32,9 +32,12 @@ export const formatClock = (
       .padStart(2, "0")}`;
   };
 
+  const additionalTimeFactor = 180;
+
   const startTimeInMinutes = toMinutesFromHoursAndMinutes(13, 0);
   let endTimeInMinutes =
-    toMinutesFromHoursAndMinutes(21, 0) + 60 * (dayLengthModifier - 1);
+    toMinutesFromHoursAndMinutes(21, 0) +
+    additionalTimeFactor * (dayLengthModifier - 1);
   if (endTimeInMinutes >= 1440) endTimeInMinutes = 1439;
 
   // Converts from timelapsed in ms to minutes on the clock
@@ -86,3 +89,16 @@ export const formatNumber = (
  */
 export const toMilliseconds = (minutes: number, seconds: number) =>
   (minutes * 60 + seconds) * 1000;
+
+/**
+ * Sums numbers of an object
+ */
+export const sumObjectValues = (obj: any) => {
+  if (obj === null && typeof obj !== "object") return 0;
+  const sum = Object.values(obj).reduce(
+    (a, b) => (typeof a === "number" ? (typeof b === "number" ? a + b : 0) : 0),
+    0
+  );
+  if (typeof sum !== "number") return 0;
+  return sum;
+};

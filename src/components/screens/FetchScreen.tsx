@@ -1,31 +1,136 @@
-import React from "react";
+import { ThemeProvider, Tooltip } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import CloudDownloadTwoToneIcon from "@mui/icons-material/CloudDownloadTwoTone";
 
-import { IRemote } from "types/gitInterfaces";
+import { theme } from "styles/muiThemes";
+import { IProject, IRemoteBranch } from "types/gitInterfaces";
+import { useFirstRender } from "hooks/useFirstRender";
 import InfoText from "components/InfoText";
 import Background from "components/Background";
+import ProjectsNav from "components/fetch/ProjectsNav";
 import RemoteBranch from "components/fetch/RemoteBranch";
 
 import "./FetchScreen.scss";
+import { RotatingLines } from "react-loader-spinner";
+import HighlightText from "components/HighlightText";
 
 interface IFetchScreenProps {
-  remote: IRemote;
+  project: IProject;
+  projects: IProject[];
+  displayBranches: IRemoteBranch[];
+  isFirstDay: boolean;
+  tutorialCompleted: boolean;
   terminalController: JSX.Element;
+  goBack: () => void;
+  activateProject: (project: IProject) => void;
 }
 
 const FetchScreen: React.FC<IFetchScreenProps> = ({
+  project,
+  projects,
+  displayBranches,
+  isFirstDay,
+  tutorialCompleted,
   terminalController,
-  remote,
+  goBack,
+  activateProject,
 }): JSX.Element => {
-  const fetchedBranches = remote.branches.filter((rb) => rb.isFetched);
+  const firstRender = useFirstRender();
+  const [isCloning, setIsCloning] = useState<boolean>(false);
+  const [textCopied, setTextCopied] = useState<boolean>(false);
+  const [prevProject, setPrevProject] = useState<string>(project.type);
+  const [prevTutorialCompleted, setPrevTutorialCompleted] =
+    useState<boolean>(tutorialCompleted);
+
+  const copyProjectUrl = () => {
+    navigator.clipboard.writeText(project.url);
+    setTextCopied(true);
+    setTimeout(() => {
+      setTextCopied(false);
+    }, 1500);
+  };
+
+  useEffect(() => {
+    if (project.type !== prevProject) setPrevProject(project.type);
+  }, [project.type]);
+
+  useEffect(() => {
+    if (tutorialCompleted !== prevTutorialCompleted)
+      setPrevTutorialCompleted(tutorialCompleted);
+  }, [tutorialCompleted]);
+
+  useEffect(() => {
+    let timeId: NodeJS.Timeout | null = null;
+
+    if (
+      project.cloned &&
+      !firstRender &&
+      project.type === prevProject &&
+      tutorialCompleted &&
+      tutorialCompleted !== prevTutorialCompleted
+    ) {
+      setIsCloning(true);
+      timeId = setTimeout(() => {
+        setIsCloning(false);
+      }, 3000);
+    }
+
+    return () => {
+      if (timeId) clearTimeout(timeId);
+    };
+  }, [project.cloned, tutorialCompleted]);
+
   return (
     <Background>
       <div className="fetch-screen">
+        <div className="fetch-screen-projects">
+          <ProjectsNav
+            project={project}
+            projects={projects}
+            activateProject={activateProject}
+          />
+        </div>
         <div className="fetch-screen-content">
-          {fetchedBranches.length > 0 ? (
+          {!project.cloned || !tutorialCompleted ? (
+            <div className="fetch-screen-content-info">
+              <div className="fetch-screen-content-info-content">
+                <CloudDownloadTwoToneIcon />
+                <div className="fetch-screen-content-info-content-url">
+                  <h1>Project URL</h1>
+                  <div className="fetch-screen-content-info-content-url-text">
+                    <p>{project.url}</p>
+                    <ContentCopyOutlinedIcon onClick={() => copyProjectUrl()} />
+                  </div>
+                  {textCopied && (
+                    <div className="fetch-screen-content-info-content-url-copied">
+                      Copied!
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="fetch-screen-content-info-text">
+                <InfoText text="You have not cloned this project yet. Use %git clone <PROJECT_URL>% to connect to this project" />
+              </div>
+            </div>
+          ) : isCloning ? (
+            <div className="fetch-screen-content-cloning">
+              <RotatingLines
+                strokeColor="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="96"
+                visible={true}
+              />
+              <HighlightText
+                text={`Cloning %${project.type}% project to your computer...`}
+              />
+            </div>
+          ) : !isCloning && displayBranches.length > 0 ? (
             <>
               <div className="fetch-screen-content-branches">
-                {fetchedBranches.map((rb, i) => (
+                {displayBranches.map((rb, i) => (
                   <RemoteBranch key={i} branch={rb} />
                 ))}
               </div>
@@ -35,13 +140,26 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
             </>
           ) : (
             <div className="fetch-screen-content-info">
-              <CloudDownloadTwoToneIcon />
-              <p>Waiting for fetch ...</p>
-              <InfoText text="A new day is about to start! Fetch today's orders with %git fetch% and get started " />
+              <div className="fetch-screen-content-info-content">
+                <CloudDownloadTwoToneIcon />
+                <p>Waiting for fetch ...</p>
+              </div>
+              <div className="fetch-screen-content-info-text">
+                <InfoText text="A new day is about to start! Fetch today's orders with %git fetch% and get started " />
+              </div>
             </div>
           )}
         </div>
         <div className="fetch-screen-terminal">{terminalController}</div>
+        {!isFirstDay && (
+          <div className="fetch-screen-return" onClick={() => goBack()}>
+            <ThemeProvider theme={theme}>
+              <Tooltip title={"Shop"}>
+                <ArrowBackIcon className="fetch-screen-return-button" />
+              </Tooltip>
+            </ThemeProvider>
+          </div>
+        )}
       </div>
     </Background>
   );

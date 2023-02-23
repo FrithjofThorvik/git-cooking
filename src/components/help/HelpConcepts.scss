@@ -1,0 +1,14 @@
+@import "styles/imports/colors";
+
+.help-concepts {
+  width: 100%;
+  height: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &-text {
+    white-space: pre-wrap;
+    font-size: 18px;
+  }
+}

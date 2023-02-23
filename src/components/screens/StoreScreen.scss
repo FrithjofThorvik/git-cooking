@@ -1,26 +1,30 @@
 @import "styles/imports/colors";
+@import "styles/imports/mixins";
 
 .store-screen {
+  @include scale(1);
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100vw;
   height: 100vh;
+  gap: 7%;
 
   &-top {
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    height: 100%;
+    width: 100%;
   }
 
   &-bottom {
+    @include scale(1, 0.1);
     display: flex;
-    margin-top: auto;
     align-items: center;
     box-sizing: border-box;
     justify-content: center;
-    margin: 50px auto 25px auto;
     gap: 25px;
     width: 90%;
     padding: 0 25px;

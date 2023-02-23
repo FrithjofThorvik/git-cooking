@@ -27,6 +27,7 @@ export interface IArcProgressClock {
 
 export interface ISummaryBranch {
   name: string;
+  isMain?: boolean;
   stats: {
     maxProfit: number;
     profit: number;
@@ -43,6 +44,10 @@ export interface ISummaryBranch {
     bonusFromEndedDayTime: number;
     maxBonusFromPercentage: number;
     maxBonusFromEndedDayTime: number;
+    orderCount: number;
+    ordersCompleted: number;
+    itemCount: number;
+    itemsMadeCount: number;
   };
 }
 
@@ -53,6 +58,10 @@ export interface ISummaryStats {
 
 export interface INewUnlockedItems {
   upgrades: number;
-  ingredients: number;
+  ingredients: {
+    total: number;
+    burger: number;
+    extra: number;
+  };
   gitCommands: number;
 }

@@ -1,10 +1,12 @@
 import { GameState, GitCommandType } from "types/enums";
 import { ICommandArg, IGitResponse } from "types/interfaces";
 import { IGitCooking, IOrderItem } from "types/gameDataInterfaces";
-import { copyObjectWithoutRef } from "./helpers";
+import { copyObjectWithoutRef, objectsEqual } from "./helpers";
 import { gitCommandDoesNotExist, gitRes } from "services/git";
 import { isGitCmdPurchased } from "./gameDataHelper";
 import { defaultItemData } from "data/defaultItemData";
+import { IGitTree } from "types/gitInterfaces";
+import { IProject } from "types/gitInterfaces";
 
 const middleware = (
   gameData: IGitCooking,
@@ -54,8 +56,15 @@ export const gitCommands: ICommandArg[] = [
       {
         key: "end-day",
         args: [],
-        cmd: (gameData, setGameData) => {
-          let updatedGameData = gameData.endDay();
+        cmd: (gameData, setGameData, input, timeLapsed) => {
+          if (timeLapsed === undefined)
+            return gitRes("Error: timelapsed undefined", false);
+
+          let updatedGameData = copyObjectWithoutRef(gameData);
+          if (updatedGameData.states.gameState === GameState.FETCH)
+            updatedGameData.states.day += 1;
+
+          updatedGameData = updatedGameData.endDay(timeLapsed);
 
           setGameData({
             ...updatedGameData,
@@ -92,10 +101,10 @@ export const gitCommands: ICommandArg[] = [
 
             const localBranch = gameData.git.getBranch(branchName);
             const remoteBranch = gameData.git.getRemoteBranch(branchName);
-            let copyGit = copyObjectWithoutRef(gameData.git);
+            let copyGit: IGitTree = copyObjectWithoutRef(gameData.git);
             let updatedOrderService = gameData.orderService;
 
-            if (!remoteBranch && !localBranch)
+            if ((!remoteBranch && !localBranch) || !remoteBranch?.isFetched)
               return gitRes(`Error: '${branchName} does not exist'`, false);
 
             if (!localBranch && remoteBranch) {
@@ -119,17 +128,21 @@ export const gitCommands: ICommandArg[] = [
                 branchName
               );
 
+              // update commits
+              copyGit
+                .getActiveProject()
+                ?.remote.getCommitHistory(remoteBranch.targetCommitId)
+                .forEach((c) => {
+                  if (copyGit.commits.some((c1) => c1.id === c.id)) return;
+                  copyGit.commits.push(c);
+                });
+
               // switch branch
               copyGit = copyGit.switchBranch(branchName);
-
-              let newGameState = gameData.states.gameState;
-              if (newGameState === GameState.FETCH)
-                newGameState = GameState.WORKING;
 
               setGameData({
                 ...gameData,
                 itemInterface: copyObjectWithoutRef(defaultItemData),
-                states: { ...gameData.states, gameState: newGameState },
                 orderService: updatedOrderService,
                 git: copyGit,
               });
@@ -179,6 +192,17 @@ export const gitCommands: ICommandArg[] = [
 
                 let copyGit = gameData.git.addNewBranch(branchName);
 
+                let copy: IGitCooking = copyObjectWithoutRef(gameData);
+                // update orders
+                copy.orderService = copy.orderService.setNewOrders(
+                  [],
+                  branchName
+                );
+                // switch branch for orders
+                copy.orderService = copy.orderService.switchBranch(
+                  branchName,
+                  branchName
+                );
                 // switch branch
                 copyGit = copyGit.switchBranch(branchName);
 
@@ -316,7 +340,28 @@ export const gitCommands: ICommandArg[] = [
     cmd: (gameData) => {
       return middleware(gameData, GitCommandType.STATUS, () => {
         let status = "";
-        status += `On branch ${gameData.git.HEAD.targetId}\n`;
+        status += `\nOn branch ${gameData.git.HEAD.targetId}\n`;
+
+        const activeBranch = gameData.git.getActiveBranch();
+        if (activeBranch) {
+          const pushedItems = gameData.git
+            .getActiveProject()
+            ?.remote.getPushedItems(activeBranch.name);
+          const createdItems = gameData.git.getCommitFromId(
+            activeBranch.targetCommitId
+          )?.directory.createdItems;
+          if (
+            createdItems &&
+            activeBranch.remoteTrackingBranch &&
+            pushedItems
+          ) {
+            if (!objectsEqual(pushedItems, createdItems)) {
+              status += `You have unsynced changes between 'origin/${activeBranch.remoteTrackingBranch}' and ${activeBranch.name}`;
+            } else {
+              status += `Your branch is up to date with 'origin/${activeBranch.remoteTrackingBranch}'.`;
+            }
+          }
+        }
 
         if (gameData.git.stagedItems.length != 0)
           status += `\nChanges to be committed: \n`;
@@ -457,13 +502,18 @@ export const gitCommands: ICommandArg[] = [
     args: [],
     cmd: (gameData, setGameData) => {
       return middleware(gameData, GitCommandType.FETCH, () => {
+        if (!gameData.git.getActiveProject()?.cloned)
+          return gitRes("Error: you must clone a project first", false);
+
         const { updatedGit, newBranches } = gameData.git.fetch();
 
         setGameData({ ...gameData, git: updatedGit });
 
         let message = "";
         for (let i = 0; i < newBranches.length; i++) {
-          message += `* [new branch]\t${newBranches[i]}    \t-> origin/${newBranches[i]}\n`;
+          message += `* [new branch]\t${newBranches[i]}`;
+          if (newBranches[i].length < 9) message += "\t";
+          message += `\t-> origin/${newBranches[i]}\n`;
         }
         if (newBranches.length === 0) message = "No new changes";
 
@@ -481,7 +531,7 @@ export const gitCommands: ICommandArg[] = [
             key: "<PATH>",
             isDynamic: true,
             args: [],
-            cmd: (gameData, setGameData, branchName, timeLapsed) => {
+            cmd: (gameData, setGameData, branchName) => {
               return middleware(gameData, GitCommandType.PUSH, () => {
                 if (gameData.states.gameState !== GameState.WORKING)
                   return gitRes(
@@ -496,23 +546,29 @@ export const gitCommands: ICommandArg[] = [
                 if (!branch)
                   return gitRes(`Error: '${branchName} does not exist'`, false);
 
-                const createdItems = gameData.git.getCommitFromId(
-                  branch.targetCommitId
-                )?.directory.createdItems;
+                let updatedGameData: IGitCooking =
+                  copyObjectWithoutRef(gameData);
+                let updatedRemote = null;
 
-                let updatedGameData = gameData;
-
-                if (createdItems && branch.remoteTrackingBranch)
-                  updatedGameData.git.remote =
-                    updatedGameData.git.remote.pushItems(
+                if (branch.remoteTrackingBranch)
+                  updatedRemote = updatedGameData.git
+                    .getActiveProject()
+                    ?.remote.pushItems(
                       branch.remoteTrackingBranch,
-                      createdItems,
-                      updatedGameData.orderService.getAllOrders()
+                      updatedGameData.git.getCommitHistory(
+                        branch.targetCommitId
+                      ),
+                      updatedGameData.orderService.getAllOrders(branchName)
                     );
 
-                setGameData(updatedGameData);
+                if (updatedRemote !== null && updatedRemote !== undefined) {
+                  updatedGameData.git.projects =
+                    updatedGameData.git.setActiveProjectRemote(updatedRemote);
+                  setGameData(updatedGameData);
+                  return gitRes("Pushing added changes to remote", true);
+                }
 
-                return gitRes("Pushing added changes to remote", true);
+                return gitRes("Everything up-to-date", true);
               });
             },
           },
@@ -533,21 +589,26 @@ export const gitCommands: ICommandArg[] = [
         if (!activeBranch?.remoteTrackingBranch)
           return gitRes("Error: no remote specified", false);
 
-        const createdItems = gameData.git.getCommitFromId(
-          activeBranch.targetCommitId
-        )?.directory.createdItems;
-        let updatedGameData = gameData;
+        let updatedGameData: IGitCooking = copyObjectWithoutRef(gameData);
 
-        if (createdItems)
-          updatedGameData.git.remote = updatedGameData.git.remote.pushItems(
-            activeBranch.remoteTrackingBranch,
-            createdItems,
-            updatedGameData.orderService.getAllOrders()
-          );
+        let updatedRemote = null;
+        if (activeBranch.remoteTrackingBranch)
+          updatedRemote = updatedGameData.git
+            .getActiveProject()
+            ?.remote.pushItems(
+              activeBranch.remoteTrackingBranch,
+              updatedGameData.git.getCommitHistory(),
+              updatedGameData.orderService.getAllOrders()
+            );
 
-        setGameData(updatedGameData);
+        if (updatedRemote !== null && updatedRemote !== undefined) {
+          updatedGameData.git.projects =
+            updatedGameData.git.setActiveProjectRemote(updatedRemote);
+          setGameData(updatedGameData);
+          return gitRes("Pushing added changes to remote", true);
+        }
 
-        return gitRes("Pushing added changes to remote", true);
+        return gitRes("Everything up-to-date", true);
       });
     },
   },
@@ -560,9 +621,12 @@ export const gitCommands: ICommandArg[] = [
         cmd: (gameData) => {
           return middleware(gameData, GitCommandType.BRANCH, () => {
             let message = "Remote branches:\n";
-            gameData.git.remote.branches.forEach((b) => {
-              message += `\torigin/${b.name}\n`;
-            });
+            const activeProject = gameData.git.getActiveProject();
+            if (activeProject?.cloned) {
+              activeProject.remote.branches.forEach((b) => {
+                message += `\torigin/${b.name}\n`;
+              });
+            }
             return gitRes(message, true);
           });
         },
@@ -576,6 +640,57 @@ export const gitCommands: ICommandArg[] = [
           message += `\t${isActive ? "* " : ""}${b.name}\n`;
         });
         return gitRes(message, true);
+      });
+    },
+  },
+  {
+    key: "clone",
+    args: [
+      {
+        key: "<URL>",
+        args: [],
+        isDynamic: true,
+        cmd: (gameData, setGameData, url) => {
+          return middleware(gameData, GitCommandType.CLONE, () => {
+            let project: IProject | null = null;
+            for (let i = 0; i < gameData.git.projects.length; i++) {
+              if (gameData.git.projects[i].url === url)
+                project = gameData.git.projects[i];
+            }
+
+            if (!project)
+              return gitRes("Error: Project URL does not exist", false);
+            if (project.cloned)
+              return gitRes("Error: Project has already been cloned", false);
+            const copy: IGitCooking = copyObjectWithoutRef(gameData);
+            const updatedGitTree = copy.git.cloneProject(project);
+
+            const activeBranch = updatedGitTree.getActiveBranch();
+            const activeRemoteBranch =
+              activeBranch && updatedGitTree.getRemoteBranch(activeBranch.name);
+            if (activeRemoteBranch) {
+              // update orders
+              copy.orderService = copy.orderService.setNewOrders(
+                activeRemoteBranch.orders,
+                activeRemoteBranch.name
+              );
+              // switch branch for orders
+              copy.orderService = copy.orderService.switchBranch(
+                activeRemoteBranch.name,
+                activeRemoteBranch.name
+              );
+            }
+
+            setGameData({ ...copy, git: updatedGitTree });
+
+            return gitRes("", true);
+          });
+        },
+      },
+    ],
+    cmd: (gameData) => {
+      return middleware(gameData, GitCommandType.CLONE, () => {
+        return gitRes("Error: Project URL is required for cloning", false);
       });
     },
   },

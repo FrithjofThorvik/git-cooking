@@ -27,9 +27,11 @@ const SummaryScreen: React.FC<ISummaryScreenProps> = ({
           <h1>{`Day ${day}`}</h1>
         </div>
         <div className="summary-screen-branches">
-          {summaryStats.branches.map((b, i) => (
-            <SummaryModal summaryBranch={b} key={i} />
-          ))}
+          {summaryStats.branches
+            .filter((b) => b.isMain)
+            .map((b, i) => (
+              <SummaryModal summaryBranch={b} key={i} />
+            ))}
         </div>
         <InfoText
           text={`You earned %${formatNumber(
@@ -39,7 +41,7 @@ const SummaryScreen: React.FC<ISummaryScreenProps> = ({
         />
         <div className="summary-screen-buttons">
           <div className="summary-screen-buttons-next-button">
-            <MenuButton onClick={goNext} text="Next" type="green" />
+            <MenuButton onClick={goNext} text="Next" type="right" />
           </div>
         </div>
       </div>

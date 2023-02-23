@@ -5,7 +5,7 @@ import {
   IOrder,
   IOrderItem,
 } from "./gameDataInterfaces";
-import { Difficulty } from "types/enums";
+import { Difficulty, RemoteType } from "types/enums";
 
 export interface IHead {
   targetId: string;
@@ -34,9 +34,10 @@ export interface IModifiedItem {
 export interface IRemoteBranch {
   name: string;
   orders: IOrder[];
-  pushedItems: IOrderItem[];
+  targetCommitId: string;
   isFetched: boolean;
   stats: IRemoteBranchStats;
+  isMain?: boolean;
 }
 
 export interface IRemoteBranchStats {
@@ -49,26 +50,56 @@ export interface IRemoteBranchStats {
 
 export interface IRemote {
   branches: IRemoteBranch[];
+  commits: ICommit[];
+  isFetched: boolean;
+  getCommitHistory: (startCommit: string) => ICommit[];
+  mergeBranches: (
+    currentBranch: IRemoteBranch,
+    targetBranch: IRemoteBranch,
+    gameData: IGitCooking
+  ) => IRemote;
+  getBranchCommit: (branchName: string) => ICommit | null;
+  getPushedItems: (branchName: string) => IOrderItem[];
   updateBranchStats: (gameData: IGitCooking) => IRemote;
   pushItems: (
-    branchName: string,
-    items: IOrderItem[],
+    remoteBranchName: string,
+    commitHistory: ICommit[],
     orders: IOrder[]
-  ) => IRemote;
+  ) => IRemote | null;
+  getBranch: (branchName: string) => IRemoteBranch | null;
+}
+
+export interface IProject {
+  remote: IRemote;
+  cloned: boolean;
+  unlocked: boolean;
+  unlockDay: number;
+  url: string;
+  type: RemoteType;
+  active: boolean;
+  stats: {
+    cashMultiplier: number;
+    timeReduction: number;
+  };
 }
 
 export interface IGitTree {
   HEAD: IHead;
-  remote: IRemote;
   commits: ICommit[];
   branches: IBranch[];
   stagedItems: IModifiedItem[];
   modifiedItems: IModifiedItem[];
   workingDirectory: IDirectory;
+  projects: IProject[];
+  getActiveProject: () => IProject | null;
+  setActiveProjectRemote: (remote: IRemote) => IProject[];
+  cloneProject: (project: IProject) => IGitTree;
+  activateProject: (project: IProject) => IGitTree;
   isBranchActive: (branchName: string) => boolean;
   getActiveBranch: () => IBranch | undefined;
   getCommitFromId: (commitId: string) => ICommit | undefined;
-  getCommitHistory: () => ICommit[];
+  getRootCommit: () => ICommit | undefined;
+  getCommitHistory: (startCommitId?: string) => ICommit[];
   getHeadCommit: () => ICommit | undefined;
   doesBranchNameExists: (branchName: string) => boolean;
   getBranch: (branchName: string) => IBranch | null;

@@ -1,17 +1,22 @@
 import { v4 } from "uuid";
 
 import {
+  imgBacon,
   imgBunBottom,
   imgBunTop,
   imgCheeseFries,
   imgFries,
+  imgNachos,
+  imgOnionRings,
   imgOnions,
   imgPaddy,
   imgSalad,
-} from "assets";
+  imgTomato,
+} from "assets/foods";
+import { foodBalancing } from "./balancing";
 import { foodBuilder } from "services/foodBuilders";
 import { IngredientType } from "types/enums";
-import { IBurger, IFood, IFries } from "types/foodInterfaces";
+import { IBurger, IExtra, IFood } from "types/foodInterfaces";
 
 export const defaultFoods: IFood[] = [
   {
@@ -24,59 +29,67 @@ export const defaultFoods: IFood[] = [
         id: v4(),
         name: "bun top",
         image: imgBunTop,
-        cost: 100,
+        ...foodBalancing.bunTop,
         default: true,
         unlocked: true,
-        unlockDay: 0,
         purchased: true,
         type: IngredientType.BURGER,
-        useCost: 10,
       },
       paddy: {
         id: v4(),
         name: "paddy",
         image: imgPaddy,
-        cost: 100,
+        ...foodBalancing.paddy,
         default: true,
         unlocked: true,
-        unlockDay: 0,
         purchased: true,
         type: IngredientType.BURGER,
-        useCost: 15,
       },
       salad: {
         id: v4(),
         name: "salad",
         image: imgSalad,
-        cost: 100,
+        ...foodBalancing.salad,
         purchased: false,
         unlocked: false,
-        unlockDay: 2,
         type: IngredientType.BURGER,
-        useCost: 5,
+      },
+      bacon: {
+        id: v4(),
+        name: "bacon",
+        image: imgBacon,
+        ...foodBalancing.bacon,
+        purchased: false,
+        unlocked: false,
+        type: IngredientType.BURGER,
       },
       onions: {
         id: v4(),
         name: "onions",
         image: imgOnions,
-        cost: 100,
+        ...foodBalancing.onions,
         purchased: false,
         unlocked: false,
-        unlockDay: 3,
         type: IngredientType.BURGER,
-        useCost: 5,
+      },
+      tomato: {
+        id: v4(),
+        name: "tomato",
+        image: imgTomato,
+        ...foodBalancing.tomato,
+        purchased: false,
+        unlocked: false,
+        type: IngredientType.BURGER,
       },
       bunBottom: {
         id: v4(),
         name: "bun bottom",
         image: imgBunBottom,
-        cost: 100,
+        ...foodBalancing.bunBottom,
         default: true,
         unlocked: true,
-        unlockDay: 0,
         purchased: true,
         type: IngredientType.BURGER,
-        useCost: 10,
       },
     },
     builder: function (difficulty) {
@@ -85,36 +98,54 @@ export const defaultFoods: IFood[] = [
   },
   {
     id: "2",
-    name: "Fries",
+    name: "Extra",
     unlocked: true,
     type: IngredientType.EXTRA,
     ingredients: {
-      cheese: {
+      cheese_fries: {
         id: v4(),
         name: "cheese fries",
         image: imgCheeseFries,
-        cost: 100,
+        ...foodBalancing.cheeseFries,
         purchased: false,
         unlocked: false,
-        unlockDay: 2,
         type: IngredientType.EXTRA,
-        useCost: 15,
+        isSingle: true,
       },
-      normal: {
+      normal_fries: {
         id: v4(),
         name: "fries",
         image: imgFries,
-        cost: 100,
+        ...foodBalancing.fries,
         purchased: true,
         default: true,
         unlocked: true,
-        unlockDay: 0,
         type: IngredientType.EXTRA,
-        useCost: 10,
+        isSingle: true,
+      },
+      onion_rings: {
+        id: v4(),
+        name: "onion rings",
+        image: imgOnionRings,
+        ...foodBalancing.onionRings,
+        purchased: false,
+        unlocked: false,
+        type: IngredientType.EXTRA,
+        isSingle: true,
+      },
+      nachos: {
+        id: v4(),
+        name: "nachos",
+        image: imgNachos,
+        ...foodBalancing.nachos,
+        purchased: false,
+        unlocked: false,
+        type: IngredientType.EXTRA,
+        isSingle: true,
       },
     },
     builder: function (difficulty) {
-      return foodBuilder.buildFries(this.ingredients as IFries, difficulty);
+      return foodBuilder.buildExtra(this.ingredients as IExtra, difficulty);
     },
   },
 ];

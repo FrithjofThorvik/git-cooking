@@ -71,6 +71,7 @@ const Directory: React.FC<IDirectoryProps> = ({
                 .filter((o) => !o.isCreated)
                 .map((order: IOrder) => (
                   <Button
+                    disabled={disabled}
                     text={order.name}
                     onClick={() => createOrderFolder(order)}
                     key={order.id}

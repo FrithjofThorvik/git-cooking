@@ -1,12 +1,13 @@
 import { v4 } from "uuid";
 
 import { IFood } from "types/foodInterfaces";
-import { Difficulty } from "types/enums";
-import { IRemoteBranch } from "types/gitInterfaces";
+import { Difficulty, RemoteType } from "types/enums";
+import { IProject, IRemoteBranch } from "types/gitInterfaces";
 import { femaleNames, maleNames } from "data/names";
 import { femaleImages, maleImages } from "assets/avatars";
 import { IGitCooking, IOrder, IOrderItem } from "types/gameDataInterfaces";
 import { copyObjectWithoutRef, randomIntFromInterval } from "./helpers";
+import { defaultCommit } from "data/defaultGitTree";
 
 class OrderGenerator {
   private getNumberOfItems = (difficulty: Difficulty) => {
@@ -172,12 +173,12 @@ class OrderGenerator {
 
   public generateSetOfBranches = (
     gameData: IGitCooking,
-    nrSets: number
+    nrSets: number,
+    p: IProject
   ): IRemoteBranch[] => {
     const orderSet = this.generateSetOfNewOrders(gameData, nrSets);
     const defaultProps = {
       isFetched: false,
-      pushedItems: [],
       stats: {
         missingIngredients: [],
         maxProfit: 0,
@@ -187,10 +188,17 @@ class OrderGenerator {
       },
     };
 
-    return orderSet.map((orders, i) => {
-      return {
+    let branches: IRemoteBranch[] = orderSet.map((orders, i) => {
+      let name = i === 0 ? "GitWay" : i === 1 ? "GitBite" : "GitDonald";
+      if (p.type === RemoteType.INTERMEDIATE)
+        name = i === 0 ? "GitzzaHut" : i === 1 ? "GiterKing" : "GitoBell";
+      if (p.type === RemoteType.ADVANCED)
+        name = i === 0 ? "GitarBucks" : i === 1 ? "GFC" : "Gitinos";
+
+      const branch: IRemoteBranch = {
         orders: orders,
-        name: i === 0 ? "GitWay" : i === 1 ? "GitBite" : "GitDonald",
+        targetCommitId: p.remote.commits[0].id || defaultCommit.id,
+        name: name,
         ...defaultProps,
         stats: {
           ...defaultProps.stats,
@@ -202,7 +210,10 @@ class OrderGenerator {
               : Difficulty.NORMAL,
         },
       };
+      return branch;
     });
+
+    return branches;
   };
 
   private spaceOrdersEvenly = (endTime: number, orders: IOrder[]): IOrder[] => {

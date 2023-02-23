@@ -57,7 +57,9 @@ const WorkScreenController: React.FC<IWorkScreenControllerProps> = ({
         (i) => i.ingredients.length > 0
       )
     )
-      setActiveTutorialTypes([TutorialType.WORK_TERMINAL]);
+      setActiveTutorialTypes([TutorialType.WORK_ADD_FILES]);
+    if (gameData.git.stagedItems.length > 0)
+      setActiveTutorialTypes([TutorialType.WORK_COMMIT]);
     if (
       gameData.states.isDayComplete ||
       gameData.orderService
@@ -66,7 +68,33 @@ const WorkScreenController: React.FC<IWorkScreenControllerProps> = ({
     ) {
       setActiveTutorialTypes([TutorialType.WORK_PUSH]);
     }
-  }, [timeLapsed]);
+    if (gameData.states.isDayComplete) {
+      const pushTutorial = gameData.help.getTutorialsByTypes([
+        TutorialType.WORK_PUSH,
+      ]);
+      if (pushTutorial.every((t) => t.completed))
+        setActiveTutorialTypes([TutorialType.TIMES_UP]);
+    }
+
+    const activeBranch = gameData.git.getActiveBranch();
+    if (activeBranch) {
+      const pushedItems = gameData.git
+        .getActiveProject()
+        ?.remote.getPushedItems(activeBranch.name);
+
+      const pushTutorial = gameData.help.getTutorialsByTypes([
+        TutorialType.WORK_PUSH,
+      ]);
+
+      if (
+        pushTutorial.every((t) => t.completed) &&
+        pushedItems &&
+        pushedItems.length > 0
+      ) {
+        setActiveTutorialTypes([TutorialType.WORK_CHECKOUT]);
+      }
+    }
+  }, [timeLapsed, gameData.states.isDayComplete]);
 
   return (
     <WorkScreen
