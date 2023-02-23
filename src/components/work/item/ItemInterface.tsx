@@ -101,6 +101,7 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
         <StoreFoodSelector
           activeType={activeItem.type}
           setType={handleTypeSelect}
+          showName={false}
         />
       </div>
     </div>

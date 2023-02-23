@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
-import { IStats, StoreItem } from "types/gameDataInterfaces";
+import { IGitCommand, StoreItem } from "types/gameDataInterfaces";
+import { TutorialType } from "types/enums";
+import { copyObjectWithoutRef } from "services/helpers";
 import { setGameData, useGameData } from "hooks/useGameData";
 import StoreScreen from "components/screens/StoreScreen";
-import { TutorialType } from "types/enums";
 
 interface IStoreScreenControllerProps {
   goNext: () => void;
@@ -18,16 +19,28 @@ const StoreScreenController: React.FC<IStoreScreenControllerProps> = ({
   setActiveTutorialTypes,
 }): JSX.Element => {
   const gameData = useGameData();
+  const [purchasedGitCommand, setPurchasedGitCommand] = useState<
+    IGitCommand | undefined
+  >(undefined);
 
-  const purchase = (purchasable: StoreItem, _stats: IStats) => {
-    const { store, stats } = gameData.store.purchase(purchasable, _stats);
+  const purchase = (purchasable: StoreItem) => {
+    const { store, stats } = gameData.store.purchase(
+      purchasable,
+      gameData.stats
+    );
+    const gitCommand = gameData.store.gitCommands.find(
+      (c) => c.gitCommandType === purchasable.gitCommandType
+    );
+    setPurchasedGitCommand(gitCommand);
     setGameData({ ...gameData, store: store, stats: stats });
   };
 
   return (
     <StoreScreen
       day={gameData.states.day}
-      store={gameData.store}
+      purchasedGitCommand={purchasedGitCommand}
+      hasStartedFetch={gameData.states.hasStartedFetch}
+      store={copyObjectWithoutRef(gameData.store)}
       stats={gameData.stats}
       help={gameData.help}
       setActiveTutorialTypes={setActiveTutorialTypes}

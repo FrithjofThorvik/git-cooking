@@ -22,14 +22,14 @@ export const maleNames = [
 ];
 
 export const femaleNames = [
-  "Mary	",
-  "Patricia	",
-  "Jennifer	",
-  "Linda	",
-  "Elizabeth	",
-  "Barbara	",
-  "Susan	",
-  "Jessica	",
+  "Mary",
+  "Patricia",
+  "Jennifer",
+  "Linda",
+  "Elizabeth",
+  "Barbara",
+  "Susan",
+  "Jessica",
   "Sarah",
   "Karen",
   "Lisa",

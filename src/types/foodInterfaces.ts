@@ -10,7 +10,7 @@ export interface IFood {
   builder: (difficulty: Difficulty) => IIngredient[];
 }
 
-export type FoodType = IBurger | IFries;
+export type FoodType = IBurger | IExtra;
 
 export interface FoodDict {
   [key: string]: IIngredient;
@@ -20,11 +20,13 @@ export interface IBurger extends FoodDict {
   bunTop: IIngredient;
   paddy: IIngredient;
   salad: IIngredient;
+  bacon: IIngredient;
   onions: IIngredient;
   bunBottom: IIngredient;
 }
 
-export interface IFries extends FoodDict {
-  cheese: IIngredient;
-  normal: IIngredient;
+export interface IExtra extends FoodDict {
+  cheese_fries: IIngredient;
+  normal_fries: IIngredient;
+  onion_rings: IIngredient;
 }

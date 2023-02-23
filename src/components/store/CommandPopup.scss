@@ -1,0 +1,106 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.popup {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(40px);
+  animation: blurOut 300ms ease-in-out;
+
+  &-modal {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    flex-direction: column;
+    animation: scaleUp 300ms ease-in-out;
+
+    color: $white;
+    background-color: $dark;
+    border: 5px solid $line-dark;
+    box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.6),
+      inset 0 0 5px 1px rgba(0, 0, 0, 0.6);
+
+    width: 550px;
+    padding: 25px 40px;
+    border-radius: 25px;
+
+    &-title {
+      color: $line-orange;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    &-description {
+      font-weight: 100;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    &-usecase {
+      @include blurBackground;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      border-radius: 20px;
+      padding: 10px 15px;
+      font-weight: 100;
+      border: 1px solid rgba($gray, 0.4);
+      margin-top: 10px;
+      white-space: pre-wrap;
+      margin-bottom: 25px;
+    }
+  }
+
+  &-close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+
+    &:hover {
+      scale: 0.95;
+      cursor: pointer;
+      color: $gray;
+      transition: all 200ms ease-in-out;
+    }
+  }
+
+  &-unlocked {
+    color: $line-green;
+    text-align: center;
+    text-shadow: 0 0 7px $line-green;
+    margin-bottom: 25px;
+  }
+}
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes blurOut {
+  0% {
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    backdrop-filter: blur(40px);
+  }
+}

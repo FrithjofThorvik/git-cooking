@@ -1,0 +1,47 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.merge-branch {
+  @include blurBackground;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  flex-direction: column;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  color: $white;
+  border: 5px solid $line-dark;
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.6),
+    inset 0 0 5px 1px rgba(0, 0, 0, 0.6);
+  width: 300px;
+  height: 350px;
+  border-radius: 50px;
+
+  &-name {
+    color: $white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 1);
+    margin: 25px 0;
+    font-size: 26px;
+    font-weight: 900;
+  }
+
+  &-pending {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    &-title {
+      color: $white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 1);
+      margin: 25px 0;
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    &-branch {
+      margin: 7px 0;
+      color: $line-orange;
+    }
+  }
+}

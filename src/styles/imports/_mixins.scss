@@ -72,3 +72,45 @@
     width: 10px;
   }
 }
+
+@mixin scale($scale: 1, $interval: 0.05) {
+  transform: scale($scale);
+
+  @media only screen and (min-width: 600px) and (max-width: 900px) {
+    transform: scale($scale - $interval * 2);
+  }
+  @media only screen and (min-width: 900px) and (max-width: 1200px) {
+    transform: scale($scale - $interval * 1);
+  }
+  @media only screen and (min-width: 1200px) and (max-width: 1500px) {
+    transform: scale($scale);
+  }
+  @media only screen and (min-width: 1500px) and (max-width: 1800px) {
+    transform: scale($scale + $interval * 1);
+  }
+  @media only screen and (min-width: 1800px) and (max-width: 2100px) {
+    transform: scale($scale + $interval * 2);
+  }
+  @media only screen and (min-width: 2100px) and (max-width: 3500px) {
+    transform: scale($scale + $interval * 4);
+  }
+
+  @media only screen and (min-height: 400px) and (max-height: 600px) {
+    transform: scale($scale - $interval * 5);
+  }
+  @media only screen and (min-height: 600px) and (max-height: 667px) {
+    transform: scale($scale - $interval * 3);
+  }
+  @media only screen and (min-height: 667px) and (max-height: 700px) {
+    transform: scale($scale - $interval * 2);
+  }
+  @media only screen and (min-height: 700px) and (max-height: 767px) {
+    transform: scale($scale - $interval * 1);
+  }
+  @media only screen and (min-height: 767px) and (max-height: 800px) {
+    transform: scale($scale);
+  }
+  @media only screen and (min-height: 800px) and (max-height: 3400px) {
+    transform: scale($scale + $interval * 1);
+  }
+}

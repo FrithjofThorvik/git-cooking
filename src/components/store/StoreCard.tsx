@@ -15,7 +15,7 @@ export interface IStoreCardProps {
   cash: number;
   stats: IStats;
   purchasable: StoreItem;
-  purchase: (purchasable: StoreItem, _stats: IStats) => void;
+  purchase: (purchasable: StoreItem) => void;
 }
 
 const StoreCard: React.FC<IStoreCardProps> = ({
@@ -37,26 +37,29 @@ const StoreCard: React.FC<IStoreCardProps> = ({
 
   return (
     <div
-      className={`card ${purchasable.purchased
-        ? "purchased"
-        : purchasable.unlocked === undefined || purchasable.unlocked
+      className={`card ${
+        purchasable.purchased
+          ? "purchased"
+          : purchasable.unlocked === undefined || purchasable.unlocked
           ? cash >= cost
             ? ""
             : "notafford"
           : "locked"
-        }`}
+      }`}
     >
       <div className="card-content">
         <div className="card-content-top">
           {isUpgrade(purchasable) && (
             <div
-              className={`card-content-top-lvl ${purchasable.purchased ? "max" : ""
-                }`}
+              className={`card-content-top-lvl ${
+                purchasable.purchased ? "max" : ""
+              }`}
             >
-              {`${purchasable.purchased
-                ? `Max level`
-                : `Level: ${purchasable.level}`
-                }`}
+              {`${
+                purchasable.purchased
+                  ? `Max level`
+                  : `Level: ${purchasable.level}`
+              }`}
             </div>
           )}
           <div className="card-content-top-img">
@@ -86,7 +89,7 @@ const StoreCard: React.FC<IStoreCardProps> = ({
                 ) : (
                   <button
                     className="card-content-bottom-buy-button"
-                    onClick={() => purchase(purchasable, stats)}
+                    onClick={() => purchase(purchasable)}
                   >
                     <p className="card-content-bottom-buy-button-price">
                       <PaidOutlinedIcon />
@@ -98,12 +101,15 @@ const StoreCard: React.FC<IStoreCardProps> = ({
             </div>
           )}
         </div>
-        {(day === purchasable.unlockDay && (isUpgrade(purchasable) ? purchasable.level === 1 : !purchasable.purchased)) && (
-          <div className="card-content-new">
-            <NewReleasesTwoToneIcon />
-            <p>New item</p>
-          </div>
-        )}
+        {day === purchasable.unlockDay &&
+          (isUpgrade(purchasable)
+            ? purchasable.level === 1
+            : !purchasable.purchased) && (
+            <div className="card-content-new">
+              <NewReleasesTwoToneIcon />
+              <p>New item</p>
+            </div>
+          )}
       </div>
     </div>
   );

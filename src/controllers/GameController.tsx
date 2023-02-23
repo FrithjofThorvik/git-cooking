@@ -6,11 +6,12 @@ import { setGameTime, useGameTime } from "hooks/useGameTime";
 import { setGameData, useGameData } from "hooks/useGameData";
 import Tutorials from "components/Tutorials";
 import HelpButton from "components/HelpButton";
-import FetchScreenController from "./screens/FetchScreenController";
 import HelpScreenController from "./screens/HelpScreenController";
 import WorkScreenController from "controllers/screens/WorkScreenController";
+import FetchScreenController from "./screens/FetchScreenController";
 import StoreScreenController from "controllers/screens/StoreScreenController";
 import SummaryScreenController from "controllers/screens/SummaryScreenController";
+import MergeScreenController from "./screens/MergeScreenController";
 
 const GameController: React.FC = (): JSX.Element => {
   const gameData = useGameData();
@@ -29,6 +30,19 @@ const GameController: React.FC = (): JSX.Element => {
     )
       terminal.blur();
   }, [activeTutorialTypes]);
+
+  useEffect(() => {
+    const remainingTutorials = gameData.help.tutorials.filter(
+      (t) => !t.completed
+    );
+    if (
+      (remainingTutorials.length === 1 &&
+        remainingTutorials[0].type === TutorialType.HELP) ||
+      (gameData.states.day === 3 &&
+        remainingTutorials.some((t) => t.type === TutorialType.HELP))
+    )
+      setActiveTutorialTypes([TutorialType.HELP]);
+  }, gameData.help.tutorials);
 
   const startFetch = () => {
     let updatedGameData = gameData.startFetch();
@@ -51,8 +65,19 @@ const GameController: React.FC = (): JSX.Element => {
     setGameData({ ...gameData, states: updatedStates });
   };
 
+  const returnFromFetch = () => {
+    let updatedStates = gameData.states;
+    updatedStates.gameState = GameState.UPGRADE;
+    setGameData({ ...gameData, states: updatedStates });
+  };
+
   const pauseGameTime = (isPaused: boolean) =>
     setGameTime(timeLapsed, isPaused);
+
+  const completeDay = () => {
+    let updatedGameData = gameData.completeDay();
+    setGameData({ ...updatedGameData });
+  };
 
   const gameStateMachine = () => {
     switch (gameData.states.gameState) {
@@ -63,9 +88,17 @@ const GameController: React.FC = (): JSX.Element => {
           />
         );
       case GameState.FETCH:
-        if (gameData.states.day === 0) startFetch();
+        if (!gameData.states.hasStartedFetch) startFetch();
         return (
           <FetchScreenController
+            setActiveTutorialTypes={setActiveTutorialTypes}
+            goBack={() => returnFromFetch()}
+          />
+        );
+      case GameState.MERGE:
+        return (
+          <MergeScreenController
+            goNext={completeDay}
             setActiveTutorialTypes={setActiveTutorialTypes}
           />
         );

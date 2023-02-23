@@ -44,7 +44,7 @@ const StoreNav: React.FC<IStoreNavProps> = ({
       case PurchaseType.COMMANDS:
         return newUnlockedItems.gitCommands;
       case PurchaseType.INGREDIENTS:
-        return newUnlockedItems.ingredients;
+        return newUnlockedItems.ingredients.total;
       default:
         return 0;
     }

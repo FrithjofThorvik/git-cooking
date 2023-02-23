@@ -11,19 +11,23 @@ interface IInfoBoxProps {
   day: number;
   infoText: string;
   timeLapsed: number;
+  showWarning: boolean;
   baseDayLength: number;
   dayIsCompleted: boolean;
+  unsyncedBranches: string[];
   dayLengthModifier: number;
   itemsHaveBeenPushed: boolean;
-  endDay: () => void;
+  endDay: (confirm?: boolean, decline?: boolean) => void;
 }
 
 const InfoBox: React.FC<IInfoBoxProps> = ({
   day,
   infoText,
   timeLapsed,
+  showWarning,
   baseDayLength,
   dayIsCompleted,
+  unsyncedBranches,
   dayLengthModifier,
   itemsHaveBeenPushed,
   endDay,
@@ -37,6 +41,35 @@ const InfoBox: React.FC<IInfoBoxProps> = ({
       formatClock(timeLapsed, baseDayLength, dayLengthModifier)
     );
   }, [timeLapsed]);
+
+  if (showWarning)
+    return (
+      <div className="info-box">
+        <div className="info-box-warning">
+          <div className="info-box-warning-text">
+            <HighlightText
+              text={`Unsynced changes in ${unsyncedBranches.map(
+                (b) => ` ${b}`
+              )}. Do you still wish to %end day%?`}
+            />
+          </div>
+          <div className="info-box-warning-buttons">
+            <div
+              className="info-box-warning-buttons-goback"
+              onClick={() => endDay(false, true)}
+            >
+              Go back!
+            </div>
+            <div
+              className="info-box-warning-buttons-end"
+              onClick={() => endDay(true, false)}
+            >
+              End Day!
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <div className="info-box">

@@ -9,19 +9,22 @@ import StoreFoodSelector from "./StoreFoodSelector";
 
 import "./Store.scss";
 import InfoText from "components/InfoText";
+import { INewUnlockedItems } from "types/interfaces";
 
 interface IStoreProps {
   day: number;
   availableCash: number;
   activeStoreItems: StoreItem[];
   stats: IStats;
-  purchase: (purchasable: StoreItem, _stats: IStats) => void;
+  newUnlockedItems: INewUnlockedItems;
+  purchase: (purchasable: StoreItem) => void;
 }
 
 const Store: React.FC<IStoreProps> = ({
   day,
   stats,
   availableCash,
+  newUnlockedItems,
   activeStoreItems,
   purchase,
 }): JSX.Element => {
@@ -33,16 +36,16 @@ const Store: React.FC<IStoreProps> = ({
   );
 
   const addFilter = (storeItem: StoreItem): boolean => {
-    if (isGitCommand(storeItem)) if (storeItem.unlockDay === 0) return false;
-    if (isIngredient(storeItem))
-      if (storeItem.type !== activeFoodType) return false;
+    if (isGitCommand(storeItem) && storeItem.unlockDay === 0) return false;
+    if (isIngredient(storeItem) && storeItem.type !== activeFoodType)
+      return false;
     return true;
   };
 
   useEffect(() => {
     if (activeStoreItems.length > 0) {
       if (isIngredient(activeStoreItems[0]))
-        setActiveFoodType(IngredientType.BURGER);
+        !activeFoodType && setActiveFoodType(IngredientType.BURGER);
       else setActiveFoodType(null);
     }
   }, [activeStoreItems]);
@@ -69,8 +72,10 @@ const Store: React.FC<IStoreProps> = ({
     <div className="store">
       {activeFoodType && (
         <StoreFoodSelector
+          fixed
           activeType={activeFoodType}
           setType={(type: IngredientType) => setActiveFoodType(type)}
+          newUnlockedItems={newUnlockedItems}
         />
       )}
       <div
