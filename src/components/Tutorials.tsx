@@ -8,6 +8,12 @@ import TutorialScreen from "./tutorial/TutorialScreen";
 
 import "./Tutorials.scss";
 
+interface IShownIndexState {
+  tutorialIndex: number;
+  screenIndex: number;
+  promptIndex: number;
+}
+
 interface ITutorialState {
   tutorial: ITutorial;
   screen: ITutorialScreen;
@@ -41,8 +47,38 @@ const Tutorials: React.FC<ITutorialProps> = ({
   const [state, setState] = useState<ITutorialState | null>(null);
   const [isHidden, setIsHidden] = useState<boolean>(true);
   const [firstRender, setFirstRender] = useState<boolean>(false);
+  const [showTypewrite, setShowTypewrite] = useState<boolean>(true);
+  const [shownIndexes, setShownIndexes] = useState<IShownIndexState[]>([]);
 
   useKeyPress("Escape", () => closeTutorials());
+
+  // show typewrite effect if the prompt hasn't been shown before
+  const updateTypewrite = (
+    tutorialIndex: number,
+    screenIndex: number,
+    promptIndex: number
+  ) => {
+    if (!state) return;
+    if (
+      !shownIndexes.some(
+        (shownIndex) =>
+          shownIndex.tutorialIndex === tutorialIndex &&
+          shownIndex.screenIndex === screenIndex &&
+          shownIndex.promptIndex === promptIndex
+      )
+    ) {
+      setShowTypewrite(true);
+
+      setShownIndexes((prev) => [
+        ...prev,
+        {
+          tutorialIndex,
+          screenIndex,
+          promptIndex,
+        },
+      ]);
+    }
+  };
 
   const nextTutorial = () => {
     if (!state) return;
@@ -54,6 +90,7 @@ const Tutorials: React.FC<ITutorialProps> = ({
       const screen = tutorial.screens[screenIndex];
       const promptIndex = 0;
       const prompt = screen.prompts[promptIndex];
+      updateTypewrite(tutorialIndex, screenIndex, promptIndex);
       setState({
         tutorialIndex,
         tutorial,
@@ -65,6 +102,8 @@ const Tutorials: React.FC<ITutorialProps> = ({
     } else if (hideOnLastTutorial && onCompletion) {
       onCompletion();
       setState(null);
+      setShownIndexes([]);
+      setShowTypewrite(true);
       setIsHidden(true);
     }
   };
@@ -96,6 +135,7 @@ const Tutorials: React.FC<ITutorialProps> = ({
       const screen = state.tutorial.screens[screenIndex];
       const promptIndex = 0;
       const prompt = screen.prompts[promptIndex];
+      updateTypewrite(state.tutorialIndex, screenIndex, promptIndex);
       setState({
         ...state,
         screenIndex,
@@ -119,9 +159,15 @@ const Tutorials: React.FC<ITutorialProps> = ({
 
   const nextPrompt = () => {
     if (!state) return;
-    if (state.promptIndex + 1 < state.screen.prompts.length) {
+
+    // do not go to next tutorial if sentence is not finished typing
+    if (typewriter && showTypewrite) {
+      // skip sentence if trying to go to next tutorial, but not finished typing
+      setShowTypewrite(false);
+    } else if (state.promptIndex + 1 < state.screen.prompts.length) {
       const promptIndex = state.promptIndex + 1;
       const prompt = state.screen.prompts[promptIndex];
+      updateTypewrite(state.tutorialIndex, state.screenIndex, promptIndex);
       setState({ ...state, promptIndex, prompt });
     } else nextScreen();
   };
@@ -152,6 +198,9 @@ const Tutorials: React.FC<ITutorialProps> = ({
           promptIndex,
           prompt,
         });
+
+        const shownIndexes = [{ tutorialIndex, screenIndex, promptIndex }];
+        setShownIndexes(shownIndexes);
       }
     });
   };
@@ -177,6 +226,8 @@ const Tutorials: React.FC<ITutorialProps> = ({
     if (completeTutorials) completeTutorials(tutorials);
     if (onCompletion) onCompletion();
     setState(null);
+    setShownIndexes([]);
+    setShowTypewrite(true);
     setIsHidden(true);
   };
 
@@ -197,9 +248,13 @@ const Tutorials: React.FC<ITutorialProps> = ({
           promptIndex: 0,
         });
         setIsHidden(false);
+        setShownIndexes([]);
+        setShowTypewrite(true);
       } else if (tutorials.length > 0 && tutorialsCompleted) {
         setIsHidden(true);
         setState(null);
+        setShownIndexes([]);
+        setShowTypewrite(true);
       } else if (tutorials.length > 0 && !tutorialsCompleted) {
         setIsHidden(false);
       } else {
@@ -216,6 +271,8 @@ const Tutorials: React.FC<ITutorialProps> = ({
           promptIndex: 0,
         });
         setIsHidden(false);
+        setShownIndexes([]);
+        setShowTypewrite(true);
       }
     }
   }, [tutorials, state]);
@@ -233,7 +290,8 @@ const Tutorials: React.FC<ITutorialProps> = ({
         <CloseIcon />
       </div>
       <TutorialScreen
-        typewriter={typewriter}
+        typewriter={typewriter ? showTypewrite : false}
+        setShowTypewrite={setShowTypewrite}
         tutorial={state.tutorial}
         screen={state.screen}
         prompt={state.prompt}
