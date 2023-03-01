@@ -1,0 +1,42 @@
+@import "styles/imports/colors";
+
+.extra-info {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+
+  &-content {
+    width: 100%;
+    text-align: right;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+
+    &-commits {
+      width: 100%;
+      text-align: left;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    &-branch {
+      width: 100%;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+
+      &-sync {
+        font-size: 14px;
+        color: $line-green;
+        opacity: 0.8;
+        &.unsynced {
+          font-size: 14px;
+          color: $line-orange;
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+}
