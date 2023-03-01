@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Typewriter from "typewriter-effect";
 import ReactDOMServer from "react-dom/server";
 
@@ -10,16 +10,31 @@ import "./TutorialPrompt.scss";
 interface ITutorialPromptProps {
   text: string;
   typewriter?: boolean;
+  setShowTypewrite: (value: boolean) => void;
 }
 
 const TutorialPrompt: React.FC<ITutorialPromptProps> = ({
   text,
   typewriter = false,
+  setShowTypewrite,
 }): JSX.Element => {
+  const typewriteRef = useRef<HTMLDivElement>(null);
+  const strippedText = text.replaceAll("%", "");
+
+  var customNodeCreator = function (character: string) {
+    // custom part - check if string is typed out
+    const textContent = typewriteRef.current?.textContent;
+    const nextTextContent = textContent + character;
+    if (nextTextContent === strippedText) setShowTypewrite(false);
+
+    // default part
+    return document.createTextNode(character);
+  };
+
   return (
     <div className="tutorial-prompt">
       <div className="tutorial-prompt-box">
-        <div className="tutorial-prompt-box-text">
+        <div className="tutorial-prompt-box-text" ref={typewriteRef}>
           {typewriter ? (
             <Typewriter
               options={{
@@ -30,6 +45,7 @@ const TutorialPrompt: React.FC<ITutorialPromptProps> = ({
                 loop: false,
                 delay: 5,
                 cursor: "",
+                onCreateTextNode: customNodeCreator,
               }}
             />
           ) : (
