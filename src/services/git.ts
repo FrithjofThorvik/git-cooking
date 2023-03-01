@@ -1,6 +1,7 @@
 import { IGitCooking } from "types/gameDataInterfaces";
 import { gitCommands } from "./gitCommandController";
 import { ICommandArg, IGitResponse } from "types/interfaces";
+import splitSpacesExcludeQuotes from "./splitSpacesExcludeQuotes";
 import { ErrorType } from "types/enums";
 
 /**
@@ -67,9 +68,7 @@ class Git {
       let currentCmdArg: ICommandArg | null = null;
       let dynamicInput: string | undefined;
       for (let i = 0; i < args.length; i++) {
-        let currentArgKey: string = args[i]
-          .replaceAll('"', "")
-          .replaceAll("'", "");
+        let currentArgKey: string = args[i];
         let currentCmdArgs = currentCmdArg ? currentCmdArg.args : gitCommands;
 
         let tempCmdArg: ICommandArg | null = this.findCmdArg(
@@ -106,7 +105,7 @@ class Git {
     command: string,
     timeLapsed: number
   ): IGitResponse => {
-    let args = command.match(/(?:[^\s"']+|['"][^'"]*["'])+/g);
+    let args = splitSpacesExcludeQuotes(command);
     if (!args) args = [""];
 
     if (args[0] === "git")
