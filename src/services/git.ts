@@ -1,17 +1,24 @@
 import { IGitCooking } from "types/gameDataInterfaces";
 import { gitCommands } from "./gitCommandController";
 import { ICommandArg, IGitResponse } from "types/interfaces";
+import { ErrorType } from "types/enums";
 
 /**
  * Git command response.
  * @param   {string}      msg     - Response message.
  * @param   {boolean}     success - Request succeeded/failed.
+ * @param   {ErrorType}     errorType - Type of error.
  * @returns {IGitResponse}
  */
-export const gitRes = (msg: string, success: boolean): IGitResponse => {
+export const gitRes = (
+  msg: string,
+  success: boolean,
+  errorType?: ErrorType
+): IGitResponse => {
   return {
     message: msg,
     success: success,
+    errorType,
   };
 };
 

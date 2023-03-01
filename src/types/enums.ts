@@ -94,3 +94,8 @@ export enum RemoteType {
   INTERMEDIATE = "intermediate",
   ADVANCED = "advanced",
 }
+
+export enum ErrorType {
+  WRONG_FILE_NAME,
+  WRONG_BRANCH_NAME,
+}
