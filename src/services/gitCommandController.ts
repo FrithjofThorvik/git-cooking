@@ -1,4 +1,4 @@
-import { GameState, GitCommandType } from "types/enums";
+import { ErrorType, GameState, GitCommandType } from "types/enums";
 import { ICommandArg, IGitResponse } from "types/interfaces";
 import { IGitCooking, IOrderItem } from "types/gameDataInterfaces";
 import { copyObjectWithoutRef, objectsEqual } from "./helpers";
@@ -8,6 +8,26 @@ import { defaultItemData } from "data/defaultItemData";
 import { IGitTree } from "types/gitInterfaces";
 import { IProject } from "types/gitInterfaces";
 
+const errorHandler = (response: IGitResponse) => {
+  let returnResponse = response;
+  if (response.success) return returnResponse;
+
+  switch (response.errorType) {
+    case ErrorType.WRONG_FILE_NAME:
+      returnResponse.message +=
+        "\n" +
+        "%HINT%: Use 'git status' to see full path of modified and staged files.";
+      return returnResponse;
+    case ErrorType.WRONG_BRANCH_NAME:
+      returnResponse.message +=
+        "\n" +
+        "%HINT%: Purchase 'git branch', and use 'git branch' or 'git branch -r' to see available branches.";
+      return returnResponse;
+    default:
+      return returnResponse;
+  }
+};
+
 const middleware = (
   gameData: IGitCooking,
   gitCommandType: GitCommandType,
@@ -15,7 +35,8 @@ const middleware = (
 ) => {
   if (!isGitCmdPurchased(gameData.store.gitCommands, gitCommandType))
     return gitRes(`Error: 'git ${gitCommandType}' is not purchased`, false);
-  return next();
+
+  return errorHandler(next());
 };
 
 export const gitCommands: ICommandArg[] = [
@@ -85,7 +106,7 @@ export const gitCommands: ICommandArg[] = [
         cmd: (gameData, setGameData, branchName) => {
           return middleware(gameData, GitCommandType.CHECKOUT, () => {
             if (typeof branchName !== "string")
-              return gitRes(`Error: '${branchName} is invalid'`, false);
+              return gitRes(`Error: '${branchName}' is invalid`, false);
 
             if (gameData.git.isBranchActive(branchName))
               return gitRes(`Error: already on ${branchName}`, false);
@@ -105,7 +126,11 @@ export const gitCommands: ICommandArg[] = [
             let updatedOrderService = gameData.orderService;
 
             if ((!remoteBranch && !localBranch) || !remoteBranch?.isFetched)
-              return gitRes(`Error: '${branchName} does not exist'`, false);
+              return gitRes(
+                `Error: '${branchName}' does not exist`,
+                false,
+                ErrorType.WRONG_BRANCH_NAME
+              );
 
             if (!localBranch && remoteBranch) {
               // create new branch that tracks remote
@@ -185,10 +210,14 @@ export const gitCommands: ICommandArg[] = [
             cmd: (gameData, setGameData, branchName) => {
               return middleware(gameData, GitCommandType.CHECKOUT, () => {
                 if (typeof branchName !== "string")
-                  return gitRes(`Error: '${branchName} is an invalid'`, false);
+                  return gitRes(`Error: '${branchName}' is an invalid`, false);
 
                 if (gameData.git.doesBranchNameExists(branchName))
-                  return gitRes(`Error: '${branchName} already exist'`, false);
+                  return gitRes(
+                    `Error: '${branchName}' already exist`,
+                    false,
+                    ErrorType.WRONG_BRANCH_NAME
+                  );
 
                 let copyGit = gameData.git.addNewBranch(branchName);
 
@@ -236,12 +265,16 @@ export const gitCommands: ICommandArg[] = [
         cmd: (gameData, setGameData, path) => {
           return middleware(gameData, GitCommandType.ADD, () => {
             if (typeof path !== "string")
-              return gitRes(`Error: '${path} is invalid'`, false);
+              return gitRes(`Error: '${path}' is invalid`, false);
 
             let itemToStage = gameData.git.getModifiedFile(path);
 
             if (!itemToStage)
-              return gitRes(`Error: '${path}' did not match any files`, false);
+              return gitRes(
+                `Error: '${path}' did not match any files`,
+                false,
+                ErrorType.WRONG_FILE_NAME
+              );
 
             const updatedGitTree = gameData.git.stageItem(itemToStage);
 
@@ -340,7 +373,7 @@ export const gitCommands: ICommandArg[] = [
     cmd: (gameData) => {
       return middleware(gameData, GitCommandType.STATUS, () => {
         let status = "";
-        status += `\nOn branch ${gameData.git.HEAD.targetId}\n`;
+        status += `On branch ${gameData.git.HEAD.targetId}\n`;
 
         const activeBranch = gameData.git.getActiveBranch();
         if (activeBranch) {
@@ -356,35 +389,53 @@ export const gitCommands: ICommandArg[] = [
             pushedItems
           ) {
             if (!objectsEqual(pushedItems, createdItems)) {
-              status += `You have unsynced changes between 'origin/${activeBranch.remoteTrackingBranch}' and ${activeBranch.name}`;
+              status += `You have unsynced changes between 'origin/${activeBranch.remoteTrackingBranch}' and '${activeBranch.name}'\n`;
             } else {
-              status += `Your branch is up to date with 'origin/${activeBranch.remoteTrackingBranch}'.`;
+              status += `Your branch is up to date with 'origin/${activeBranch.remoteTrackingBranch}'\n`;
             }
           }
         }
 
         if (gameData.git.stagedItems.length != 0)
-          status += `\nChanges to be committed: \n`;
-        for (let i = 0; i < gameData.git.stagedItems.length; i++) {
-          const stagedItem = gameData.git.stagedItems[i];
-          let prefix = "modified";
-          if (stagedItem.added) prefix = "added";
-          if (stagedItem.deleted) prefix = "deleted";
+          status += `\nChanges to be committed: \n  (use "git restore --staged <file>..." to unstage)\n`;
+        gameData.git.stagedItems.forEach((stagedItem) => {
+          let prefix = "%modified%";
+          if (stagedItem.added) prefix = "%added%";
+          if (stagedItem.deleted) prefix = "%deleted%";
           status += `\t ${prefix}: \t${stagedItem.item.path}\n`;
-        }
+        });
 
-        if (gameData.git.modifiedItems.length != 0)
-          status += `\nChanges not staged for commit: \n`;
-        for (let i = 0; i < gameData.git.modifiedItems.length; i++) {
-          const modifiedItem = gameData.git.modifiedItems[i];
-          let prefix = "modified";
-          if (modifiedItem.added) prefix = "added";
-          if (modifiedItem.deleted) prefix = "deleted";
+        const trackedItems = gameData.git.modifiedItems.filter((i) => !i.added);
+        if (trackedItems.length != 0)
+          status += `\nChanges not staged for commit: \n  (use "git add <file>..." to update what will be committed)\n  (use "git restore <file>..." to discard changes in working directory)\n`;
+        trackedItems.forEach((modifiedItem) => {
+          let prefix = "%modified%";
+          if (modifiedItem.deleted) prefix = "%deleted%";
           status += `\t ${prefix}: \t${modifiedItem.item.path}\n`;
-        }
+        });
 
-        if (status) return gitRes(status, true);
-        else return gitRes("Nothing to commit, working tree clean", true);
+        const newItems = gameData.git.modifiedItems.filter((i) => i.added);
+        if (newItems.length != 0)
+          status += `\nUntracked files: \n  (use "git add <file>..." to include in what will be committed)\n`;
+        newItems.forEach((newItem) => {
+          let prefix = "%added%";
+          status += `\t ${prefix}: \t${newItem.item.path}\n`;
+        });
+
+        if (
+          gameData.git.stagedItems.length === 0 &&
+          gameData.git.modifiedItems.length != 0
+        )
+          status +=
+            "\nnothing added to commit but untracked files present (use 'git add' to track)";
+
+        if (
+          gameData.git.stagedItems.length === 0 &&
+          gameData.git.modifiedItems.length === 0
+        )
+          status += "\nnothing to commit, working tree clean";
+
+        return gitRes(status, true);
       });
     },
   },
@@ -398,13 +449,17 @@ export const gitCommands: ICommandArg[] = [
         cmd: (gameData, setGameData, path) => {
           return middleware(gameData, GitCommandType.RESTORE, () => {
             if (typeof path !== "string")
-              return gitRes(`Error: '${path} is invalid'`, false);
+              return gitRes(`Error: '${path}' is invalid`, false);
 
             let modifiedItem = gameData.git.getModifiedFile(path);
             let itemToRestore: IOrderItem | undefined = modifiedItem?.item;
 
             if (itemToRestore === undefined)
-              return gitRes(`Error: '${path}' did not match any files`, false);
+              return gitRes(
+                `Error: '${path}' did not match any files`,
+                false,
+                ErrorType.WRONG_FILE_NAME
+              );
 
             if (modifiedItem) {
               let copyGit = gameData.git;
@@ -444,43 +499,48 @@ export const gitCommands: ICommandArg[] = [
             isDynamic: true,
             args: [],
             cmd: (gameData, setGameData, path) => {
-              if (typeof path !== "string")
-                return gitRes(`Error: '${path} is invalid'`, false);
+              return middleware(gameData, GitCommandType.RESTORE, () => {
+                if (typeof path !== "string")
+                  return gitRes(`Error: '${path}' is invalid`, false);
 
-              let stagedFile = gameData.git.getStagedFile(path);
-              let itemToRestore: IOrderItem | undefined = stagedFile?.item;
+                let stagedFile = gameData.git.getStagedFile(path);
+                let itemToRestore: IOrderItem | undefined = stagedFile?.item;
 
-              if (itemToRestore === undefined)
-                return gitRes(
-                  `Error: '${path}' did not match any files`,
-                  false
-                );
+                if (itemToRestore === undefined)
+                  return gitRes(
+                    `Error: '${path}' did not match any files`,
+                    false,
+                    ErrorType.WRONG_FILE_NAME
+                  );
 
-              if (stagedFile) {
-                let copyGit = gameData.git;
+                if (stagedFile) {
+                  let copyGit = gameData.git;
 
-                copyGit = copyGit.restoreStagedFile(stagedFile);
+                  copyGit = copyGit.restoreStagedFile(stagedFile);
 
-                setGameData({
-                  ...gameData,
-                  git: copyGit,
-                });
-              }
+                  setGameData({
+                    ...gameData,
+                    git: copyGit,
+                  });
+                }
 
-              return gitRes(`Restored '${path}'`, true);
+                return gitRes(`Restored '${path}'`, true);
+              });
             },
           },
           {
             key: ".",
             args: [],
             cmd: (gameData, setGameData) => {
-              const copyGit = gameData.git.restoreAllStagedFiles();
+              return middleware(gameData, GitCommandType.RESTORE, () => {
+                const copyGit = gameData.git.restoreAllStagedFiles();
 
-              setGameData({
-                ...gameData,
-                git: copyGit,
+                setGameData({
+                  ...gameData,
+                  git: copyGit,
+                });
+                return gitRes("Restored staged files", true);
               });
-              return gitRes("Restored staged files", true);
             },
           },
         ],
@@ -540,11 +600,15 @@ export const gitCommands: ICommandArg[] = [
                   );
 
                 if (typeof branchName !== "string")
-                  return gitRes(`Error: '${branchName} is invalid'`, false);
+                  return gitRes(`Error: '${branchName}' is invalid`, false);
 
                 const branch = gameData.git.getBranch(branchName);
                 if (!branch)
-                  return gitRes(`Error: '${branchName} does not exist'`, false);
+                  return gitRes(
+                    `Error: '${branchName}' does not exist`,
+                    false,
+                    ErrorType.WRONG_BRANCH_NAME
+                  );
 
                 let updatedGameData: IGitCooking =
                   copyObjectWithoutRef(gameData);
