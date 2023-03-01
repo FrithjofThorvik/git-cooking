@@ -75,7 +75,7 @@ const Terminal: React.FC<ITerminalProps> = ({
   }, [terminalDisplay]);
 
   return (
-    <div className="terminal" onDoubleClick={() => focus()}>
+    <div className="terminal" onMouseUp={() => focus()}>
       <div className="terminal-content">
         <div className="terminal-content-history">
           <p>{terminalDisplay}</p>
