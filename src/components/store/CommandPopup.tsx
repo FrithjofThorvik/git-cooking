@@ -1,7 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import HighlightText from "components/HighlightText";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IGitCommand } from "types/gameDataInterfaces";
 import { useKeyPress } from "hooks/useKeyPress";
 import { ThemeProvider, Tooltip, createTheme } from "@mui/material";
@@ -14,9 +14,21 @@ interface ICommandPopup {
 
 const CommandPopup: React.FC<ICommandPopup> = ({ purchasedGitCommand }) => {
   const [close, setClose] = useState<boolean>(false);
+  const [_purchasedGitCommand, setPurchasedGitCommand] =
+    useState<IGitCommand | null>(null);
   useKeyPress("Escape", () => {
     setClose(true);
   });
+
+  useEffect(() => {
+    if (
+      _purchasedGitCommand?.gitCommandType !==
+      purchasedGitCommand.gitCommandType
+    ) {
+      setClose(false);
+      setPurchasedGitCommand(purchasedGitCommand);
+    }
+  }, [purchasedGitCommand]);
 
   if (close) return <></>;
   return (
