@@ -7,22 +7,20 @@ import "./WorkScreen.scss";
 
 interface IWorkScreenProps {
   ordersController: JSX.Element;
-  infoBoxController: JSX.Element;
+  infoController: JSX.Element;
   terminalController: JSX.Element;
   fileController: JSX.Element;
   stageController: JSX.Element;
   directoryController: JSX.Element;
-  commitHistoryController: JSX.Element;
 }
 
 const WorkScreen: React.FC<IWorkScreenProps> = ({
   ordersController,
-  infoBoxController,
+  infoController,
   terminalController,
   fileController,
   stageController,
   directoryController,
-  commitHistoryController,
 }): JSX.Element => {
   return (
     <Background img={imgRestaurant} opacity={0.75} blur={0}>
@@ -39,10 +37,7 @@ const WorkScreen: React.FC<IWorkScreenProps> = ({
         </div>
         <div className="work-screen-right">
           <div className="work-screen-right-top">{ordersController}</div>
-          <div className="work-screen-right-bottom">
-            {infoBoxController}
-            {commitHistoryController}
-          </div>
+          <div className="work-screen-right-bottom">{infoController}</div>
         </div>
       </div>
     </Background>
