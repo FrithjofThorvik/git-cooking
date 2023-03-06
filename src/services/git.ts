@@ -26,7 +26,7 @@ export const gitRes = (
 export const gitCommandDoesNotExist = (): IGitResponse => {
   return {
     message:
-      "Error: this command either does not exist, or is not integrated into the game",
+      'Error: this command either does not exist, or is not integrated into the game\n %HINT:% remember to use quotation marks, %" "%, if your message or item has a space in it. Example:\n \tgit add %"orders/Steven/my item"%',
     success: false,
   };
 };
