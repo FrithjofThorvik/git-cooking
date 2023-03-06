@@ -84,7 +84,7 @@ const InfoBoxController: React.FC<
         (b) => b.isUnsynced && b.name === activeBranch?.name
       )
     );
-  }, [unsyncedBranches, gameData.git.getActiveBranch(), gameData.git.commits]);
+  }, [gameData.git.getActiveBranch(), gameData.git.commits]);
 
   return (
     <>

@@ -81,9 +81,7 @@ const Terminal: React.FC<ITerminalProps> = ({
     <div className="terminal" onMouseUp={() => focus()}>
       <div className="terminal-content">
         <div className="terminal-content-history">
-          <p>
-            <HighlightText text={terminalDisplay} />
-          </p>
+          <HighlightText text={terminalDisplay} />
           <div ref={bottomRef} />
         </div>
         <div className="terminal-content-input">
