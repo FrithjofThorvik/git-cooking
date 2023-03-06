@@ -5,7 +5,7 @@ import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import CloudDownloadTwoToneIcon from "@mui/icons-material/CloudDownloadTwoTone";
 
 import { theme } from "styles/muiThemes";
-import { IProject, IRemoteBranch } from "types/gitInterfaces";
+import { IBranch, IProject, IRemoteBranch } from "types/gitInterfaces";
 import { useFirstRender } from "hooks/useFirstRender";
 import InfoText from "components/InfoText";
 import Background from "components/Background";
@@ -21,7 +21,7 @@ interface IFetchScreenProps {
   projects: IProject[];
   displayBranches: IRemoteBranch[];
   isFirstDay: boolean;
-  tutorialCompleted: boolean;
+  checkedOutBranch: IBranch | null;
   terminalController: JSX.Element;
   goBack: () => void;
   activateProject: (project: IProject) => void;
@@ -32,7 +32,7 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
   projects,
   displayBranches,
   isFirstDay,
-  tutorialCompleted,
+  checkedOutBranch,
   terminalController,
   goBack,
   activateProject,
@@ -41,8 +41,6 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
   const [isCloning, setIsCloning] = useState<boolean>(false);
   const [textCopied, setTextCopied] = useState<boolean>(false);
   const [prevProject, setPrevProject] = useState<string>(project.type);
-  const [prevTutorialCompleted, setPrevTutorialCompleted] =
-    useState<boolean>(tutorialCompleted);
 
   const copyProjectUrl = () => {
     navigator.clipboard.writeText(project.url);
@@ -57,20 +55,9 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
   }, [project.type]);
 
   useEffect(() => {
-    if (tutorialCompleted !== prevTutorialCompleted)
-      setPrevTutorialCompleted(tutorialCompleted);
-  }, [tutorialCompleted]);
-
-  useEffect(() => {
     let timeId: NodeJS.Timeout | null = null;
 
-    if (
-      project.cloned &&
-      !firstRender &&
-      project.type === prevProject &&
-      tutorialCompleted &&
-      tutorialCompleted !== prevTutorialCompleted
-    ) {
+    if (project.cloned && !firstRender && project.type === prevProject) {
       setIsCloning(true);
       timeId = setTimeout(() => {
         setIsCloning(false);
@@ -80,7 +67,7 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
     return () => {
       if (timeId) clearTimeout(timeId);
     };
-  }, [project.cloned, tutorialCompleted]);
+  }, [project.cloned]);
 
   return (
     <Background>
@@ -93,7 +80,20 @@ const FetchScreen: React.FC<IFetchScreenProps> = ({
           />
         </div>
         <div className="fetch-screen-content">
-          {!project.cloned || !tutorialCompleted ? (
+          {checkedOutBranch !== null ? (
+            <div className="fetch-screen-content-cloning">
+              <RotatingLines
+                strokeColor="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="96"
+                visible={true}
+              />
+              <HighlightText
+                text={`Checking out ${checkedOutBranch.name}...`}
+              />
+            </div>
+          ) : !project.cloned ? (
             <div className="fetch-screen-content-info">
               <div className="fetch-screen-content-info-content">
                 <CloudDownloadTwoToneIcon />

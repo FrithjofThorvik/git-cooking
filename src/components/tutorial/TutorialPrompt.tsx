@@ -9,12 +9,14 @@ import "./TutorialPrompt.scss";
 
 interface ITutorialPromptProps {
   text: string;
+  hideGoBack: boolean;
   typewriter?: boolean;
   setShowTypewrite: (value: boolean) => void;
 }
 
 const TutorialPrompt: React.FC<ITutorialPromptProps> = ({
   text,
+  hideGoBack,
   typewriter = false,
   setShowTypewrite,
 }): JSX.Element => {
@@ -54,7 +56,9 @@ const TutorialPrompt: React.FC<ITutorialPromptProps> = ({
         </div>
         <img src={imgChef} alt="Chef" />
         <p className="tutorial-prompt-box-next">{"[ENTER] → Next"}</p>
-        <p className="tutorial-prompt-box-back">{"Prev ← [BACKSPACE]"}</p>
+        <p className="tutorial-prompt-box-back">
+          {hideGoBack ? "" : "Prev ← [BACKSPACE]"}
+        </p>
       </div>
     </div>
   );

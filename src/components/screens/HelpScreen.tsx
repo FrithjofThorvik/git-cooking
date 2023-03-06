@@ -59,6 +59,10 @@ const HelpScreen: React.FC<IHelpScreenProps> = ({
           setActiveHelpScreen={(hs: HelpScreenType) => setActiveHelpScreen(hs)}
         />
         <Tutorials
+          setActiveTutorialTypes={() => {
+            //do nothing
+          }}
+          unlockedTutorials={[]}
           tutorials={activeTutorials}
           hideOnLastTutorial
           onCompletion={() => setActiveTutorials([])}
