@@ -41,7 +41,7 @@ const GameController: React.FC = (): JSX.Element => {
       (gameData.states.day === 3 &&
         remainingTutorials.some((t) => t.type === TutorialType.HELP))
     )
-      setActiveTutorialTypes([TutorialType.HELP]);
+      unlockTutorialByType([TutorialType.HELP]);
   }, gameData.help.tutorials);
 
   const startFetch = () => {
@@ -79,19 +79,23 @@ const GameController: React.FC = (): JSX.Element => {
     setGameData({ ...updatedGameData });
   };
 
+  const unlockTutorialByType = (tutorialTypes: TutorialType[]) => {
+    const tutorials = gameData.help.getTutorialsByTypes(tutorialTypes);
+    const updatedHelp = gameData.help.unlockTutorials(tutorials);
+    setGameData({ ...gameData, help: updatedHelp });
+  };
+
   const gameStateMachine = () => {
     switch (gameData.states.gameState) {
       case GameState.WORKING:
         return (
-          <WorkScreenController
-            setActiveTutorialTypes={setActiveTutorialTypes}
-          />
+          <WorkScreenController setActiveTutorialTypes={unlockTutorialByType} />
         );
       case GameState.FETCH:
         if (!gameData.states.hasStartedFetch) startFetch();
         return (
           <FetchScreenController
-            setActiveTutorialTypes={setActiveTutorialTypes}
+            setActiveTutorialTypes={unlockTutorialByType}
             goBack={() => returnFromFetch()}
           />
         );
@@ -99,7 +103,7 @@ const GameController: React.FC = (): JSX.Element => {
         return (
           <MergeScreenController
             goNext={completeDay}
-            setActiveTutorialTypes={setActiveTutorialTypes}
+            setActiveTutorialTypes={unlockTutorialByType}
           />
         );
       case GameState.SUMMARY:
@@ -111,7 +115,7 @@ const GameController: React.FC = (): JSX.Element => {
       case GameState.UPGRADE:
         return (
           <StoreScreenController
-            setActiveTutorialTypes={setActiveTutorialTypes}
+            setActiveTutorialTypes={unlockTutorialByType}
             goNext={() => startFetch()}
             goBack={() => setGameState(GameState.SUMMARY)}
           />
@@ -143,7 +147,9 @@ const GameController: React.FC = (): JSX.Element => {
           {gameStateMachine()}
           <Tutorials
             tutorials={gameData.help.getTutorialsByTypes(activeTutorialTypes)}
+            unlockedTutorials={gameData.help.unlockedTutorials}
             completeTutorials={completeTutorials}
+            setActiveTutorialTypes={setActiveTutorialTypes}
             hideOnCompletion
             stopGameTime
             typewriter

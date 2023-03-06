@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { IProject, IRemoteBranch } from "types/gitInterfaces";
+import { IBranch, IProject, IRemoteBranch } from "types/gitInterfaces";
 import { IGitCooking } from "types/gameDataInterfaces";
 import { TutorialType } from "types/enums";
 import { copyObjectWithoutRef } from "services/helpers";
@@ -19,16 +19,13 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
 }): JSX.Element => {
   const gameData = useGameData();
   const project = gameData.git.getActiveProject();
-  const cloneTutorial = gameData.help.tutorials.find(
-    (t) => t.type === TutorialType.CLONE
-  );
-  const [tutorialCompleted, setTutorialCompleted] = useState<boolean>(
-    cloneTutorial ? cloneTutorial.completed : false
-  );
   const [displayBranches, setDisplayBranches] = useState<IRemoteBranch[]>(
     project
       ? project.remote.branches.filter((rb) => rb.isFetched && !rb.isMain)
       : []
+  );
+  const [checkedOutBranch, setCheckedOutBranch] = useState<IBranch | null>(
+    null
   );
 
   const activateProject = (project: IProject) => {
@@ -88,19 +85,18 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
   // Starts day when a remote branch has been checkout out
   useEffect(() => {
     let updatedGameData: IGitCooking = copyObjectWithoutRef(gameData);
-    if (
-      !updatedGameData.git.branches.some((b) => {
-        let remoteBranch = null;
-        if (b.remoteTrackingBranch)
-          remoteBranch = updatedGameData.git.getRemoteBranch(
-            b.remoteTrackingBranch
-          );
-        return remoteBranch && !remoteBranch.isMain;
-      })
-    )
-      return;
+    const checkedOutBranch = updatedGameData.git.branches.find((b) => {
+      let remoteBranch = null;
+      if (b.remoteTrackingBranch)
+        remoteBranch = updatedGameData.git.getRemoteBranch(
+          b.remoteTrackingBranch
+        );
+      return remoteBranch && !remoteBranch.isMain;
+    });
+    if (checkedOutBranch === undefined) return;
     updatedGameData = updatedGameData.startDay();
-    setGameData({ ...updatedGameData });
+    setCheckedOutBranch(checkedOutBranch);
+    setTimeout(() => setGameData({ ...updatedGameData }), 2000);
   }, [gameData.git.branches]);
 
   useEffect(() => {
@@ -111,21 +107,14 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
     );
   }, [project]);
 
-  useEffect(() => {
-    const cloneTutorial = gameData.help.tutorials.find(
-      (t) => t.type === TutorialType.CLONE
-    );
-    if (cloneTutorial?.completed) setTutorialCompleted(true);
-  }, [gameData.help.tutorials]);
-
   if (!project) return <></>;
   return (
     <FetchScreen
       projects={gameData.git.projects}
-      tutorialCompleted={tutorialCompleted}
       project={project}
       displayBranches={displayBranches}
       terminalController={<TerminalController />}
+      checkedOutBranch={checkedOutBranch}
       isFirstDay={gameData.states.day === 0}
       goBack={goBack}
       activateProject={activateProject}

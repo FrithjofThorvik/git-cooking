@@ -1,0 +1,9 @@
+@import "styles/imports/colors";
+.hover-warning {
+  position: absolute;
+  width: auto;
+  height: auto;
+  background-color: $dark;
+  padding: 10px min(100px, 20%);
+  top: 70%;
+}

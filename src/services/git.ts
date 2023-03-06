@@ -1,24 +1,32 @@
 import { IGitCooking } from "types/gameDataInterfaces";
 import { gitCommands } from "./gitCommandController";
 import { ICommandArg, IGitResponse } from "types/interfaces";
+import splitSpacesExcludeQuotes from "./splitSpacesExcludeQuotes";
+import { ErrorType } from "types/enums";
 
 /**
  * Git command response.
  * @param   {string}      msg     - Response message.
  * @param   {boolean}     success - Request succeeded/failed.
+ * @param   {ErrorType}     errorType - Type of error.
  * @returns {IGitResponse}
  */
-export const gitRes = (msg: string, success: boolean): IGitResponse => {
+export const gitRes = (
+  msg: string,
+  success: boolean,
+  errorType?: ErrorType
+): IGitResponse => {
   return {
     message: msg,
     success: success,
+    errorType,
   };
 };
 
 export const gitCommandDoesNotExist = (): IGitResponse => {
   return {
     message:
-      "Error: this command either does not exist, or is not integrated into the game",
+      'Error: this command either does not exist, or is not integrated into the game\n %HINT:% remember to use quotation marks, %" "%, if your message or item has a space in it. Example:\n \tgit add %"orders/Steven/my item"%',
     success: false,
   };
 };
@@ -60,9 +68,7 @@ class Git {
       let currentCmdArg: ICommandArg | null = null;
       let dynamicInput: string | undefined;
       for (let i = 0; i < args.length; i++) {
-        let currentArgKey: string = args[i]
-          .replaceAll('"', "")
-          .replaceAll("'", "");
+        let currentArgKey: string = args[i];
         let currentCmdArgs = currentCmdArg ? currentCmdArg.args : gitCommands;
 
         let tempCmdArg: ICommandArg | null = this.findCmdArg(
@@ -99,7 +105,7 @@ class Git {
     command: string,
     timeLapsed: number
   ): IGitResponse => {
-    let args = command.match(/(?:[^\s"']+|['"][^'"]*["'])+/g);
+    let args = splitSpacesExcludeQuotes(command);
     if (!args) args = [""];
 
     if (args[0] === "git")

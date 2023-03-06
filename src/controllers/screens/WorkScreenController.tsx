@@ -9,10 +9,9 @@ import WorkScreen from "components/screens/WorkScreen";
 import FileController from "controllers/components/work/ItemController";
 import StageController from "controllers/components/work/StageController";
 import OrdersController from "controllers/components/work/OrdersController";
-import InfoBoxController from "controllers/components/work/InfoBoxController";
+import InfoController from "controllers/components/work/InfoController";
 import TerminalController from "controllers/components/work/TerminalController";
 import DirectoryController from "controllers/components/work/DirectoryController";
-import CommitHistoryController from "controllers/components/work/CommitHistoryController";
 
 interface IWorkScreenControllerProps {
   setActiveTutorialTypes: (tutorials: TutorialType[]) => void;
@@ -99,12 +98,11 @@ const WorkScreenController: React.FC<IWorkScreenControllerProps> = ({
   return (
     <WorkScreen
       ordersController={<OrdersController />}
-      infoBoxController={<InfoBoxController />}
+      infoController={<InfoController />}
       terminalController={<TerminalController />}
       fileController={<FileController />}
       stageController={<StageController />}
       directoryController={<DirectoryController />}
-      commitHistoryController={<CommitHistoryController />}
     />
   );
 };

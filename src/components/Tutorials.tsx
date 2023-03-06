@@ -7,6 +7,14 @@ import TutorialsNav from "./tutorial/TutorialsNav";
 import TutorialScreen from "./tutorial/TutorialScreen";
 
 import "./Tutorials.scss";
+import { TutorialType } from "types/enums";
+import TutorialModal from "./TutorialModal";
+
+interface IShownIndexState {
+  tutorialIndex: number;
+  screenIndex: number;
+  promptIndex: number;
+}
 
 interface ITutorialState {
   tutorial: ITutorial;
@@ -19,6 +27,7 @@ interface ITutorialState {
 
 interface ITutorialProps {
   tutorials: ITutorial[];
+  unlockedTutorials: ITutorial[];
   stopGameTime?: boolean;
   hideOnCompletion?: boolean;
   hideOnLastTutorial?: boolean;
@@ -26,14 +35,17 @@ interface ITutorialProps {
   onCompletion?: () => void;
   pauseGameTime?: (isPaused: boolean) => void;
   completeTutorials?: (tutorials: ITutorial[]) => void;
+  setActiveTutorialTypes: (tutorialTypes: TutorialType[]) => void;
 }
 
 const Tutorials: React.FC<ITutorialProps> = ({
   tutorials,
+  unlockedTutorials,
   stopGameTime,
   hideOnCompletion,
   hideOnLastTutorial,
   typewriter = false,
+  setActiveTutorialTypes,
   onCompletion,
   pauseGameTime,
   completeTutorials,
@@ -41,8 +53,38 @@ const Tutorials: React.FC<ITutorialProps> = ({
   const [state, setState] = useState<ITutorialState | null>(null);
   const [isHidden, setIsHidden] = useState<boolean>(true);
   const [firstRender, setFirstRender] = useState<boolean>(false);
+  const [showTypewrite, setShowTypewrite] = useState<boolean>(true);
+  const [shownIndexes, setShownIndexes] = useState<IShownIndexState[]>([]);
 
   useKeyPress("Escape", () => closeTutorials());
+
+  // show typewrite effect if the prompt hasn't been shown before
+  const updateTypewrite = (
+    tutorialIndex: number,
+    screenIndex: number,
+    promptIndex: number
+  ) => {
+    if (!state) return;
+    if (
+      !shownIndexes.some(
+        (shownIndex) =>
+          shownIndex.tutorialIndex === tutorialIndex &&
+          shownIndex.screenIndex === screenIndex &&
+          shownIndex.promptIndex === promptIndex
+      )
+    ) {
+      setShowTypewrite(true);
+
+      setShownIndexes((prev) => [
+        ...prev,
+        {
+          tutorialIndex,
+          screenIndex,
+          promptIndex,
+        },
+      ]);
+    }
+  };
 
   const nextTutorial = () => {
     if (!state) return;
@@ -54,6 +96,7 @@ const Tutorials: React.FC<ITutorialProps> = ({
       const screen = tutorial.screens[screenIndex];
       const promptIndex = 0;
       const prompt = screen.prompts[promptIndex];
+      updateTypewrite(tutorialIndex, screenIndex, promptIndex);
       setState({
         tutorialIndex,
         tutorial,
@@ -65,6 +108,8 @@ const Tutorials: React.FC<ITutorialProps> = ({
     } else if (hideOnLastTutorial && onCompletion) {
       onCompletion();
       setState(null);
+      setShownIndexes([]);
+      setShowTypewrite(true);
       setIsHidden(true);
     }
   };
@@ -96,6 +141,7 @@ const Tutorials: React.FC<ITutorialProps> = ({
       const screen = state.tutorial.screens[screenIndex];
       const promptIndex = 0;
       const prompt = screen.prompts[promptIndex];
+      updateTypewrite(state.tutorialIndex, screenIndex, promptIndex);
       setState({
         ...state,
         screenIndex,
@@ -119,9 +165,15 @@ const Tutorials: React.FC<ITutorialProps> = ({
 
   const nextPrompt = () => {
     if (!state) return;
-    if (state.promptIndex + 1 < state.screen.prompts.length) {
+
+    // do not go to next tutorial if sentence is not finished typing
+    if (typewriter && showTypewrite) {
+      // skip sentence if trying to go to next tutorial, but not finished typing
+      setShowTypewrite(false);
+    } else if (state.promptIndex + 1 < state.screen.prompts.length) {
       const promptIndex = state.promptIndex + 1;
       const prompt = state.screen.prompts[promptIndex];
+      updateTypewrite(state.tutorialIndex, state.screenIndex, promptIndex);
       setState({ ...state, promptIndex, prompt });
     } else nextScreen();
   };
@@ -152,6 +204,9 @@ const Tutorials: React.FC<ITutorialProps> = ({
           promptIndex,
           prompt,
         });
+
+        const shownIndexes = [{ tutorialIndex, screenIndex, promptIndex }];
+        setShownIndexes(shownIndexes);
       }
     });
   };
@@ -177,6 +232,8 @@ const Tutorials: React.FC<ITutorialProps> = ({
     if (completeTutorials) completeTutorials(tutorials);
     if (onCompletion) onCompletion();
     setState(null);
+    setShownIndexes([]);
+    setShowTypewrite(true);
     setIsHidden(true);
   };
 
@@ -197,9 +254,13 @@ const Tutorials: React.FC<ITutorialProps> = ({
           promptIndex: 0,
         });
         setIsHidden(false);
+        setShownIndexes([]);
+        setShowTypewrite(true);
       } else if (tutorials.length > 0 && tutorialsCompleted) {
         setIsHidden(true);
         setState(null);
+        setShownIndexes([]);
+        setShowTypewrite(true);
       } else if (tutorials.length > 0 && !tutorialsCompleted) {
         setIsHidden(false);
       } else {
@@ -216,6 +277,8 @@ const Tutorials: React.FC<ITutorialProps> = ({
           promptIndex: 0,
         });
         setIsHidden(false);
+        setShownIndexes([]);
+        setShowTypewrite(true);
       }
     }
   }, [tutorials, state]);
@@ -226,15 +289,33 @@ const Tutorials: React.FC<ITutorialProps> = ({
     else if (stopGameTime && pauseGameTime) pauseGameTime(!isHidden);
   }, [isHidden]);
 
-  if ((hideOnCompletion && isHidden) || !state) return <></>;
+  if ((hideOnCompletion && isHidden) || !state) {
+    if (unlockedTutorials.length === 0) return <></>;
+    const modalHandleClick = (tutorialTypes: TutorialType[]) => {
+      setIsHidden(false);
+      setActiveTutorialTypes(tutorialTypes);
+    };
+    return (
+      <TutorialModal
+        unlockedTutorials={unlockedTutorials}
+        handleClick={modalHandleClick}
+      />
+    );
+  }
   return (
     <div className="tutorial">
       <div className="tutorial-close" onClick={() => closeTutorials()}>
         <CloseIcon />
       </div>
       <TutorialScreen
-        typewriter={typewriter}
+        typewriter={typewriter ? showTypewrite : false}
+        setShowTypewrite={setShowTypewrite}
         tutorial={state.tutorial}
+        hideGoBack={
+          state.promptIndex === 0 &&
+          state.screenIndex === 0 &&
+          state.tutorialIndex === 0
+        }
         screen={state.screen}
         prompt={state.prompt}
         screenIndex={state.screenIndex}

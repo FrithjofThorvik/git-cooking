@@ -47,7 +47,7 @@ const Directory: React.FC<IDirectoryProps> = ({
                 transform: `rotate(${isOrdersOpen ? "90deg" : "0deg"})`,
               }}
             />
-            <div>Orders</div>
+            <div>orders</div>
           </div>
           {isOrdersOpen && (
             <div className="directory-content-folder-content">
