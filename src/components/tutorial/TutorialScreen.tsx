@@ -12,8 +12,10 @@ interface ITutorialScreenProps {
   screenIndex: number;
   prompt: string;
   promptIndex: number;
+  hideGoBack: boolean;
   nextPrompt: () => void;
   prevPrompt: () => void;
+  setShowTypewrite: (value: boolean) => void;
   typewriter?: boolean;
 }
 
@@ -23,8 +25,10 @@ const TutorialScreen: React.FC<ITutorialScreenProps> = ({
   screenIndex,
   prompt,
   promptIndex,
+  hideGoBack,
   nextPrompt,
   prevPrompt,
+  setShowTypewrite,
   typewriter = false,
 }): JSX.Element => {
   return (
@@ -34,7 +38,12 @@ const TutorialScreen: React.FC<ITutorialScreenProps> = ({
           <img src={screen.img} alt={screen.title} />
         </div>
       )}
-      <TutorialPrompt text={prompt} typewriter={typewriter} />
+      <TutorialPrompt
+        text={prompt}
+        typewriter={typewriter}
+        setShowTypewrite={setShowTypewrite}
+        hideGoBack={hideGoBack}
+      />
       <TutorialScreenNav
         tutorial={tutorial}
         screenIndex={screenIndex}

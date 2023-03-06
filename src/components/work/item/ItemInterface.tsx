@@ -10,6 +10,7 @@ import { IIngredient, IOrderItem } from "types/gameDataInterfaces";
 import DisplayItem from "./DisplayItem";
 
 import "./ItemInterface.scss";
+import HoverWarning from "components/HoverWarning";
 
 interface IItemInterfaceProps {
   activeItem: IOrderItem | null;
@@ -32,13 +33,35 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
   const itemRef = useRef<HTMLDivElement>(null);
   const isHovered = useHover(itemRef);
   const [foodTypeIngredients, setFoodTypeIngredients] = useState<FoodType>();
+  const [showWarning, setShowWarning] = useState(false);
+  const [declineWarning, setDeclineWarning] = useState(false);
 
   const handleTypeSelect = (type: IngredientType) => {
-    Object.values(IngredientType).forEach((val) => {
-      if (val === type && activeItem) {
-        modifyOrderItem(activeItem, { type: val });
-      }
-    });
+    const ingredients = activeItem?.ingredients;
+    if (
+      ingredients &&
+      ingredients.length > 0 &&
+      type !== activeItem?.type &&
+      !showWarning &&
+      !declineWarning
+    ) {
+      // if you have ingredients and try to change food type
+      // and assuming you don't already have a warning, or have declined a previous warning
+      // show warning
+      setShowWarning(true);
+    } else if (type !== activeItem?.type && (declineWarning || !showWarning)) {
+      // if not setting show warning to true
+      // if we are changing food type
+      // and we don't have a warning currently, or we have declined a previous warning
+      // change the active item
+      Object.values(IngredientType).forEach((val) => {
+        if (val === type && activeItem) {
+          modifyOrderItem(activeItem, { type: val });
+        }
+      });
+      setShowWarning(false);
+      setDeclineWarning(false);
+    }
   };
 
   useEffect(() => {
@@ -48,6 +71,12 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
       }
     }
   }, [activeItem?.type]);
+
+  useEffect(() => {
+    // If you changed the active item -> reset state
+    setShowWarning(false);
+    setDeclineWarning(false);
+  }, [activeItem]);
 
   if (activeItem === null) return <></>;
   return (
@@ -104,6 +133,17 @@ const ItemInterface: React.FC<IItemInterfaceProps> = ({
           showName={false}
         />
       </div>
+
+      {/* Warning */}
+      <HoverWarning
+        show={showWarning}
+        handleClickOutside={() => {
+          // If you click outside the warning -> remove warning/decline warning
+          setShowWarning(false);
+          setDeclineWarning(true);
+        }}
+        text="%Warning!% Changing food type will %clear% your current item. Add a %new item% if you wish to serve your customer two foods."
+      />
     </div>
   );
 };

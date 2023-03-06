@@ -5,6 +5,7 @@ import { defaultTutorials } from "./defaultTutorials";
 export const defaultHelp: IHelp = {
   tutorials: copyObjectWithoutRef(defaultTutorials),
   isHelpScreenOpen: false,
+  unlockedTutorials: [],
   setIsHelpScreenOpen: function (isOpen) {
     let copy: IHelp = copyObjectWithoutRef(this);
     copy.isHelpScreenOpen = isOpen;
@@ -32,6 +33,23 @@ export const defaultHelp: IHelp = {
         }
       });
     });
+    copy.unlockedTutorials = copy.unlockedTutorials.filter((uT) => {
+      let isCompleted = false;
+      copy.tutorials.forEach((t) => {
+        if (t.type === uT.type) isCompleted = t.completed;
+      });
+      return !isCompleted;
+    });
+    return copy;
+  },
+  unlockTutorials: function (tutorials) {
+    let copy: IHelp = copyObjectWithoutRef(this);
+    tutorials
+      .filter((t) => !t.completed) // not completed
+      .filter((t) => !copy.unlockedTutorials.some((uT) => uT.type === t.type)) // not already unlocked
+      .forEach((t) => {
+        copy.unlockedTutorials.push(t);
+      });
     return copy;
   },
 };

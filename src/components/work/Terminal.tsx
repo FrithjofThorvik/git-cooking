@@ -1,4 +1,5 @@
 import { TerminalOutlined } from "@mui/icons-material";
+import HighlightText from "components/HighlightText";
 import React, { useEffect, useRef, useState } from "react";
 
 import { IGitCooking } from "types/gameDataInterfaces";
@@ -43,7 +44,9 @@ const Terminal: React.FC<ITerminalProps> = ({
       case "Enter":
         event.preventDefault();
         const gitRes = parseCommand(gameData, value);
-        setTerminalDisplay((prevState) => prevState + "\n" + gitRes.message);
+        setTerminalDisplay(
+          (prevState) => prevState + `\n%> ${value}% \n` + gitRes.message
+        );
         setValue("");
         setCommandHistoryIndex(-1);
         break;
@@ -75,10 +78,10 @@ const Terminal: React.FC<ITerminalProps> = ({
   }, [terminalDisplay]);
 
   return (
-    <div className="terminal" onDoubleClick={() => focus()}>
+    <div className="terminal" onMouseUp={() => focus()}>
       <div className="terminal-content">
         <div className="terminal-content-history">
-          <p>{terminalDisplay}</p>
+          <HighlightText text={terminalDisplay} />
           <div ref={bottomRef} />
         </div>
         <div className="terminal-content-input">

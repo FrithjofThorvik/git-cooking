@@ -1,8 +1,10 @@
 import { IGitCooking } from "./gameDataInterfaces";
+import { ErrorType } from "./enums";
 
 export interface IGitResponse {
   message: string;
   success: boolean;
+  errorType?: ErrorType;
 }
 
 export interface ICommandArg {
