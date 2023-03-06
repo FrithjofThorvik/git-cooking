@@ -12,6 +12,7 @@ interface ITutorialScreenProps {
   screenIndex: number;
   prompt: string;
   promptIndex: number;
+  hideGoBack: boolean;
   nextPrompt: () => void;
   prevPrompt: () => void;
   setShowTypewrite: (value: boolean) => void;
@@ -24,6 +25,7 @@ const TutorialScreen: React.FC<ITutorialScreenProps> = ({
   screenIndex,
   prompt,
   promptIndex,
+  hideGoBack,
   nextPrompt,
   prevPrompt,
   setShowTypewrite,
@@ -40,6 +42,7 @@ const TutorialScreen: React.FC<ITutorialScreenProps> = ({
         text={prompt}
         typewriter={typewriter}
         setShowTypewrite={setShowTypewrite}
+        hideGoBack={hideGoBack}
       />
       <TutorialScreenNav
         tutorial={tutorial}

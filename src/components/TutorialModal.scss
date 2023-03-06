@@ -1,0 +1,184 @@
+@import "styles/imports/colors";
+@import "styles/imports/mixins";
+
+.tutorial-modal {
+  display: flex;
+  position: absolute;
+  bottom: 10px;
+  left: 70px;
+  z-index: 2;
+
+  &-text {
+    position: absolute;
+    margin: 0;
+    width: 100px;
+    text-align: center;
+    z-index: 2;
+    top: -50px;
+    right: -25px;
+
+    color: $line-green;
+    text-shadow: 0 0 7px $line-green;
+    font-weight: 600;
+
+    animation: upDown 2s infinite;
+  }
+
+  &-count {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $green;
+    border: 2px solid $line-green;
+    box-shadow: 0 3px 5px 1px rgba(0, 0, 0, 0.4),
+      inset 0 0 5px 1px rgba(black, 0.3);
+    font-size: 25px;
+    width: 12px;
+    height: 12px;
+    padding: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 100%;
+    z-index: 2;
+    top: -6px;
+    right: -6px;
+
+    &.new {
+      animation: blink 2s;
+    }
+  }
+
+  &-circle {
+    box-sizing: border-box;
+    background-color: $dark;
+    border: 2px solid $green;
+    animation: flash 2s infinite;
+    transition: scale 200ms ease-in-out;
+    width: 60px;
+    height: 60px;
+    padding: 5px;
+    border-radius: 100%;
+
+    img {
+      width: 100%;
+      border-radius: 100%;
+    }
+
+    &:hover {
+      cursor: pointer;
+      animation-play-state: paused;
+      transform: scale(0.98);
+    }
+  }
+
+  &-menu {
+    @include blurBackground(10px);
+    display: flex;
+    position: absolute;
+    align-items: center;
+    height: fit-content;
+    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: flex-start;
+    transform: translate(100%, -100%);
+    transition: all ease-in-out 200ms;
+    box-shadow: 3px 5px 5px 3px rgba(black, 0.4),
+      inset 0 0 3px 2px rgba(black, 0.4);
+    border: 1px solid $line-dark;
+
+    top: 0;
+    right: 0;
+    gap: 10px;
+    opacity: 1;
+    width: 300px;
+    padding: 25px;
+    padding-bottom: 45px;
+    border-radius: 25px;
+    border-bottom-left-radius: 0;
+
+    &-title {
+      color: $line-green;
+      text-shadow: 0 0 7px $line-green;
+      font-weight: 600;
+    }
+
+    &-item {
+      color: rgba($white, 0.7);
+      transition: color ease-in-out 100ms;
+      &:hover {
+        cursor: pointer;
+        color: $white;
+      }
+    }
+
+    &-view {
+      position: absolute;
+      right: 15px;
+      bottom: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: rgba($white, 0.3);
+      column-gap: 3px;
+      font-weight: 900;
+      font-size: 12px;
+      transition: color ease-in-out 200ms;
+
+      &:hover {
+        cursor: pointer;
+        color: rgba($white, 0.8);
+      }
+    }
+
+    &.hide {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+}
+
+@keyframes flash {
+  0% {
+    box-shadow: 0 0 0 0 rgba($line-green, 0), inset 0 0 5px 6px rgba(black, 0.3);
+    text-shadow: 0 0 0 $line-green;
+    background-color: $dark;
+    border-color: rgba($line-green, 1);
+  }
+  50% {
+    box-shadow: 0 0 10px 3px rgba($line-green, 0.5),
+      inset 0 0 5px 6px rgba(black, 0.3);
+    text-shadow: 0 0 4px $line-green;
+    border-color: rgba($line-green, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba($line-green, 0), inset 0 0 5px 6px rgba(black, 0.3);
+    text-shadow: 0 0 0 $line-green;
+    background-color: $dark;
+    border-color: rgba($line-green, 1);
+  }
+}
+
+@keyframes blink {
+  0%,
+  50%,
+  100% {
+    opacity: 1;
+  }
+  25%,
+  75% {
+    opacity: 0;
+  }
+}
+
+@keyframes upDown {
+  0%,
+  50%,
+  100% {
+    transform: translateY(2px);
+  }
+  25%,
+  75% {
+    transform: translateY(-2px);
+  }
+}

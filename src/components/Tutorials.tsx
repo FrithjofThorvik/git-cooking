@@ -7,6 +7,8 @@ import TutorialsNav from "./tutorial/TutorialsNav";
 import TutorialScreen from "./tutorial/TutorialScreen";
 
 import "./Tutorials.scss";
+import { TutorialType } from "types/enums";
+import TutorialModal from "./TutorialModal";
 
 interface IShownIndexState {
   tutorialIndex: number;
@@ -25,6 +27,7 @@ interface ITutorialState {
 
 interface ITutorialProps {
   tutorials: ITutorial[];
+  unlockedTutorials: ITutorial[];
   stopGameTime?: boolean;
   hideOnCompletion?: boolean;
   hideOnLastTutorial?: boolean;
@@ -32,14 +35,17 @@ interface ITutorialProps {
   onCompletion?: () => void;
   pauseGameTime?: (isPaused: boolean) => void;
   completeTutorials?: (tutorials: ITutorial[]) => void;
+  setActiveTutorialTypes: (tutorialTypes: TutorialType[]) => void;
 }
 
 const Tutorials: React.FC<ITutorialProps> = ({
   tutorials,
+  unlockedTutorials,
   stopGameTime,
   hideOnCompletion,
   hideOnLastTutorial,
   typewriter = false,
+  setActiveTutorialTypes,
   onCompletion,
   pauseGameTime,
   completeTutorials,
@@ -283,7 +289,19 @@ const Tutorials: React.FC<ITutorialProps> = ({
     else if (stopGameTime && pauseGameTime) pauseGameTime(!isHidden);
   }, [isHidden]);
 
-  if ((hideOnCompletion && isHidden) || !state) return <></>;
+  if ((hideOnCompletion && isHidden) || !state) {
+    if (unlockedTutorials.length === 0) return <></>;
+    const modalHandleClick = (tutorialTypes: TutorialType[]) => {
+      setIsHidden(false);
+      setActiveTutorialTypes(tutorialTypes);
+    };
+    return (
+      <TutorialModal
+        unlockedTutorials={unlockedTutorials}
+        handleClick={modalHandleClick}
+      />
+    );
+  }
   return (
     <div className="tutorial">
       <div className="tutorial-close" onClick={() => closeTutorials()}>
@@ -293,6 +311,11 @@ const Tutorials: React.FC<ITutorialProps> = ({
         typewriter={typewriter ? showTypewrite : false}
         setShowTypewrite={setShowTypewrite}
         tutorial={state.tutorial}
+        hideGoBack={
+          state.promptIndex === 0 &&
+          state.screenIndex === 0 &&
+          state.tutorialIndex === 0
+        }
         screen={state.screen}
         prompt={state.prompt}
         screenIndex={state.screenIndex}

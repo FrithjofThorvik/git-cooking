@@ -133,6 +133,8 @@ export interface ITutorial {
 export interface IHelp {
   tutorials: ITutorial[];
   isHelpScreenOpen: boolean;
+  unlockedTutorials: ITutorial[];
+  unlockTutorials: (tutorials: ITutorial[]) => IHelp;
   completeTutorials: (tutorials: ITutorial[]) => IHelp;
   setIsHelpScreenOpen: (isOpen: boolean) => IHelp;
   getTutorialsByTypes: (types: TutorialType[]) => ITutorial[];

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { TutorialType } from "types/enums";
 
 import { IGitCooking } from "types/gameDataInterfaces";
 
@@ -48,17 +47,10 @@ export const useInfoBoxText = (
       const allOrdersCount = gameData.orderService.getAllOrders().length;
       const availableOrdersCount =
         gameData.orderService.getAvailableOrders().length;
-      const pushTutorial = gameData.help.getTutorialsByTypes([
-        TutorialType.WORK_PUSH,
-      ]);
 
       // Not all orders have been presented yet
       if (availableOrdersCount < allOrdersCount) {
         setInfoText(`Fulfill as many orders as you can before the day ends`);
-      } else if (!pushTutorial.every((t) => t.completed)) {
-        setInfoText(
-          `Make sure complete all orders. Remember to use %git add .% and %git commit -m [msg]%`
-        );
       } else {
         setInfoText(
           `When finished, %git push% your work to the branch you pulled orders from`
