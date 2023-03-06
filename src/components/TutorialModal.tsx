@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { TutorialType } from "types/enums";
 import { ITutorial } from "types/gameDataInterfaces";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { KeyboardArrowDown } from "@mui/icons-material";
 
 import "./TutorialModal.scss";
-import { KeyboardArrowDown } from "@mui/icons-material";
+import { useFirstRender } from "hooks/useFirstRender";
 
 interface ITutorialModalProps {
   unlockedTutorials: ITutorial[];
@@ -18,9 +18,7 @@ const TutorialModal: React.FC<ITutorialModalProps> = ({
   handleClick,
 }) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [tutorialLength, setTutorialLength] = useState<number>(
-    unlockedTutorials.length
-  );
+  const [tutorialLength, setTutorialLength] = useState<number>(0);
   const [activateFlash, setActivateFlash] = useState<boolean>(false);
 
   useEffect(() => {
