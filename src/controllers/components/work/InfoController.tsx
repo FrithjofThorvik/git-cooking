@@ -63,14 +63,14 @@ const InfoBoxController: React.FC<
   };
 
   useEffect(() => {
-    if (!isPushed) {
-      gameData.git.getActiveProject()?.remote.branches.forEach((b) => {
-        const pushedItems = gameData.git
-          .getActiveProject()
-          ?.remote.getPushedItems(b.name);
-        if (pushedItems && pushedItems.length > 0) setIsPushed(true);
-      });
-    }
+    const activeBranch = gameData.git.getActiveBranch();
+    // get pushed items of the active branch
+    const pushedItems =
+      activeBranch &&
+      gameData.git.getActiveProject()?.remote.getPushedItems(activeBranch.name);
+
+    // isPushed = true if pushed items in active branch
+    setIsPushed(pushedItems !== undefined && pushedItems.length > 0);
   }, [gameData.git.getActiveProject()?.remote.branches]);
 
   useEffect(() => {
