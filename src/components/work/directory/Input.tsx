@@ -48,7 +48,7 @@ const Input: React.FC<IInputProps> = ({
         }}
         ref={inputRef}
         type="text"
-        placeholder="item name"
+        placeholder="Ex: burger #1"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => handleInputEvent(e)}
