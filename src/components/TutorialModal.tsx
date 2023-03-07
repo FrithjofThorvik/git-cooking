@@ -6,7 +6,6 @@ import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import { KeyboardArrowDown } from "@mui/icons-material";
 
 import "./TutorialModal.scss";
-import { useFirstRender } from "hooks/useFirstRender";
 
 interface ITutorialModalProps {
   unlockedTutorials: ITutorial[];
@@ -22,6 +21,15 @@ const TutorialModal: React.FC<ITutorialModalProps> = ({
   const [activateFlash, setActivateFlash] = useState<boolean>(false);
 
   useEffect(() => {
+    if (
+      unlockedTutorials.every(
+        (t) =>
+          t.type === TutorialType.GAME_INTRO || t.type === TutorialType.TERMINAL
+      )
+    ) {
+      // show the intro and terminal tutorial by default
+      handleClick(unlockedTutorials.map((t) => t.type));
+    }
     if (unlockedTutorials.length !== tutorialLength) {
       setActivateFlash(true);
       setTimeout(() => setActivateFlash(false), 2000);
