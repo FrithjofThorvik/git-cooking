@@ -24,7 +24,9 @@ const TutorialModal: React.FC<ITutorialModalProps> = ({
     if (
       unlockedTutorials.every(
         (t) =>
-          t.type === TutorialType.GAME_INTRO || t.type === TutorialType.TERMINAL
+          t.type === TutorialType.GAME_INTRO ||
+          t.type === TutorialType.TERMINAL ||
+          t.type === TutorialType.HELP
       )
     ) {
       // show the intro and terminal tutorial by default
