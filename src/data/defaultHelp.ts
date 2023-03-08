@@ -1,8 +1,9 @@
 import { copyObjectWithoutRef } from "services/helpers";
+import { TutorialType } from "types/enums";
 import { IHelp, ITutorial } from "types/gameDataInterfaces";
 import { defaultTutorials } from "./defaultTutorials";
 
-export const defaultHelp: IHelp = {
+let defaultHelp: IHelp = {
   tutorials: copyObjectWithoutRef(defaultTutorials),
   isHelpScreenOpen: false,
   unlockedTutorials: [],
@@ -53,3 +54,11 @@ export const defaultHelp: IHelp = {
     return copy;
   },
 };
+
+defaultHelp.unlockedTutorials = defaultHelp.getTutorialsByTypes([
+  TutorialType.GAME_INTRO,
+  TutorialType.TERMINAL,
+  TutorialType.HELP,
+]);
+
+export { defaultHelp };

@@ -56,7 +56,6 @@ const FetchScreenController: React.FC<IFetchScreenControllerProps> = ({
   };
 
   useEffect(() => {
-    setActiveTutorialTypes([TutorialType.GAME_INTRO, TutorialType.TERMINAL]);
     if (gameData.git.projects.some((p) => p.cloned)) {
       setActiveTutorialTypes([TutorialType.CLONE]);
     }

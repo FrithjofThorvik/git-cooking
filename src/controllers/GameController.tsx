@@ -31,19 +31,6 @@ const GameController: React.FC = (): JSX.Element => {
       terminal.blur();
   }, [activeTutorialTypes]);
 
-  useEffect(() => {
-    const remainingTutorials = gameData.help.tutorials.filter(
-      (t) => !t.completed
-    );
-    if (
-      (remainingTutorials.length === 1 &&
-        remainingTutorials[0].type === TutorialType.HELP) ||
-      (gameData.states.day === 3 &&
-        remainingTutorials.some((t) => t.type === TutorialType.HELP))
-    )
-      unlockTutorialByType([TutorialType.HELP]);
-  }, gameData.help.tutorials);
-
   const startFetch = () => {
     let updatedGameData = gameData.startFetch();
     if (timeLapsed !== 0) setGameTime(0);

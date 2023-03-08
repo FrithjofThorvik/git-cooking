@@ -311,7 +311,7 @@ export const defaultTutorials: ITutorial[] = [
         title: "Help!",
         img: imgHelp,
         prompts: [
-          "If you need more %help% you can always view the tutorials again, in addition to an overview of %git commands% and important %git concepts%.",
+          "If you need more %help% you can always view tutorials again, in addition to viewing an overview of %git commands% and important %git concepts%.",
           "Just look for the help button in %the bottom left% of the screen.",
         ],
       },
