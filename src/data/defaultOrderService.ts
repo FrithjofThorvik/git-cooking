@@ -35,7 +35,7 @@ export const defaultOrderService: IOrderService = {
       });
     } else {
       // update orders of branch
-      copy.branches[branchIndex].orders === orders;
+      copy.branches[branchIndex].orders = orders;
     }
     return copy;
   },
