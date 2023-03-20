@@ -42,14 +42,15 @@ const CommandPopup: React.FC<ICommandPopup> = ({ purchasedGitCommand }) => {
         <div className="popup-modal-usecase">
           <HighlightText text={purchasedGitCommand.useCase} />
         </div>
+        <div className="popup-close-button" onClick={() => setClose(true)}>
+          <ThemeProvider theme={theme}>
+            <Tooltip title="Close">
+              <CloseIcon />
+            </Tooltip>
+          </ThemeProvider>
+        </div>
       </div>
-      <div className="popup-close-button" onClick={() => setClose(true)}>
-        <ThemeProvider theme={theme}>
-          <Tooltip title="Close">
-            <CloseIcon />
-          </Tooltip>
-        </ThemeProvider>
-      </div>
+      <p className="popup-esc">{"press [ESC] to exit"}</p>
     </div>
   );
 };
