@@ -336,12 +336,19 @@ export const gitCommands: ICommandArg[] = [
                 let updatedOrderService = gameData.orderService;
                 const newCreatedItems =
                   updatedGit.getHeadCommit()?.directory.createdItems;
+                const currentBranch = gameData.git.getActiveBranch();
 
-                if (newCreatedItems)
+                if (newCreatedItems) {
                   updatedOrderService =
                     updatedOrderService.updatePercentageCompleted(
                       newCreatedItems
                     );
+                  // also update the branch array in orderService!
+                  updatedOrderService = updatedOrderService.setNewOrders(
+                    updatedOrderService.getAllOrders(),
+                    currentBranch?.name
+                  );
+                }
 
                 setGameData({
                   ...gameData,
