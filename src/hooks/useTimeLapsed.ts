@@ -26,7 +26,6 @@ export const useTimeLapsed = (ms: number, handleEnd: () => void): void => {
         setPausedTime(pausedTime + 1);
       } else if (newTimeLapsed > dayLength) {
         handleEnd();
-        setGameTime(0);
       } else setGameTime(newTimeLapsed);
     }, ms);
 
